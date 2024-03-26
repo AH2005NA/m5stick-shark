@@ -1,8 +1,8 @@
-# M5Stick-NEMO
+# M5Stick-SHARK
+Uodated version of M5Stickc-NEMO
 Firmware for high-tech pranks on M5Stack ESP32 Devices
 
-![M5-Nemo Matrix Logo](https://github.com/n0xa/m5stick-nemo/blob/main/NEMOMatrix.png)
-Logo by @unagironin
+![Shark](https://github.com/AH2005NA/m5stick-shark/blob/main/Shark.png)
 
 ## Name and Background
 NEMO started a personal project to help me learn more about ESP32 development with the Arduino IDE. I decided to replicate a few common, trending pranks that were getting a lot of attention in the tech community, as a challenge to myself, and to also better understand these attacks.  
