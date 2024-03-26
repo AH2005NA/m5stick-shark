@@ -1,5 +1,6 @@
 # M5Stick-SHARK
-Updated version of M5Stickc-NEMO https://github.com/n0xa/m5stick-nemo
+Updated version of M5Stickc-NEMO https://github.com/n0xa/m5stick-nemo.
+
 Firmware for pranks on M5Stack ESP32 Devices
 
 ![Shark](https://github.com/AH2005NA/m5stick-shark/blob/main/Shark.png)
