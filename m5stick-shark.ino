@@ -3,13 +3,13 @@
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
-#define STICK_C_PLUS2
+//  #define STICK_C_PLUS2
 // #define STICK_C
 // #define CARDPUTER
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
-#define LANGUAGE_EN_US
+//  #define LANGUAGE_EN_US
 // #define LANGUAGE_PT_BR
 
 // -- DEPRECATED - THESE ARE NOW EEPROM DEFINED -- //

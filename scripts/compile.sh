@@ -55,18 +55,18 @@ arduino-cli compile --log \
   --build-property build.partitions=huge_app \
   --build-property upload.maximum_size=3145728 \
   --build-property compiler.cpp.extra_flags="${extra_flags}" \
-  --output-dir ./m5stick-nemo/build \
-  ./m5stick-nemo/m5stick-nemo.ino
+  --output-dir ./m5stick-shark/build \
+  ./m5stick-shark/m5stick-shark.ino
 
 if [[ "${locale}" == "en-us" ]]; then
-  output_file="M5Nemo-${name}.bin"
+  output_file="M5shark-${name}.bin"
 else
-  output_file="M5Nemo-${name}.${locale}.bin"
+  output_file="M5shark-${name}.${locale}.bin"
 fi
 
 echo "Merging binaries to ${output_file}"
 
-esptool.py --chip esp32s3 merge_bin --output ./m5stick-nemo/build/${output_file}  \
-            ${bootloader_addr} ./m5stick-nemo/build/m5stick-nemo.ino.bootloader.bin \
-            0x8000 ./m5stick-nemo/build/m5stick-nemo.ino.partitions.bin \
-            0x10000 ./m5stick-nemo/build/m5stick-nemo.ino.bin
+esptool.py --chip esp32s3 merge_bin --output ./m5stick-shark/build/${output_file}  \
+            ${bootloader_addr} ./m5stick-shark/build/m5stick-shark.ino.bootloader.bin \
+            0x8000 ./m5stick-shark/build/m5stick-shark.ino.partitions.bin \
+            0x10000 ./m5stick-shark/build/m5stick-shark.ino.bin

@@ -34,11 +34,11 @@ echo "Running with config: $BUILD_CONFIG and device $device"
 cat $BUILD_CONFIG
 source $BUILD_CONFIG
 
-docker run --rm -it -v $(pwd):/m5stick-nemo --device=$device m5stick-nemo/arduino-build-cli:test esptool.py --port $device erase_flash
+docker run --rm -it -v $(pwd):/m5stick-shark --device=$device m5stick-shark/arduino-build-cli:test esptool.py --port $device erase_flash
 if [[ "${LOCALE}" == "en-us" ]]; then
-  output_file="M5Nemo-${NAME}.bin"
+  output_file="M5shark-${NAME}.bin"
 else
-  output_file="M5Nemo-${NAME}.${LOCALE}.bin"
+  output_file="M5shark-${NAME}.${LOCALE}.bin"
 fi
 
-docker run --rm -it -v $(pwd):/m5stick-nemo --device=$device m5stick-nemo/arduino-build-cli:test esptool.py --port $device write_flash -z 0 /m5stick-nemo/build/${output_file}
+docker run --rm -it -v $(pwd):/m5stick-shark --device=$device m5stick-shark/arduino-build-cli:test esptool.py --port $device write_flash -z 0 /m5stick-shark/build/${output_file}
