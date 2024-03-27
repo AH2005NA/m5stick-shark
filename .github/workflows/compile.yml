@@ -1,5 +1,5 @@
 ---
-name: Compile NEMO Firmware
+name: Compile SHARK Firmware
 
 on:
   push:
@@ -72,8 +72,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - id: nemo_version
-        name: Get NEMO Version
+      - id: shark_version
+        name: Get SHARK Version
         run: |
           set -x
 
@@ -145,38 +145,38 @@ jobs:
         run: |
           set -x
 
-          version=${{ steps.nemo_version.outputs.version }}
+          version=${{ steps.shark_version.outputs.version }}
           locale=${{ matrix.locale }}
           language=$(echo "LANGUAGE_${locale//-/_}" | tr '[:lower:]' '[:upper:]')
           
-          extra_flags="${{ matrix.board.extra_flags }} -DNEMO_VERSION=\"${version}\" -D${language}"
+          extra_flags="${{ matrix.board.extra_flags }} -DSHARK_VERSION=\"${version}\" -D${language}"
 
           arduino-cli compile --fqbn ${{ matrix.board.fqbn }} -e \
                               --build-property build.partitions=huge_app \
                               --build-property upload.maximum_size=3145728 \
                               --build-property compiler.cpp.extra_flags="${extra_flags}" \
-                              ./m5stick-nemo.ino
+                              ./m5stick-shark.ino
       
       - name: Create ${{ matrix.board.name }} Firmware Binary
         run: |
           set -x
           
-          version=${{ steps.nemo_version.outputs.version }}
+          version=${{ steps.shark_version.outputs.version }}
           locale=${{ matrix.locale }}
           
           if [[ "${locale}" == "en-us" ]]; then
-            output_file="M5Nemo-${version}-${{ matrix.board.name }}.bin"
+            output_file="M5shark-${version}-${{ matrix.board.name }}.bin"
           else
-            output_file="M5Nemo-${version}-${{ matrix.board.name }}.${locale}.bin"
+            output_file="M5shark-${version}-${{ matrix.board.name }}.${locale}.bin"
           fi
 
           fqbn=${{ matrix.board.fqbn }}
           directory="${fqbn//:/.}"
 
           esptool.py --chip esp32s3 merge_bin --output ${output_file}  \
-            ${{ matrix.board.partitions.bootloader_addr }} build/${directory}/m5stick-nemo.ino.bootloader.bin \
-            0x8000 build/${directory}/m5stick-nemo.ino.partitions.bin \
-            0x10000 build/${directory}/m5stick-nemo.ino.bin
+            ${{ matrix.board.partitions.bootloader_addr }} build/${directory}/m5stick-shark.ino.bootloader.bin \
+            0x8000 build/${directory}/m5stick-shark.ino.partitions.bin \
+            0x10000 build/${directory}/m5stick-shark.ino.bin
 
       - name: List all files
         if: always()
@@ -192,8 +192,8 @@ jobs:
       - name: Upload ${{ matrix.board.name }} Firmware Binary
         uses: actions/upload-artifact@v4
         with:
-          name: M5Nemo-${{ matrix.board.name }}.${{ matrix.locale }}
-          path: M5Nemo-*.bin
+          name: M5shark-${{ matrix.board.name }}.${{ matrix.locale }}
+          path: M5shark-*.bin
           if-no-files-found: error
 
   create_release:
@@ -203,8 +203,8 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
-    - id: nemo_version
-      name: Get NEMO Version
+    - id: shark_version
+      name: Get SHARK Version
       run: |
         set -x
 
@@ -228,12 +228,12 @@ jobs:
         ls -all
         tree
 
-    - name: Create Release ${{ steps.nemo_version.outputs.version }}
+    - name: Create Release ${{ steps.shark_version.outputs.version }}
       uses: softprops/action-gh-release@v1
       with:
-        name: NEMO Release ${{ steps.nemo_version.outputs.version }}
-        tag_name: ${{ steps.nemo_version.outputs.version }}
+        name: SHARK Release ${{ steps.shark_version.outputs.version }}
+        tag_name: ${{ steps.shark_version.outputs.version }}
         generate_release_notes: true
         files: |
-          M5Nemo-*.bin
+          M5shark-*.bin
 
