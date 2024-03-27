@@ -3,13 +3,13 @@
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
-//  #define STICK_C_PLUS2
+// #define STICK_C_PLUS2
 // #define STICK_C
 // #define CARDPUTER
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
-//  #define LANGUAGE_EN_US
+// #define LANGUAGE_EN_US
 // #define LANGUAGE_PT_BR
 
 // -- DEPRECATED - THESE ARE NOW EEPROM DEFINED -- //
@@ -21,7 +21,7 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
-#define CARDPUTER
+#define STICK_C_PLUS2
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR)
@@ -327,11 +327,14 @@ void drawmenu(MENU thismenu[], int size) {
     }
   }
   //time
-  auto dt = StickCP2.Rtc.getDateTime();
-  setCursor(180, 0, 1);
-  print(String(dt.time.hours));
-  print(":");
-  print(String(dt.time.minutes));
+    setCursor(180, 0, 1);
+#if defined(STICK_C_PLUS2)
+      auto dt = StickCP2.Rtc.getDateTime();
+      DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
+#else
+      M5.Rtc.GetBm8563Time();
+      DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+#endif
   //Baterie
   setCursor(191, 16, 1);
   print(String(M5.Power.getBatteryLevel()));
@@ -2313,10 +2316,15 @@ void check_menu_press() {
 #endif
     void bootScreen() {
 // Boot Screen
-#ifdef SONG
-      auto dt = StickCP2.Rtc.getDateTime();
       screenBrightness(100);
+#ifdef SONG
+#if defined(STICK_C_PLUS2)
+      auto dt = StickCP2.Rtc.getDateTime();
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[dt.time.seconds % valImages]);
+#else
+      M5.Rtc.GetBm8563Time();
+      DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[M5.Rtc.Second % valImages]);
+#endif
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6

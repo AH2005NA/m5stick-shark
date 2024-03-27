@@ -103,11 +103,14 @@ void drawRemotemenue(void) {
     }
   }
   //time
-  auto dt = StickCP2.Rtc.getDateTime();
-  DISP.setCursor(180, 0, 1);
-  DISP.print(dt.time.hours);
-  DISP.print(":");
-  DISP.print(dt.time.minutes);
+  DISP.setCursor(191, 16, 1);
+#if defined(STICK_C_PLUS2)
+      auto dt = StickCP2.Rtc.getDateTime();
+      DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
+#else
+      M5.Rtc.GetBm8563Time();
+      DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+#endif
   //Baterie
   DISP.setCursor(191, 16, 1);
   DISP.print(M5.Power.getBatteryLevel());

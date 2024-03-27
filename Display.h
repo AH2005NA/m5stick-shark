@@ -2,7 +2,7 @@
 //DISP.height()
 //DISP.width()
 
-uint16_t displayBuffer[SCREEN_WIDTH][SCREEN_HEIGHT];
+//uint16_t displayBuffer[SCREEN_WIDTH][SCREEN_HEIGHT];
 void setTextSize(uint8_t TXT_size)
 {
   DISP.setTextSize(TXT_size);
