@@ -101,7 +101,7 @@ void drawRemotemenue(void) {
       DISP.setTextColor(FGCOLOR, BGCOLOR);
       }
     }
-  }
+  }/*
   //time
   DISP.setCursor(191, 16, 1);
 #if defined(STICK_C_PLUS2)
@@ -114,7 +114,7 @@ void drawRemotemenue(void) {
   //Baterie
   DISP.setCursor(191, 16, 1);
   DISP.print(M5.Power.getBatteryLevel());
-  DISP.print("%");
+  DISP.print("%");*/
 }
 void Remotemenue(uint8_t num)
 {

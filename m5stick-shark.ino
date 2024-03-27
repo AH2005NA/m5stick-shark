@@ -48,7 +48,7 @@ String platformName = "StickC+";
 #define ROTATION
 #define USE_EEPROM
 #define SDCARD  //Requires a custom-built adapter
-// #define SONG
+ #define SONG
 
 // -=-=- ALIASES -=-=-
 #define DISP M5.Lcd
@@ -61,7 +61,7 @@ String platformName = "StickC+";
 #define SD_MOSI_PIN 26
 #define SD_CS_PIN -1  //can be 14, to avoid serial messages
 #define M5LED_ON LOW
-#define M5LED_OFF HIGHNEMOMatrix
+#define M5LED_OFF HIGH
 #endif
 
 #if defined(STICK_C_PLUS2)
@@ -337,7 +337,13 @@ void drawmenu(MENU thismenu[], int size) {
 #endif
   //Baterie
   setCursor(191, 16, 1);
+  #if defined(PWRMGMT)
   print(String(M5.Power.getBatteryLevel()));
+  #endif
+      //#ifdef AXP
+      //float c = M5.Axp.GetVapsData() * 1.4 / 1000;
+      //float b = M5.Axp.GetVbatData() * 1.1 / 1000;
+      //int battery = ((b - 3.0) / 1.2) * 100;
   print("%");
 }
 
