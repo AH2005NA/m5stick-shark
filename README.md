@@ -12,6 +12,7 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 ## My Changelog
 * Change everything to Shark
 * add time and battery on Menu
+* add Custom Boot Images and sounds
 
 ## My ToDo list
 * IR_AH app (IR Receive and Transmit)
