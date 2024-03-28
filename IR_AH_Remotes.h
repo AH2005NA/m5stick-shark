@@ -52,106 +52,93 @@ Remote Remote2[] ={Remote20, Remote21, Remote22};
 Remote *Allremotes[] = {Remote1, Remote2};
 
 
-#define STICK_C_PLUS2
-#define DISP M5.Lcd
-#define M5_BUTTON_MENU 35
-#define M5_BUTTON_HOME 37
-#define M5_BUTTON_RST 39
+//#define STICK_C_PLUS2
+//#define DISP M5.Lcd
+//#define M5_BUTTON_MENU 35
+//#define M5_BUTTON_HOME 37
+//#define M5_BUTTON_RST 39
 uint8_t cursorr=0;
 uint8_t Remutenum=0;
 int size=0;
 void drawRemotemenue(void) {
-  DISP.setTextSize(SMALL_TEXT);
-  DISP.fillScreen(BGCOLOR);
-  DISP.setCursor(0, 0, 1);
-  // scrolling menu
-  if (cursorr < 0) {
-    cursorr = size - 1;  // rollover hack for up-arrow on cardputer
-  }
-  if (cursorr > 5) {
-    for ( int i = 0 + (cursorr - 5) ; i < size ; i++ ) {
-      if(cursorr == i){
-        DISP.setTextColor(BGCOLOR, FGCOLOR);
-      }
-      if (i)
-      {
-      DISP.printf(" %-19s\n", Allremotes[Remutenum][i-1].name);
-      DISP.setTextColor(FGCOLOR, BGCOLOR);
-      }
-      else
-      {
-      DISP.printf(" %-19s\n", "Back");
-      DISP.setTextColor(FGCOLOR, BGCOLOR);
-      }
-    }
-  } else {
-    for (
-      int i = 0 ; i < size ; i++ ) {
-      if(cursorr == i){
-        DISP.setTextColor(BGCOLOR, FGCOLOR);
-      }
-      if (i)
-      {
-      DISP.printf(" %-19s\n", Allremotes[Remutenum][i-1].name);
-      DISP.setTextColor(FGCOLOR, BGCOLOR);
-      }
-      else
-      {
-      DISP.printf(" %-19s\n", "Back");
-      DISP.setTextColor(FGCOLOR, BGCOLOR);
-      }
-    }
-  }/*
-  //time
-  DISP.setCursor(191, 16, 1);
-#if defined(STICK_C_PLUS2)
-      auto dt = StickCP2.Rtc.getDateTime();
-      DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
-#else
-      M5.Rtc.GetBm8563Time();
-      DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
-#endif
-  //Baterie
-  DISP.setCursor(191, 16, 1);
-  DISP.print(M5.Power.getBatteryLevel());
-  DISP.print("%");*/
+  //DISP.setTextSize(SMALL_TEXT);
+  //DISP.fillScreen(BGCOLOR);
+  //DISP.setCursor(0, 0, 1);
+  //// scrolling menu
+  //if (cursorr < 0) {
+  //  cursorr = size - 1;  // rollover hack for up-arrow on cardputer
+  //}
+  //if (cursorr > 5) {
+  //  for ( int i = 0 + (cursorr - 5) ; i < size ; i++ ) {
+  //    if(cursorr == i){
+  //      DISP.setTextColor(BGCOLOR, FGCOLOR);
+  //    }
+  //    if (i)
+  //    {
+  //    DISP.printf(" %-19s\n", Allremotes[Remutenum][i-1].name);
+  //    DISP.setTextColor(FGCOLOR, BGCOLOR);
+  //    }
+  //    else
+  //    {
+  //    DISP.printf(" %-19s\n", "Back");
+  //    DISP.setTextColor(FGCOLOR, BGCOLOR);
+  //    }
+  //  }
+  //} else {
+  //  for (
+  //    int i = 0 ; i < size ; i++ ) {
+  //    if(cursorr == i){
+  //      DISP.setTextColor(BGCOLOR, FGCOLOR);
+  //    }
+  //    if (i)
+  //    {
+  //    DISP.printf(" %-19s\n", Allremotes[Remutenum][i-1].name);
+  //    DISP.setTextColor(FGCOLOR, BGCOLOR);
+  //    }
+  //    else
+  //    {
+  //    DISP.printf(" %-19s\n", "Back");
+  //    DISP.setTextColor(FGCOLOR, BGCOLOR);
+  //    }
+  //  }
+  //}
 }
 void Remotemenue(uint8_t num)
 {
-  Remutenum=num;
-  size = 8;//sizeof(Allremotes[Remutenum]);
-  Serial.println(size);
-  DISP.fillScreen(BGCOLOR);
-  cursorr = 0;
-  rstOverride = true;
-  delay(10);
-  drawRemotemenue();
-  while (1)
-  {
-  if (digitalRead(M5_BUTTON_RST) == LOW) {
-    cursorr++;
-    cursorr = cursorr % size;
-    drawRemotemenue();
-    delay(250);
-  }
-  uint8_t corsorbuf=cursorr;
-  if (digitalRead(M5_BUTTON_HOME) == LOW){
-    if(cursorr)
-    {
-      while(digitalRead(M5_BUTTON_HOME) == LOW)
-      {
-        TransmitIR(Allremotes[Remutenum][cursorr-1].Raw);
-      }
-    }
-    else
-    {
-      rstOverride = false;
-      isSwitching = true;
-      break;
-    }
-    cursorr=corsorbuf;
-    //current_proc = IRAHmenu[cursorr].command;
-  }
-  }
+  //Remutenum=num;
+  //size = 8;//sizeof(Allremotes[Remutenum]);
+  //Serial.println(size);
+  //DISP.fillScreen(BGCOLOR);
+  //cursorr = 0;
+  //rstOverride = true;
+  //delay(10);
+  //drawRemotemenue();
+  //while (1)
+  //{
+  //if (digitalRead(M5_BUTTON_RST) == LOW) {
+  //  cursorr++;
+  //  cursorr = cursorr % size;
+  //  drawRemotemenue();
+  //  delay(250);
+  //}
+  //uint8_t corsorbuf=cursorr;
+  //if (digitalRead(M5_BUTTON_HOME) == LOW){
+  //  if(cursorr)
+  //  {
+  //    while(digitalRead(M5_BUTTON_HOME) == LOW)
+  //    {
+  //      TransmitIR(Allremotes[Remutenum][cursorr-1].Raw);
+  //    }
+  //  }
+  //  else
+  //  {
+  //    rstOverride = false;
+  //    isSwitching = true;
+  //    break;
+  //  }
+  //  cursorr=corsorbuf;
+  //  //current_proc = IRAHmenu[cursorr].command;
+  //}
+  //}
 }
 

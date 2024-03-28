@@ -328,12 +328,14 @@ void drawmenu(MENU thismenu[], int size) {
   }
   //time
     setCursor(180, 0, 1);
+#if defined(RTC)
 #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
 #else
       M5.Rtc.GetBm8563Time();
       DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+#endif
 #endif
   //Baterie
   setCursor(191, 16, 1);
@@ -2324,6 +2326,7 @@ void check_menu_press() {
 // Boot Screen
       screenBrightness(100);
 #ifdef SONG
+#if defined(RTC)
 #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[dt.time.seconds % valImages]);
@@ -2335,6 +2338,7 @@ void check_menu_press() {
       BITMAP;
       //Random Startupsound 0...6
       setupSongs(dt.time.seconds % 7);
+#endif
 #endif
 #ifndef STICK_C
       //BITMAP;
