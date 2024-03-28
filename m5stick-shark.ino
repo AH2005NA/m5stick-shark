@@ -2,7 +2,7 @@
 // github.com/n0xa | IG: @4x0nn
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
-// #define STICK_C_PLUS
+ #define STICK_C_PLUS
 // #define STICK_C_PLUS2
 // #define STICK_C
 // #define CARDPUTER
@@ -2330,14 +2330,18 @@ void check_menu_press() {
 #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[dt.time.seconds % valImages]);
-#else
-      M5.Rtc.GetBm8563Time();
-      DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[M5.Rtc.Second % valImages]);
-#endif
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
       setupSongs(dt.time.seconds % 7);
+#else
+      M5.Rtc.GetBm8563Time();
+      DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[M5.Rtc.Second % valImages]);
+      delay(1000);
+      BITMAP;
+      //Random Startupsound 0...6
+      setupSongs(M5.Rtc.Second % 7);
+#endif
 #endif
 #endif
 #ifndef STICK_C
