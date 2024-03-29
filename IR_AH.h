@@ -23,14 +23,14 @@ uint64_t RecIR(void)
   }*/
 }
 
-void TransmitIR(uint16_t RAWdata[])
+void TransmitIR(uint16_t RAWdata[], uint16_t freq)
 {
-    uint16_t Adress = 0xdadd;
-    uint16_t code = 0x4444;
+    //uint16_t Adress = 0xdadd;
+    //uint16_t code = 0x4444;
     IRsend irsender(IRLED);
     irsender.begin();
     int Numpairs = sizeof(RAWdata);
-    irsender.sendRaw(RAWdata, Numpairs, 38000);
+    irsender.sendRaw(RAWdata, Numpairs, freq);
   //irsender.sendNEC(Adress, 16, true);
   //irsender.sendNEC(code, 16, false);
   //IRsend irsend(IRLED);

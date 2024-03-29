@@ -967,16 +967,29 @@ void check_menu_press() {
     /// IR_AH_Transmit MENU ///
     MENU IR_AH_Transmitmenu[] = {
       { TXT_BACK, 24 },
-      { Name_Remote1, 0xff },
-      { Name_Remote2, 0xff },
+      { Name_Remote1, 1 },
+      { Name_Remote2, 2 },
     };
     int IR_AH_Transmitmenu_size = sizeof(IR_AH_Transmitmenu) / sizeof(MENU);
-    //struct MENU {
-    //  char name[19];
-    //  int command;
-    //};
+
+    MENU IR_AH_Transmitremotes[] = {
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+    };
+    uint8_t whichrwmote=0;
+    int IR_AH_Transmitremotes_size=sizeof(IR_AH_Transmitremotes) / sizeof(MENU);
 
     void IR_AH_Transmit_setup(void) {
+      whichrwmote=0;
       DISP.fillScreen(BGCOLOR);
       cursor = 0;
       rstOverride = true;
@@ -985,23 +998,59 @@ void check_menu_press() {
     }
 
     void IR_AH_Transmit_loop(void) {
-      if (check_next_press()) {
-        cursor++;
-        cursor = cursor % IR_AH_Transmitmenu_size;
-        drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
-        delay(250);
-      }
-      if (check_select_press()) {
-        rstOverride = false;
-        isSwitching = true;
-        if (cursor) {
-          while (check_select_press()) {}
-          Remotemenue(cursor - 1);
-        } else {
-          current_proc = IR_AH_Transmitmenu[cursor].command;
+      if(whichrwmote)
+      {
+        if (check_next_press()) {
+          cursor++;
+          cursor = cursor % IR_AH_Transmitremotes_size;
+          drawmenu(IR_AH_Transmitremotes, IR_AH_Transmitremotes_size);
+          //Allremotes[whichrwmote][i-1].name
+          delay(250);
+        }
+        if (check_select_press()) {
+          if (cursor) {
+            TransmitIR(Allremotes[whichrwmote-1][cursor-1].Raw, Allremotes[whichrwmote-1][cursor-1].kFrequency);
+          } else {
+            cursor=0;
+            whichrwmote=0;
+            drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
+            delay(250);
+          //rstOverride = false;
+          //isSwitching = true;
+          //current_proc = IR_AH_Transmitmenu[cursor].command;
+          }
         }
       }
-      //TransmitIR();
+      else
+      {
+        if (check_next_press()) {
+          cursor++;
+          cursor = cursor % IR_AH_Transmitmenu_size;
+          drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
+          delay(250);
+        }
+        if (check_select_press()) {
+          if (cursor) {
+            whichrwmote=cursor;
+            cursor = 0;
+            for(uint8_t i = 1; i < sizeof(IR_AH_Transmitremotes) / sizeof(MENU)+1; i++)
+            {
+              if(Allremotes[whichrwmote-1][i-1].name == "1" && Allremotes[whichrwmote-1][i-1].Raw == (uint16_t*)1 && Allremotes[whichrwmote-1][i-1].kFrequency == 1)
+              {
+                IR_AH_Transmitremotes_size=i;
+                break;
+              }
+              strncpy(IR_AH_Transmitremotes[i].name, Allremotes[whichrwmote-1][i-1].name, 19);
+            }
+            drawmenu(IR_AH_Transmitremotes, IR_AH_Transmitremotes_size);
+            delay(250);
+          } else {
+          rstOverride = false;
+          isSwitching = true;
+            current_proc = IR_AH_Transmitmenu[cursor].command;
+          }
+        }
+      }
     }
 
 
