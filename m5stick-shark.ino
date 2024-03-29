@@ -1,5 +1,5 @@
 // Shark Firmware for the M5 Stack Stick C Plus
-// github.com/n0xa | IG: @4x0nn
+// github.com/AH2005NA 
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
@@ -1052,7 +1052,7 @@ void check_menu_press() {
 
     void IR_AH_Receive_setup(void) {
       DISP.fillScreen(BGCOLOR);
-      DISP.qrcode("https://github.com/n0xa/m5stick-nemo", 145, 22, 100, 5);
+      DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 145, 22, 100, 5);
       while(!check_select_press());
     }
 
@@ -1897,7 +1897,7 @@ void check_menu_press() {
     /// CREDITS ///
     void credits_setup() {
       DISP.fillScreen(WHITE);
-      DISP.qrcode("https://github.com/n0xa/m5stick-nemo", 145, 22, 100, 5);
+      DISP.qrcode("https://github.com/AH2005NA/m5stick-shark", 145, 22, 100, 5);
       DISP.setTextColor(BLACK, WHITE);
       DISP.setTextSize(MEDIUM_TEXT);
       DISP.setCursor(0, 10);
