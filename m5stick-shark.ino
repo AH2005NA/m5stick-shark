@@ -53,6 +53,7 @@ String platformName = "StickC+";
 // -=-=- ALIASES -=-=-
 #define DISP M5.Lcd
 #define IRLED 9
+#define IRREC 26
 #define SPEAKER M5.Beep
 //  #define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);// NOT TESTED YET
 #define BITMAP Serial.println("unsupported")
@@ -85,6 +86,7 @@ String platformName = "StickC+2";
 // -=-=- ALIASES -=-=-
 #define DISP M5.Lcd
 #define IRLED 19
+#define IRREC 26
 #define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);
 #define M5_BUTTON_MENU 35
 #define M5_BUTTON_HOME 37
@@ -120,6 +122,7 @@ String platformName = "StickC";
 // -=-=- ALIASES -=-=-
 #define DISP M5.Lcd
 #define IRLED 9
+#define IRREC 26
 #define BITMAP Serial.println("unsupported")
 #define SD_CLK_PIN 0
 #define SD_MISO_PIN 36
@@ -146,6 +149,7 @@ String platformName = "Cardputer";
 // -=-=- ALIASES -=-=-
 #define DISP M5Cardputer.Display
 #define IRLED 44
+#define IRREC 26
 #define BACKLIGHT 38
 #define MINBRIGHT 165
 #define SPEAKER M5Cardputer.Speaker
@@ -202,6 +206,9 @@ String platformName = "Cardputer";
 // 21 - Deauth Attack
 // 22 - Custom Color Settings
 // 23 - Pre-defined color themes
+// 24 - IR_AH menu
+// 25 - IR_AH Transmit
+// 26 - IR_AH Receive
 // .. - ..
 // 97 - Mount/UnMount SD Card on M5Stick devices, if SDCARD is declared
 
@@ -261,7 +268,7 @@ bool clone_flg = false;
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 #include <IRrecv.h>
-//#include <IRutils.h>
+#include <IRutils.h>
 #include <DNSServer.h>
 #include <WebServer.h>
 #include "applejuice.h"
@@ -932,8 +939,8 @@ void check_menu_press() {
     /// IR_AH MENU ///
     MENU IRAHmenu[] = {
       { TXT_BACK, 1 },
-      { "IR Transmit", 25 },  // We jump to the region menu first
-      { "IR Receive", 26 },
+      { TXT_IR_TX, 25 },  // We jump to the region menu first
+      { TXT_IR_RX, 26 },
     };
     int IRAHmenu_size = sizeof(IRAHmenu) / sizeof(MENU);
 
@@ -1051,16 +1058,36 @@ void check_menu_press() {
 
 
     void IR_AH_Receive_setup(void) {
+      rstOverride = true;
+      isSwitching = false;
       DISP.fillScreen(BGCOLOR);
-      DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 145, 22, 100, 5);
+      DISP.setCursor(0, 0, SMALL_TEXT);
+      DISP.print(TXT_hw_to);
+      DISP.setCursor(0, 26, SMALL_TEXT);
+      DISP.print(TXT_conect);
+      DISP.setCursor(0, 68, TINY_TEXT);
+      DISP.print(TXT_snsor);
+      DISP.setCursor(0, 82, TINY_TEXT);
+      DISP.print(TXT_req);
+      DISP.setCursor(0, 106, TINY_TEXT);
+      DISP.print("G");
+      DISP.setCursor(16, 106, TINY_TEXT);
+      DISP.print(String(IRREC));
+      DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 105, 0, 135, 5);
+      delay(250);
       while(!check_select_press());
     }
 
     void IR_AH_Receive_loop(void) {
+      DISP.fillScreen(BGCOLOR);
       DISP.setCursor(0, 0, 2);
       uint64_t Buf = RecIR();
       DISP.println(String(Buf, HEX));
       //Serial.pintln(Buf);
+      if(check_next_press())
+      {
+        current_proc = 24;
+      }
     }
 
 

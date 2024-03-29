@@ -96,6 +96,12 @@
   #define TXT_SET_FGCOLOR "MAIN COLOR"
   #define TXT_SET_BGCOLOR "BACKGROUND COLOR"
   #define TXT_THEME "Color Theme"
+  #define TXT_hw_to "How to"
+  #define TXT_conect "connect:"
+  #define TXT_snsor "sensor" 
+  #define TXT_req "required" 
+  #define TXT_IR_TX "IR Transmit"
+  #define TXT_IR_RX "IR Receive"
 #endif
 
 #if defined(LANGUAGE_PT_BR)
@@ -196,4 +202,10 @@
   #define TXT_SET_FGCOLOR "COR PRINCIPAL"
   #define TXT_SET_BGCOLOR "COR DE FUNDO"
   #define TXT_THEME "Tema De Cores"
+  #define TXT_hw_to "como"
+  #define TXT_conect "conectar:"
+  #define TXT_snsor "sensor" 
+  #define TXT_req "necessrio" 
+  #define TXT_IR_TX "IR Transmite"
+  #define TXT_IR_RX "IR Receber"
 #endif
