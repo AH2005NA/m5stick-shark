@@ -1004,7 +1004,6 @@ void check_menu_press() {
           cursor++;
           cursor = cursor % IR_AH_Transmitremotes_size;
           drawmenu(IR_AH_Transmitremotes, IR_AH_Transmitremotes_size);
-          //Allremotes[whichrwmote][i-1].name
           delay(250);
         }
         if (check_select_press()) {
@@ -1015,9 +1014,6 @@ void check_menu_press() {
             whichrwmote=0;
             drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
             delay(250);
-          //rstOverride = false;
-          //isSwitching = true;
-          //current_proc = IR_AH_Transmitmenu[cursor].command;
           }
         }
       }
@@ -1056,6 +1052,8 @@ void check_menu_press() {
 
     void IR_AH_Receive_setup(void) {
       DISP.fillScreen(BGCOLOR);
+      DISP.qrcode("https://github.com/n0xa/m5stick-nemo", 145, 22, 100, 5);
+      while(!check_select_press());
     }
 
     void IR_AH_Receive_loop(void) {
@@ -1903,7 +1901,7 @@ void check_menu_press() {
       DISP.setTextColor(BLACK, WHITE);
       DISP.setTextSize(MEDIUM_TEXT);
       DISP.setCursor(0, 10);
-      DISP.print(" M5-NEMO\n");
+      DISP.print(" M5-SHARK\n");
       DISP.setTextSize(SMALL_TEXT);
       DISP.printf("  %s\n", SHARK_VERSION);
       DISP.println(" For M5Stack");
