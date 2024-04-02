@@ -10,6 +10,8 @@
                                               Robson Couto, 2019
 */
 
+const int valsongs =7;
+
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -161,17 +163,6 @@ int melody[40] = {
 
 
 void setupSongs(uint8_t randomsong) {
-  //Start
-  /*
-uint8_t randomsong = EEPROM.read(6);
-if(randomsong>=6)
-{
-EEPROM.write(6, 0);
-}
-else
-{
-EEPROM.write(6, (randomsong+1));
-}*/
   if(randomsong==0){
     for(uint8_t i=0; i<20; i++)
     {
