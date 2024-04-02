@@ -27,8 +27,8 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER)
-#define LANGUAGE_EN_US
-// #define LANGUAGE_GER
+//#define LANGUAGE_EN_US
+ #define LANGUAGE_GER
 #endif
 
 // -=-=- DEAUTHER -=-  @bmorcelli -=-=- | Discord: Pirata#5263 bmorcelli
@@ -384,7 +384,7 @@ void number_drawmenu(int nums) {
     {
       cursor=0;
     }
-    else {
+    else {while (1){
       if(M5Cardputer.Keyboard.isKeyPressed('0')){plus=0;}
       else if(M5Cardputer.Keyboard.isKeyPressed('1')){plus=1;}
       else if(M5Cardputer.Keyboard.isKeyPressed('2')){plus=2;}
@@ -395,15 +395,18 @@ void number_drawmenu(int nums) {
       else if(M5Cardputer.Keyboard.isKeyPressed('7')){plus=7;}
       else if(M5Cardputer.Keyboard.isKeyPressed('8')){plus=8;}
       else if(M5Cardputer.Keyboard.isKeyPressed('9')){plus=9;}
+      else{break;}
       if(cursor==0){}
       else if(cursor<10){cursor=cursor*10;}
       else if(cursor<100){cursor=cursor*100;}
       else if(cursor<1000){cursor=cursor*1000;}
       else if(cursor<10000){cursor=cursor*10000;}
-      cursor+=plus;
+      if(((int32_t)cursor+plus)>nums){cursor=nums;}
+      else{cursor+=plus;}
+      break;
+    }
     }
   }
-  //if(cursor>nums){cursor=nums;}
   DISP.setTextSize(MEDIUM_TEXT);
   DISP.fillScreen(BGCOLOR);
   DISP.setCursor(20, 20);

