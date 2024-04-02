@@ -1,6 +1,7 @@
-
+void TransmitIR(uint16_t RAWdata[], uint16_t freq);
 uint64_t RecIR(void)
 {
+  delay(100);
   IRrecv irrecv(IRREC);
   decode_results results;
   irrecv.enableIRIn();
@@ -9,17 +10,24 @@ uint64_t RecIR(void)
     if (irrecv.decode(&results))
     {
       uint16_t *raw_array = resultToRawArray(&results);
-      uint64_t ret=(raw_array[0])|(raw_array[1]<<16)|(raw_array[3]<<32)|(raw_array[4]<<48);
       // Print the raw received IR data to the serial monitor
       Serial.println("Raw IR data:");
       for(uint8_t i=0; i<getCorrectedRawLength(&results); i++)
       {
-        Serial.println(String(raw_array[i], HEX));
+        Serial.print(String(raw_array[i], HEX));
+        Serial.println(", ");
       }
-      //return results.value;
-      return ret;
-      // Enable the IR receiver for the next data
+      Serial.print("data: ");
+      serialPrintUint64(results.value, HEX);
+      Serial.println("");
+      while(digitalRead(M5_BUTTON_RST) == LOW)
+      {
+      TransmitIR(raw_array, 38000);
+      }
       irrecv.resume();
+      return results.value;
+      //return results.value;
+      // Enable the IR receiver for the next data
     }
     //delay(100);
   }
