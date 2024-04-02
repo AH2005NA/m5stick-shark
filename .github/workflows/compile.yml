@@ -35,7 +35,7 @@ jobs:
               name: "M5Cardputer",
               fqbn: "m5stack:esp32:m5stack_cardputer",
               extra_flags: "-DCARDPUTER",
-              libraries: "M5Cardputer IRRemoteESP8266 M5Stack-SD-Updater M5Unified",
+              libraries: "M5Cardputer IRRemoteESP8266 M5Stack-SD-Updater M5Unified ESP32Time",
               partitions: {
                 bootloader_addr: "0x0000",
               },
