@@ -22,13 +22,12 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
-//#define STICK_C_PLUS2
+// #define STICK_C_PLUS2
  #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER)
-//#define LANGUAGE_EN_US
- #define LANGUAGE_GER
+ #define LANGUAGE_EN_US
 #endif
 
 // -=-=- DEAUTHER -=-  @bmorcelli -=-=- | Discord: Pirata#5263 bmorcelli
@@ -154,6 +153,7 @@ String platformName = "Cardputer";
 #define ACTIVE_LOW_IR
 #define USE_EEPROM
 #define SDCARD
+#define SONG
 // -=-=- ALIASES -=-=-
 #define DISP M5Cardputer.Display
 #define IRLED 44
@@ -382,7 +382,14 @@ void number_drawmenu(int nums) {
   {
     if(M5Cardputer.Keyboard.isKeyPressed(KEY_BACKSPACE))
     {
-      cursor=0;
+      if(cursor<10)
+      {
+        cursor=0;
+      }
+      else
+      {
+        cursor=cursor/10;
+      }
     }
     else {while (1){
       if(M5Cardputer.Keyboard.isKeyPressed('0')){plus=0;}
@@ -413,6 +420,7 @@ void number_drawmenu(int nums) {
   DISP.print(String(cursor, DEC));
   delay(250);
 #else
+  cursor = cursor % 60;
   DISP.setTextSize(SMALL_TEXT);
   DISP.fillScreen(BGCOLOR);
   DISP.setCursor(0, 0);
@@ -635,7 +643,6 @@ void check_menu_press() {
           #endif
           {
             cursor++;
-            cursor = cursor % 11;
             number_drawmenu(11);
             screenBrightness(10 * cursor);
             delay(250);
@@ -1545,7 +1552,6 @@ void check_menu_press() {
         #endif
         {
           cursor++;
-          cursor = cursor % 24;
           number_drawmenu(24);
           delay(100);
         }
@@ -1572,7 +1578,6 @@ void check_menu_press() {
         #endif
         {
           cursor++;
-          cursor = cursor % 60;
           number_drawmenu(60);
           delay(100);
         }
@@ -2486,14 +2491,20 @@ void check_menu_press() {
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
-      setupSongs(dt.time.seconds % 7);
+      setupSongs(dt.time.seconds % valsongs);
+#elif defined(ESPTime)
+      DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[rtcp.getSecond() % valImages]);
+      delay(1000);
+      BITMAP;
+      //Random Startupsound 0...6
+      setupSongs(rtcp.getSecond() % valsongs);
 #else
       M5.Rtc.GetBm8563Time();
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[M5.Rtc.Second % valImages]);
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
-      setupSongs(M5.Rtc.Second % 7);
+      setupSongs(M5.Rtc.Second % valsongs);
 #endif
 #endif
 #endif
