@@ -18,7 +18,7 @@ uint16_t BGCOLOR = 0x0001;  // placeholder
 uint16_t FGCOLOR = 0xFFF1;  // placeholder
 
 #ifndef SHARK_VERSION
-#define SHARK_VERSION "dev 1.0.0"
+#define SHARK_VERSION "dev 1.0.1"
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
