@@ -30,6 +30,7 @@ jobs:
         locale:
           - en-us
           - pt-br
+          - ger
         board:
           - {
               name: "M5Cardputer",

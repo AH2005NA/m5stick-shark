@@ -26,8 +26,9 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
  #define CARDPUTER
 #endif
 
-#if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR)
+#if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER)
 #define LANGUAGE_EN_US
+// #define LANGUAGE_GER
 #endif
 
 // -=-=- DEAUTHER -=-  @bmorcelli -=-=- | Discord: Pirata#5263 bmorcelli
@@ -1120,13 +1121,9 @@ void check_menu_press() {
       isSwitching = false;
       DISP.fillScreen(BGCOLOR);
       DISP.setCursor(0, 0, SMALL_TEXT);
-      DISP.print(TXT_hw_to);
-      DISP.setCursor(0, 26, SMALL_TEXT);
-      DISP.print(TXT_conect);
+      DISP.print(TXT_hw_to_conect);
       DISP.setCursor(0, 68, TINY_TEXT);
-      DISP.print(TXT_snsor);
-      DISP.setCursor(0, 82, TINY_TEXT);
-      DISP.print(TXT_req);
+      DISP.print(TXT_snsor_req);
       DISP.setCursor(0, 106, TINY_TEXT);
       DISP.print("G");
       DISP.setCursor(16, 106, TINY_TEXT);

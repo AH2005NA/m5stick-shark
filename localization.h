@@ -96,10 +96,8 @@
   #define TXT_SET_FGCOLOR "MAIN COLOR"
   #define TXT_SET_BGCOLOR "BACKGROUND COLOR"
   #define TXT_THEME "Color Theme"
-  #define TXT_hw_to "How to"
-  #define TXT_conect "connect:"
-  #define TXT_snsor "sensor" 
-  #define TXT_req "required" 
+  #define TXT_hw_to_conect "How to\nconnect:"
+  #define TXT_snsor_req "sensor\nrequired" 
   #define TXT_IR_TX "IR Transmit"
   #define TXT_IR_RX "IR Receive"
 #endif
@@ -202,10 +200,8 @@
   #define TXT_SET_FGCOLOR "HAUPTFARBE"
   #define TXT_SET_BGCOLOR "HINTERGRUNDFARBE"
   #define TXT_THEME "Farbthema"
-  #define TXT_hw_to "How to"//\n
-  #define TXT_conect "connect:"
-  #define TXT_snsor "sensor"//\n
-  #define TXT_req "required" 
+  #define TXT_hw_to_conect "Die\nverbinungen:"
+  #define TXT_snsor_req "sensor\nwird gebrauch" 
   #define TXT_IR_TX "IR Senden"
   #define TXT_IR_RX "IR Empfangen"
 #endif
@@ -308,10 +304,8 @@
   #define TXT_SET_FGCOLOR "COR PRINCIPAL"
   #define TXT_SET_BGCOLOR "COR DE FUNDO"
   #define TXT_THEME "Tema De Cores"
-  #define TXT_hw_to "como"
-  #define TXT_conect "conectar:"
-  #define TXT_snsor "sensor" 
-  #define TXT_req "necessrio" 
+  #define TXT_hw_to_conect "como\nconectar:"
+  #define TXT_snsor_req "sensor\nnecessrio" 
   #define TXT_IR_TX "IR Transmite"
   #define TXT_IR_RX "IR Receber"
 #endif

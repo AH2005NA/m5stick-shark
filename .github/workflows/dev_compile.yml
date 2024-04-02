@@ -30,6 +30,7 @@ jobs:
         locale:
           - en-us
           - pt-br
+          - ger
         board:
           - {
               name: "M5Cardputer",
@@ -161,7 +162,7 @@ jobs:
           
           if [[ "${locale}" == "en-us" ]]; then
             output_file="M5shark-${version}-${{ matrix.board.name }}.bin"
-          else
+          else 
             output_file="M5shark-${version}-${{ matrix.board.name }}.${locale}.bin"
           fi
 
