@@ -224,11 +224,11 @@ jobs:
         ls -all
         tree
 
-    - name: Create Release ${{ steps.shark_version.outputs.version }}
-      uses: softprops/action-gh-release@v1
-      with:
-        name: SHARK Release ${{ steps.shark_version.outputs.version }}
-        tag_name: ${{ steps.shark_version.outputs.version }}
-        generate_release_notes: true
-        files: |
-          M5shark-*.bin
+    #- name: Create Release ${{ steps.shark_version.outputs.version }}
+    #  uses: softprops/action-gh-release@v1
+    #  with:
+    #    name: SHARK Release ${{ steps.shark_version.outputs.version }}
+    #    tag_name: ${{ steps.shark_version.outputs.version }}
+    #    generate_release_notes: true
+    #    files: |
+    #      M5shark-*.bin
