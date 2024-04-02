@@ -5,12 +5,13 @@
 // #define STICK_C_PLUS
 // #define STICK_C_PLUS2
 // #define STICK_C
-// #define CARDPUTER
+ #define CARDPUTER
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
 // #define LANGUAGE_EN_US
 // #define LANGUAGE_PT_BR
+// #define LANGUAGE_GER
 
 // -- DEPRECATED - THESE ARE NOW EEPROM DEFINED -- //
 uint16_t BGCOLOR = 0x0001;  // placeholder
@@ -134,6 +135,10 @@ String platformName = "StickC";
 
 #if defined(CARDPUTER)
 #include <M5Cardputer.h>
+// -=-=- RT -=-=-
+#include <ESP32Time.h>
+ESP32Time rtcp;
+#define ESPTime
 // -=-=- Display -=-=-
 String platformName = "Cardputer";
 #define BIG_TEXT 4
@@ -142,6 +147,7 @@ String platformName = "Cardputer";
 #define TINY_TEXT 1
 // -=-=- FEATURES -=-=-
 #define KB
+#define RTC
 #define HID
 #define ACTIVE_LOW_IR
 #define USE_EEPROM
@@ -334,29 +340,74 @@ void drawmenu(MENU thismenu[], int size) {
     }
   }
   //time
-    setCursor(180, 0, 1);
 #if defined(RTC)
+setCursor(180, 0, 1);
 #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
+#elif defined(ESPTime)
+      DISP.printf("%02d:%02d\n", rtcp.getHour(), rtcp.getMinute());
 #else
       M5.Rtc.GetBm8563Time();
       DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
 #endif
 #endif
   //Baterie
-  setCursor(191, 16, 1);
   #if defined(PWRMGMT)
+  setCursor(191, 16, 1);
   print(String(M5.Power.getBatteryLevel()));
   #endif
-      //#ifdef AXP
-      //float c = M5.Axp.GetVapsData() * 1.4 / 1000;
-      //float b = M5.Axp.GetVbatData() * 1.1 / 1000;
-      //int battery = ((b - 3.0) / 1.2) * 100;
+  #ifdef AXP
+  setCursor(191, 16, 1);
+  float c = M5.Axp.GetVapsData() * 1.4 / 1000;
+  float b = M5.Axp.GetVbatData() * 1.1 / 1000;
+  int battery = ((b - 3.0) / 1.2) * 100;
+  print(String(battery));
+  #endif
+  #if defined(CARDPUTER)
+  setCursor(191, 16, 1);
+  uint8_t battery = ((((analogRead(VBAT_PIN)) - 1842) * 100) / 738);
+  print(String(battery));
+  #endif
   print("%");
 }
 
 void number_drawmenu(int nums) {
+#if defined(KB)
+  cursor=cursor-1;
+  uint16_t plus=0;
+  if(1)//M5Cardputer.Keyboard.isChange())
+  {
+    if(M5Cardputer.Keyboard.isKeyPressed(KEY_BACKSPACE))
+    {
+      cursor=0;
+    }
+    else {
+      if(M5Cardputer.Keyboard.isKeyPressed('0')){plus=0;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('1')){plus=1;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('2')){plus=2;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('3')){plus=3;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('4')){plus=4;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('5')){plus=5;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('6')){plus=6;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('7')){plus=7;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('8')){plus=8;}
+      else if(M5Cardputer.Keyboard.isKeyPressed('9')){plus=9;}
+      if(cursor==0){}
+      else if(cursor<10){cursor=cursor*10;}
+      else if(cursor<100){cursor=cursor*100;}
+      else if(cursor<1000){cursor=cursor*1000;}
+      else if(cursor<10000){cursor=cursor*10000;}
+      cursor+=plus;
+    }
+  }
+  //if(cursor>nums){cursor=nums;}
+  DISP.setTextSize(MEDIUM_TEXT);
+  DISP.fillScreen(BGCOLOR);
+  DISP.setCursor(20, 20);
+  DISP.print(String(cursor, DEC));
+  delay(250);
+#else
   DISP.setTextSize(SMALL_TEXT);
   DISP.fillScreen(BGCOLOR);
   DISP.setCursor(0, 0);
@@ -379,6 +430,7 @@ void number_drawmenu(int nums) {
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
   }
+#endif
 }
 
 void switcher_button_proc() {
@@ -571,7 +623,12 @@ void check_menu_press() {
         cursor = brightness / 10;
         number_drawmenu(11);
         while (!check_select_press()) {
-          if (check_next_press()) {
+          #if defined(CARDPUTER)
+          if (check_next_press()||M5Cardputer.Keyboard.isChange())
+          #else
+          if (check_next_press())
+          #endif
+          {
             cursor++;
             cursor = cursor % 11;
             number_drawmenu(11);
@@ -1448,6 +1505,8 @@ void check_menu_press() {
 #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       DISP.printf("%02d:%02d:%02d\n", dt.time.hours, dt.time.minutes, dt.time.seconds);
+#elif defined(ESPTime)
+      DISP.printf("%02d:%02d:%02d\n", rtcp.getHour(), rtcp.getMinute(), rtcp.getSecond());
 #else
       M5.Rtc.GetBm8563Time();
       DISP.printf("%02d:%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
@@ -1468,13 +1527,22 @@ void check_menu_press() {
 #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       cursor = dt.time.hours;
+#elif defined(ESPTime)
+      cursor = rtcp.getHour();
 #else
       M5.Rtc.GetBm8563Time();
       cursor = M5.Rtc.Hour;
 #endif
       number_drawmenu(24);
-      while (digitalRead(M5_BUTTON_HOME) == HIGH) {
-        if (check_next_press()) {
+      
+      while (!check_select_press())
+      {
+        #if defined(CARDPUTER)
+        if (check_next_press()||M5Cardputer.Keyboard.isChange())
+        #else
+        if (check_next_press())
+        #endif
+        {
           cursor++;
           cursor = cursor % 24;
           number_drawmenu(24);
@@ -1488,12 +1556,20 @@ void check_menu_press() {
       delay(2000);
 #if defined(STICK_C_PLUS2)
       cursor = dt.time.minutes;
+#elif defined(ESPTime)
+      cursor = rtcp.getMinute();
 #else
       cursor = M5.Rtc.Minute;
 #endif
       number_drawmenu(60);
-      while (digitalRead(M5_BUTTON_HOME) == HIGH) {
-        if (check_next_press()) {
+      while (!check_select_press())
+      {
+        #if defined(CARDPUTER)
+        if (check_next_press()||M5Cardputer.Keyboard.isChange())
+        #else
+        if (check_next_press())
+        #endif
+        {
           cursor++;
           cursor = cursor % 60;
           number_drawmenu(60);
@@ -1505,6 +1581,8 @@ void check_menu_press() {
       DISP.setCursor(0, 0);
 #if defined(STICK_C_PLUS2)
       StickCP2.Rtc.setDateTime({ { dt.date.year, dt.date.month, dt.date.date }, { hour, minute, 0 } });
+#elif defined(ESPTime)
+      rtcp.setTime(0, minute, hour, 17, 1, 2021);
 #else
       RTC_TimeTypeDef TimeStruct;
       TimeStruct.Hours = hour;
