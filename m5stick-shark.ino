@@ -5,7 +5,7 @@
 // #define STICK_C_PLUS
 // #define STICK_C_PLUS2
 // #define STICK_C
- #define CARDPUTER
+// #define CARDPUTER
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
@@ -21,8 +21,9 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #define SHARK_VERSION "dev 1.0.0"
 #endif
 
-#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
-#define STICK_C_PLUS2
+//#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
+//#define STICK_C_PLUS2
+ #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR)
