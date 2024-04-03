@@ -23,7 +23,8 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
 // #define STICK_C_PLUS2
- #define CARDPUTER
+// #define CARDPUTER
+ #define STICK_C
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER)
@@ -328,7 +329,11 @@ void drawmenu(MENU thismenu[], int size) {
       if (cursor == i) {
         setTextColor(BGCOLOR, FGCOLOR);
       }
+      #ifdef STICK_C
+      printf(" %-25s\n", thismenu[i].name);
+      #else
       printf(" %-19s\n", thismenu[i].name);
+      #endif
       setTextColor(FGCOLOR, BGCOLOR);
     }
   } else {
@@ -337,7 +342,11 @@ void drawmenu(MENU thismenu[], int size) {
       if (cursor == i) {
         setTextColor(BGCOLOR, FGCOLOR);
       }
+      #ifdef STICK_C
+      printf(" %-25s\n", thismenu[i].name);
+      #else
       printf(" %-19s\n", thismenu[i].name);
+      #endif
       setTextColor(FGCOLOR, BGCOLOR);
     }
   }
@@ -349,6 +358,10 @@ setCursor(180, 0, 1);
       DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
 #elif defined(ESPTime)
       DISP.printf("%02d:%02d\n", rtcp.getHour(), rtcp.getMinute());
+#elif defined(STICK_C)
+      setCursor(130, 0, 1);
+      M5.Rtc.GetBm8563Time();
+      DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
 #else
       M5.Rtc.GetBm8563Time();
       DISP.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
@@ -364,6 +377,9 @@ setCursor(180, 0, 1);
   float c = M5.Axp.GetVapsData() * 1.4 / 1000;
   float b = M5.Axp.GetVbatData() * 1.1 / 1000;
   int battery = ((b - 3.0) / 1.2) * 100;
+  #ifdef STICK_C
+  setCursor(141, 16, 1);
+  #endif
   print(String(battery));
   #endif
   #if defined(CARDPUTER)
@@ -420,7 +436,7 @@ void number_drawmenu(int nums) {
   DISP.print(String(cursor, DEC));
   delay(250);
 #else
-  cursor = cursor % 60;
+  cursor = cursor % nums;
   DISP.setTextSize(SMALL_TEXT);
   DISP.fillScreen(BGCOLOR);
   DISP.setCursor(0, 0);
@@ -430,7 +446,11 @@ void number_drawmenu(int nums) {
       if (cursor == i) {
         DISP.setTextColor(BGCOLOR, FGCOLOR);
       }
-      DISP.printf(" %-19d\n", i);
+      #ifdef STICK_C
+      printf(" %-25s\n", i);
+      #else
+      printf(" %-19s\n", i);
+      #endif
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
   } else {
@@ -439,10 +459,14 @@ void number_drawmenu(int nums) {
       if (cursor == i) {
         DISP.setTextColor(BGCOLOR, FGCOLOR);
       }
-      DISP.printf(" %-19d\n", i);
+      #ifdef STICK_C
+      printf(" %-25s\n", i);
+      #else
+      printf(" %-19s\n", i);
+      #endif
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
-  }
+    }
 #endif
 }
 
@@ -1509,7 +1533,12 @@ void check_menu_press() {
     }
 
     void clock_loop() {
+#ifdef STICK_C
+      DISP.setCursor(25, 20, 2);
+#else
       DISP.setCursor(40, 40, 2);
+#endif
+
 #if defined(STICK_C_PLUS2)
       auto dt = StickCP2.Rtc.getDateTime();
       DISP.printf("%02d:%02d:%02d\n", dt.time.hours, dt.time.minutes, dt.time.seconds);
