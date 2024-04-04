@@ -18,7 +18,7 @@ uint16_t BGCOLOR = 0x0001;  // placeholder
 uint16_t FGCOLOR = 0xFFF1;  // placeholder
 
 #ifndef SHARK_VERSION
-#define SHARK_VERSION "dev 1.0.1"
+#define SHARK_VERSION "dev 1.0.2"
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
@@ -553,7 +553,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
       { "IR AH", 24 },
-      { "Modules", 27 },
+//      { "Modules", 27 },
       { TXT_SETTINGS, 2 },
     };
     int mmenu_size = sizeof(mmenu) / sizeof(MENU);
