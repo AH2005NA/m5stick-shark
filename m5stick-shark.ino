@@ -453,9 +453,9 @@ void number_drawmenu(int nums) {
       #endif
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
-  } else {
-    for (
-      int i = 0; i < nums; i++) {
+  }
+  else {
+    for (int i = 0; i < nums; i++) {
       if (cursor == i) {
         DISP.setTextColor(BGCOLOR, FGCOLOR);
       }
@@ -466,7 +466,7 @@ void number_drawmenu(int nums) {
       #endif
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
-    }
+  }
 #endif
 }
 
