@@ -22,9 +22,8 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
-// #define STICK_C_PLUS2
+ #define STICK_C_PLUS2
 // #define CARDPUTER
- #define STICK_C
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER)
@@ -137,7 +136,7 @@ String platformName = "StickC";
 
 #if defined(CARDPUTER)
 #include <M5Cardputer.h>
-// -=-=- RT -=-=-
+// -=-=- RTC -=-=-
 #include <ESP32Time.h>
 ESP32Time rtcp;
 #define ESPTime
@@ -218,6 +217,8 @@ String platformName = "Cardputer";
 // 24 - IR_AH menu
 // 25 - IR_AH Transmit
 // 26 - IR_AH Receive
+// 27 - Moduls
+// 28 - RFID
 // .. - ..
 // 97 - Mount/UnMount SD Card on M5Stick devices, if SDCARD is declared
 
@@ -447,9 +448,9 @@ void number_drawmenu(int nums) {
         DISP.setTextColor(BGCOLOR, FGCOLOR);
       }
       #ifdef STICK_C
-      printf(" %-25s\n", i);
+      DISP.printf(" %-25s\n", i);
       #else
-      printf(" %-19s\n", i);
+      DISP.printf(" %-19s\n", i);
       #endif
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
@@ -460,9 +461,9 @@ void number_drawmenu(int nums) {
         DISP.setTextColor(BGCOLOR, FGCOLOR);
       }
       #ifdef STICK_C
-      printf(" %-25s\n", i);
+      DISP.printf(" %-25s\n", i);
       #else
-      printf(" %-19s\n", i);
+      DISP.printf(" %-19s\n", i);
       #endif
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
@@ -552,6 +553,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
       { "IR AH", 24 },
+      { "Modules", 27 },
       { TXT_SETTINGS, 2 },
     };
     int mmenu_size = sizeof(mmenu) / sizeof(MENU);
@@ -1179,6 +1181,60 @@ void check_menu_press() {
       }
     }
 
+
+    MENU Modulesmenu[] = {
+      { TXT_BACK, 1 },
+      { "RFID", 28 },
+    };
+    int Modulesmenu_size = sizeof(Modulesmenu) / sizeof(MENU);
+
+    void Modules_setup() {
+      cursor = 0;
+      rstOverride = true;
+      drawmenu(Modulesmenu, Modulesmenu_size);
+      delay(500);  // Prevent switching after menu loads up
+    }
+
+    void Modules_loop() {
+      if (check_next_press()) {
+        cursor++;
+        cursor = cursor % Modulesmenu_size;
+        drawmenu(Modulesmenu, Modulesmenu_size);
+        delay(250);
+      }
+      if (check_select_press()) {
+        rstOverride = false;
+        isSwitching = true;
+        current_proc = Modulesmenu[cursor].command;
+      }
+    }
+
+    MENU RFIDmenu[] = {
+      { TXT_BACK, 27 },
+      { "RFID", 28 },
+    };
+    int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
+
+    void RFID_setup() {
+      cursor = 0;
+      rstOverride = true;
+      drawmenu(RFIDmenu, RFIDmenu_size);
+      delay(500);  // Prevent switching after menu loads up
+    }
+
+    void RFID_loop() {
+      if (check_next_press()) {
+        cursor++;
+        cursor = cursor % RFIDmenu_size;
+        drawmenu(RFIDmenu, RFIDmenu_size);
+        delay(250);
+      }
+      if (check_select_press()) {
+        rstOverride = false;
+        isSwitching = true;
+        current_proc = RFIDmenu[cursor].command;
+      }
+    }
 
     int rotation = 1;
 #if defined(ROTATION)
@@ -2698,12 +2754,12 @@ void check_menu_press() {
       }
 #if defined(USE_EEPROM)
       EEPROM.begin(EEPROM_SIZE);
-      //Serial.printf("EEPROM 0 - Rotation:   %d\n", EEPROM.read(0));
-      //Serial.printf("EEPROM 1 - Dim Time:   %d\n", EEPROM.read(1));
-      //Serial.printf("EEPROM 2 - Brightness: %d\n", EEPROM.read(2));
-      //Serial.printf("EEPROM 3 - TVBG Reg:   %d\n", EEPROM.read(3));
-      //Serial.printf("EEPROM 4 - FGColor:    %d\n", EEPROM.read(4));
-      //Serial.printf("EEPROM 5 - BGColor:    %d\n", EEPROM.read(5));
+      Serial.printf("EEPROM 0 - Rotation:   %d\n", EEPROM.read(0));
+      Serial.printf("EEPROM 1 - Dim Time:   %d\n", EEPROM.read(1));
+      Serial.printf("EEPROM 2 - Brightness: %d\n", EEPROM.read(2));
+      Serial.printf("EEPROM 3 - TVBG Reg:   %d\n", EEPROM.read(3));
+      Serial.printf("EEPROM 4 - FGColor:    %d\n", EEPROM.read(4));
+      Serial.printf("EEPROM 5 - BGColor:    %d\n", EEPROM.read(5));
       if (EEPROM.read(0) > 3 || EEPROM.read(1) > 240 || EEPROM.read(2) > 100 || EEPROM.read(3) > 1 || EEPROM.read(4) > 19 || EEPROM.read(5) > 19) {
 // Assume out-of-bounds settings are a fresh/corrupt EEPROM and write defaults for everything
 //Serial.println("EEPROM likely not properly configured. Writing defaults.");
@@ -2872,6 +2928,12 @@ void check_menu_press() {
           case 26:
             IR_AH_Receive_setup();
             break;
+          case 27:
+            Modules_setup();
+            break;
+          case 28:
+            RFID_setup();
+            break;
         }
       }
 
@@ -2971,6 +3033,12 @@ void check_menu_press() {
           break;
         case 26:
           IR_AH_Receive_loop();
+          break;
+        case 27:
+          Modules_loop();
+          break;
+        case 28:
+          RFID_loop();
           break;
 #if defined(SDCARD)  // SDCARD M5Stick
 #ifndef CARDPUTER    // SDCARD M5Stick

@@ -41,7 +41,7 @@ void setTextColor(uint16_t BGpCOLOR, uint16_t FGpCOLOR)
   //Serial.write(FGpCOLOR&0x00ff);
 }
 
-void printf(char *arg, char* Text)
+void printf(const char *arg, char* Text)
 {
   DISP.printf(arg, Text);
   //Serial.write(0xff);
