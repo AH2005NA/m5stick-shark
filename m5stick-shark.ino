@@ -18,7 +18,7 @@ uint16_t BGCOLOR = 0x0001;  // placeholder
 uint16_t FGCOLOR = 0xFFF1;  // placeholder
 
 #ifndef SHARK_VERSION
-#define SHARK_VERSION "dev 1.0.2"
+#define SHARK_VERSION "dev 1.0.3"
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
@@ -391,12 +391,19 @@ setCursor(180, 0, 1);
   print("%");
 }
 
+#ifdef CARDPUTER
+
 void number_drawmenu(int nums) {
-#if defined(KB)
-  cursor=cursor-1;
-  uint16_t plus=0;
-  if(1)//M5Cardputer.Keyboard.isChange())
+  if(check_next_press())
   {
+    cursor++;
+    cursor = cursor % nums ;
+    if (cursor<0)
+    {
+      cursor=nums-1;
+    }
+  }
+  uint16_t plus=0;
     if(M5Cardputer.Keyboard.isKeyPressed(KEY_BACKSPACE))
     {
       if(cursor<10)
@@ -425,51 +432,44 @@ void number_drawmenu(int nums) {
       else if(cursor<100){cursor=cursor*100;}
       else if(cursor<1000){cursor=cursor*1000;}
       else if(cursor<10000){cursor=cursor*10000;}
-      if(((int32_t)cursor+plus)>nums){cursor=nums;}
+      if(((int32_t)cursor+plus)>=nums){cursor=nums-1;}
       else{cursor+=plus;}
       break;
-    }
     }
   }
   DISP.setTextSize(MEDIUM_TEXT);
   DISP.fillScreen(BGCOLOR);
   DISP.setCursor(20, 20);
   DISP.print(String(cursor, DEC));
-  delay(250);
+}
+
 #else
-  cursor = cursor % nums;
+
+void number_drawmenu(int nums) {
   DISP.setTextSize(SMALL_TEXT);
   DISP.fillScreen(BGCOLOR);
   DISP.setCursor(0, 0);
   // scrolling menu
   if (cursor > 5) {
-    for (int i = 0 + (cursor - 5); i < nums; i++) {
-      if (cursor == i) {
+    for ( int i = 0 + (cursor - 5) ; i < nums ; i++ ) {
+      if(cursor == i){
         DISP.setTextColor(BGCOLOR, FGCOLOR);
       }
-      #ifdef STICK_C
-      DISP.printf(" %-25s\n", i);
-      #else
-      DISP.printf(" %-19s\n", i);
-      #endif
+      DISP.printf(" %-19d\n",i);
+      DISP.setTextColor(FGCOLOR, BGCOLOR);
+    }
+  } else {
+    for (
+      int i = 0 ; i < nums ; i++ ) {
+      if(cursor == i){
+        DISP.setTextColor(BGCOLOR, FGCOLOR);
+      }
+      DISP.printf(" %-19d\n",i);
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
   }
-  else {
-    for (int i = 0; i < nums; i++) {
-      if (cursor == i) {
-        DISP.setTextColor(BGCOLOR, FGCOLOR);
-      }
-      #ifdef STICK_C
-      DISP.printf(" %-25s\n", i);
-      #else
-      DISP.printf(" %-19s\n", i);
-      #endif
-      DISP.setTextColor(FGCOLOR, BGCOLOR);
-    }
-  }
-#endif
 }
+#endif
 
 void switcher_button_proc() {
   if (rstOverride == false) {
@@ -660,20 +660,27 @@ void check_menu_press() {
         DISP.println(String(TXT_SET_BRIGHT));
         delay(1000);
         cursor = brightness / 10;
-        number_drawmenu(11);
+      number_drawmenu(11);
+#ifdef CARDPUTER
         while (!check_select_press()) {
-          #if defined(CARDPUTER)
-          if (check_next_press()||M5Cardputer.Keyboard.isChange())
-          #else
-          if (check_next_press())
-          #endif
+          if (M5Cardputer.Keyboard.isChange())
           {
+            number_drawmenu(11);
+            screenBrightness(10 * cursor);
+            delay(100);
+          }
+        }
+#else
+        while( !check_select_press()) {
+          if (check_next_press()) {
             cursor++;
+            cursor = cursor % 11 ;
             number_drawmenu(11);
             screenBrightness(10 * cursor);
             delay(250);
-          }
+           }
         }
+#endif
         screenBrightness(10 * cursor);
 #if defined(USE_EEPROM)
         EEPROM.write(2, 10 * cursor);
@@ -1627,20 +1634,25 @@ void check_menu_press() {
       cursor = M5.Rtc.Hour;
 #endif
       number_drawmenu(24);
-      
-      while (!check_select_press())
-      {
-        #if defined(CARDPUTER)
-        if (check_next_press()||M5Cardputer.Keyboard.isChange())
-        #else
-        if (check_next_press())
-        #endif
-        {
-          cursor++;
-          number_drawmenu(24);
-          delay(100);
+
+#ifdef CARDPUTER
+        while (!check_select_press()) {
+          if (M5Cardputer.Keyboard.isChange())
+          {
+            number_drawmenu(24);
+            delay(100);
+          }
         }
-      }
+#else
+        while( !check_select_press()) {
+          if (check_next_press()) {
+            cursor++;
+            cursor = cursor % 24 ;
+            number_drawmenu(24);
+            delay(200);
+           }
+        }
+#endif
       int hour = cursor;
       DISP.fillScreen(BGCOLOR);
       DISP.setCursor(0, 0);
@@ -1654,19 +1666,25 @@ void check_menu_press() {
       cursor = M5.Rtc.Minute;
 #endif
       number_drawmenu(60);
-      while (!check_select_press())
-      {
-        #if defined(CARDPUTER)
-        if (check_next_press()||M5Cardputer.Keyboard.isChange())
-        #else
-        if (check_next_press())
-        #endif
-        {
-          cursor++;
-          number_drawmenu(60);
-          delay(100);
+
+#ifdef CARDPUTER
+        while (!check_select_press()) {
+          if (M5Cardputer.Keyboard.isChange())
+          {
+            number_drawmenu(60);
+            delay(100);
+          }
         }
-      }
+#else
+        while( !check_select_press()) {
+          if (check_next_press()) {
+            cursor++;
+            cursor = cursor % 60 ;
+            number_drawmenu(60);
+            delay(200);
+           }
+        }
+#endif
       int minute = cursor;
       DISP.fillScreen(BGCOLOR);
       DISP.setCursor(0, 0);
