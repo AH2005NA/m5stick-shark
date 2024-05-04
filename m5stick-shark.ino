@@ -22,8 +22,8 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
- #define STICK_C_PLUS2
-// #define CARDPUTER
+// #define STICK_C_PLUS2
+ #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER)
@@ -1078,7 +1078,9 @@ void check_menu_press() {
       { TXT_BACK, 24 },
       { Name_Remote1, 1 },
       { Name_Remote2, 2 },
+      { Name_Remote3, 3 },
     };
+
     int IR_AH_Transmitmenu_size = sizeof(IR_AH_Transmitmenu) / sizeof(MENU);
 
     MENU IR_AH_Transmitremotes[] = {
