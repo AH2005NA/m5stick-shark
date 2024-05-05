@@ -236,7 +236,8 @@ const String contributors[] PROGMEM = {
   "@unagironin",
   "@vladimirpetrov",
   "@vs4vijay",
-  "@AH2005NA"
+  "@AH2005NA",
+  "@FatherDivine"
 };
 
 int advtime = 0;
@@ -292,6 +293,7 @@ bool clone_flg = false;
 #include "IMAGESMatrix.h"
 #include "songs.h"
 #include "localization.h"
+#include "MFRC522_I2C.h"
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #if defined(DEAUTHER)
@@ -311,10 +313,26 @@ struct QRCODE {
 
 QRCODE qrcodes[] = {
   { TXT_BACK, "" },
+  { "GITHUB", "https://github.com/AH2005NA/m5stick-shark" },
   { "Rickroll", "https://youtu.be/dQw4w9WgXcQ" },
   { "HackerTyper", "https://hackertyper.net/" },
   { "ZomboCom", "https://html5zombo.com/" },
 };
+
+
+// -+-+-+-+ RFID START-+-+-+-+
+MFRC522 mfrc522(0x28); // Create MFRC522 instance.
+
+enum state {
+  read_mode,
+  write_mode
+} currentState;
+
+bool readUID = false;
+
+byte UID[20];
+uint8_t UIDLength = 0;
+// -+-+-+-+ RFID END-+-+-+-+
 
 
 void drawmenu(MENU thismenu[], int size) {
@@ -553,7 +571,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
       { "IR AH", 24 },
-//      { "Modules", 27 },
+      { "Modules", 27 },
       { TXT_SETTINGS, 2 },
     };
     int mmenu_size = sizeof(mmenu) / sizeof(MENU);
@@ -1220,18 +1238,100 @@ void check_menu_press() {
 
     MENU RFIDmenu[] = {
       { TXT_BACK, 27 },
-      { "RFID", 28 },
+      { "Read", 28 },
+      { "Write", 28 },
+      { "Emulate", 28 },
     };
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
+ 
+// -+-+-+-+ IncursioHack RFID START -+-+-+-+
+void displayReadMode() {
+  DISP.setTextColor(RED);
+  DISP.setTextSize(SMALL_TEXT);
+  DISP.println(F("  RFID2 I2C MFRC522"));
+  DISP.println("");
+  DISP.setTextColor(BLUE);
+  DISP.setTextSize(TINY_TEXT); // Reduce text size
+//  DISP.println(String(TXT_RFID_PRESSBTN_WRITE));
+  DISP.setTextSize(TINY_TEXT); // Reduce text size
+//  DISP.println(String(TXT_RFID_READY_READ));
+  DISP.println("");
+  DISP.setTextColor(FGCOLOR, BGCOLOR);
+}
+
+void displayWriteMode() {
+  DISP.setTextColor(RED);
+  DISP.setTextSize(SMALL_TEXT);
+  DISP.println(F("  RFID2 I2C MFRC522"));
+  DISP.println("");
+  DISP.setTextColor(BLUE);
+  DISP.setTextSize(TINY_TEXT); // Reduce text size
+//  DISP.println(String(TXT_RFID_PRESSBTN_READ));
+  DISP.setTextSize(TINY_TEXT); // Reduce text size
+//  DISP.println(String(TXT_RFID_READY_WRITE));
+  DISP.println("");
+  DISP.setTextColor(FGCOLOR, BGCOLOR);
+  displayUID();
+
+}
+
+void cls() {
+  DISP.setTextColor(FGCOLOR, BGCOLOR);
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  DISP.fillScreen(BLACK);
+  DISP.setCursor(0, 0);
+}
 
     void RFID_setup() {
+      Wire.begin();
+      mfrc522.PCD_Init();
+      currentState = read_mode;
+      displayReadMode();
       cursor = 0;
       rstOverride = true;
       drawmenu(RFIDmenu, RFIDmenu_size);
-      delay(500);  // Prevent switching after menu loads up
+      delay(1000);
     }
 
     void RFID_loop() {
+  M5.update();
+
+  if (M5Cardputer.Keyboard.isKeyPressed(KEY_ENTER) && readUID) {
+    cls();
+    switch (currentState) {
+      case read_mode:
+        currentState = write_mode;
+        displayWriteMode();
+        delay(300);
+        break;
+      case write_mode:
+        currentState = read_mode;
+        displayReadMode();
+        readUID = false;
+        delay(300);
+        break;
+    }
+  }
+
+  if (!mfrc522.PICC_IsNewCardPresent())
+    return;
+  if (!mfrc522.PICC_ReadCardSerial())
+    return;
+
+  cls();
+
+  switch (currentState) {
+    case read_mode:
+      displayReadMode();
+      readCard();
+      break;
+    case write_mode:
+      displayWriteMode();
+      writeCard();
+      break;
+  }
+
+  mfrc522.PICC_HaltA();
       if (check_next_press()) {
         cursor++;
         cursor = cursor % RFIDmenu_size;
@@ -1245,6 +1345,68 @@ void check_menu_press() {
       }
     }
 
+void readCard() {
+  MFRC522::PICC_Type piccType = (MFRC522::PICC_Type)mfrc522.PICC_GetType(mfrc522.uid.sak);
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  DISP.print(F(""));
+  DISP.print(mfrc522.PICC_GetTypeName(piccType));
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  DISP.print(F(" (SAK "));
+  DISP.print(mfrc522.uid.sak);
+  DISP.print(")\r\n");
+  if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
+      piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
+      piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
+    DISP.setTextColor(RED);
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.setCursor(0, 80); // Move the error message down
+//    DISP.println(String(TXT_RFID_NOTMIFARE));
+    DISP.setCursor(0, 0); // Reset cursor
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
+//    beep_error();
+    delay(1000);
+  } else {
+    DISP.println("");
+    readUID = true;
+    UIDLength = mfrc522.uid.size;
+    for (byte i = 0; i < UIDLength; i++) {
+      UID[i] = mfrc522.uid.uidByte[i];
+    }
+    Serial.println();
+    displayUID();
+    delay(1000);
+  }
+}
+
+void displayUID() {
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  DISP.println(F("User ID:"));
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  for (byte i = 0; i < UIDLength; i++) {
+    DISP.print(UID[i] < 0x10 ? " 0" : " ");
+    DISP.print(UID[i], HEX);
+  }
+}
+
+void writeCard() {
+  if (mfrc522.MIFARE_SetUid(UID, (byte)UIDLength, true)) {
+    DISP.println();
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    //DISP.println(String(TXT_RFID_WRITE));
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.println();
+  } else {
+    DISP.setTextColor(RED);
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.println();
+    //DISP.println(String(TXT_RFID_FAIL));
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
+  }
+
+  mfrc522.PICC_HaltA();
+  delay(1000);
+}
     int rotation = 1;
 #if defined(ROTATION)
     /// Rotation MENU ///
