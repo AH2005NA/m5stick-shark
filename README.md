@@ -13,9 +13,11 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 * Change everything to Shark
 * add time and battery on Menu
 * add Custom Boot Images and sounds
+* IR_AH app (Transmit)
 
 ## My ToDo list
-* IR_AH app (IR Receive and Transmit)
+* IR_AH app (IR Receive)
+* IR_AH app (save remotes to SD card)
 * RFID
 * Windows app
 * ideas?
