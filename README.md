@@ -11,6 +11,7 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 
 ## My Changelog
 DEV 1.0.4
+* M5Button(Btn G0 by Cardputer) presst while (After) Startup: no Startupsound
 * add an option to disable the Startupsound
 * 2 new language: Italian (IT_IT), French (FR_FR)
 
@@ -49,12 +50,14 @@ There are three main controls:
   * Power: Long-press the power button for 6 seconds to turn off the unit
   * Home: Tap the power button (closest to the USB port)
   * Next: Tap the side button
-  * Select: Tap the M5 button on the front of the unit  
+  * Select: Tap the M5 button on the front of the unit
+  * M5Button presst while Startup: no Startupsound
 
 * Cardputer
   * Home: Tap the Esc/~/` key or the Left-Arrow/, key
   * Next/Prev: Tap the Down-Arrow/. key and Up-Arrow/; keys to navigate
   * Select: Tap the OK/Enter key or Right-Arrow/? key  
+  * M5Button presst AFTER switch turn on: no Startupsound
 
 ## NEMO Portal
 In NEMO Portal mode, NEMO activates an open WiFi Hotspot named "Nemo Free WiFi" (configurable in portal.h) with DNS, DHCP and Web servers activated. 
