@@ -24,8 +24,8 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
- #define STICK_C_PLUS2
-// #define CARDPUTER
+// #define STICK_C_PLUS2
+ #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER) && !defined(LANGUAGE_IT_IT) && !defined(LANGUAGE_FR_FR)
@@ -158,6 +158,7 @@ String platformName = "Cardputer";
 #define SONG
 // -=-=- ALIASES -=-=-
 #define DISP M5Cardputer.Display
+#define UperBtn 0
 #define IRLED 44
 #define IRREC 26
 #define BACKLIGHT 38
@@ -2806,7 +2807,7 @@ void writeCard() {
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
-      if (EEPROM.read(6))
+      if (EEPROM.read(6) && digitalRead(M5_BUTTON_HOME))
       {
         setupSongs(dt.time.seconds % valsongs);
       }
@@ -2819,8 +2820,12 @@ void writeCard() {
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
-      if (EEPROM.read(6))
+#ifdef CARDPUTER
       pinMode(UperBtn, INPUT);
+      if (EEPROM.read(6) && digitalRead(UperBtn))
+#elif defined(M5_BUTTON_HOME)
+      if (EEPROM.read(6) && digitalRead(M5_BUTTON_HOME))
+#endif
       {
       setupSongs(rtcp.getSecond() % valsongs);
       }
@@ -2834,7 +2839,12 @@ void writeCard() {
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
-      if (EEPROM.read(6))
+#ifdef CARDPUTER
+      pinMode(UperBtn, INPUT);
+      if (EEPROM.read(6) && digitalRead(UperBtn))
+#elif defined(M5_BUTTON_HOME)
+      if (EEPROM.read(6) && digitalRead(M5_BUTTON_HOME))
+#endif
       {
       setupSongs(M5.Rtc.Second % valsongs);
       }
