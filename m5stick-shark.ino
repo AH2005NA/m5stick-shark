@@ -2820,6 +2820,7 @@ void writeCard() {
       BITMAP;
       //Random Startupsound 0...6
       if (EEPROM.read(6))
+      pinMode(UperBtn, INPUT);
       {
       setupSongs(rtcp.getSecond() % valsongs);
       }

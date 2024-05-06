@@ -31,6 +31,8 @@ jobs:
           - en-us
           - pt-br
           - ger
+          - fr-fr
+          - it-it
         board:
           - {
               name: "M5Cardputer",
