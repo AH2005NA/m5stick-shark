@@ -14,6 +14,7 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 * add time and battery on Menu
 * add Custom Boot Images and sounds
 * IR_AH app (Transmit)
+* Changed the Number-Menu for the Cardputer
 
 ## My ToDo list
 * IR_AH app (IR Receive)
