@@ -100,6 +100,8 @@
   #define TXT_snsor_req "sensor\nrequired" 
   #define TXT_IR_TX "IR Transmit"
   #define TXT_IR_RX "IR Receive"
+  #define TXT_Song_dis "Song disabled"
+  #define TXT_Song_en "Song enabled"
 #endif
 
 #if defined(LANGUAGE_GER)
@@ -204,6 +206,8 @@
   #define TXT_snsor_req "sensor\nwird gebrauch" 
   #define TXT_IR_TX "IR Senden"
   #define TXT_IR_RX "IR Empfangen"
+  #define TXT_Song_dis "Song Aus"
+  #define TXT_Song_en "Song Ein"
 #endif
 
 #if defined(LANGUAGE_PT_BR)
@@ -308,4 +312,6 @@
   #define TXT_snsor_req "sensor\nnecessrio" 
   #define TXT_IR_TX "IR Transmite"
   #define TXT_IR_RX "IR Receber"
+  #define TXT_Song_dis "Song desativada"
+  #define TXT_Song_en "Song habilitado"
 #endif

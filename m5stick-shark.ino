@@ -22,8 +22,8 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
-// #define STICK_C_PLUS2
- #define CARDPUTER
+ #define STICK_C_PLUS2
+// #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER)
@@ -731,6 +731,9 @@ void check_menu_press() {
       { TXT_SDCARD, 97 },
 #endif
 #endif
+#if defined(USE_EEPROM)
+      { TXT_Song_dis, 96 },
+#endif
       { TXT_THEME, 23 },
       { TXT_ABOUT, 10 },
       { TXT_REBOOT, 98 },
@@ -742,6 +745,17 @@ void check_menu_press() {
     int smenu_size = sizeof(smenu) / sizeof(MENU);
 
     void smenu_setup() {
+#if defined(USE_EEPROM)
+      if (EEPROM.read(6))
+      {
+      for (int i = 0; i < smenu_size; i++) {
+      }
+        if (smenu[i].command == 96)
+        {
+          strcpy(smenu[i].name, TXT_Song_en);
+        }
+      }
+#endif
       cursor = 0;
       rstOverride = true;
       drawmenu(smenu, smenu_size);
@@ -785,7 +799,42 @@ void check_menu_press() {
         if (smenu[cursor].command == 99) {
           clearSettings();
         }
-        current_proc = smenu[cursor].command;
+#if defined(USE_EEPROM)
+        if (smenu[cursor].command == 96) {
+          if (EEPROM.read(6))
+          {
+            EEPROM.write(6, 0);
+          }
+          else 
+          {
+            EEPROM.write(6, 1);
+          }
+          EEPROM.commit();
+        for (int i = 0; i < smenu_size; i++) {
+          if (smenu[i].command == 96)
+          {
+            if (EEPROM.read(6))
+            {
+              strcpy(smenu[i].name, TXT_Song_en);
+            }
+            else
+            {
+              strcpy(smenu[i].name, TXT_Song_dis);
+            }
+          }
+        }
+        drawmenu(smenu, smenu_size);
+        delay(250);
+        rstOverride = true;
+        isSwitching = false;
+        }
+        else
+        {
+#endif
+          current_proc = smenu[cursor].command;
+#if defined(USE_EEPROM)
+        }
+#endif
       }
     }
 
@@ -2755,20 +2804,41 @@ void writeCard() {
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
-      setupSongs(dt.time.seconds % valsongs);
+      if (EEPROM.read(6))
+      {
+        setupSongs(dt.time.seconds % valsongs);
+      }
+      else
+      {
+        delay(1000);
+      }
 #elif defined(ESPTime)
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[rtcp.getSecond() % valImages]);
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
+      if (EEPROM.read(6))
+      {
       setupSongs(rtcp.getSecond() % valsongs);
+      }
+      else
+      {
+        delay(1000);
+      }
 #else
       M5.Rtc.GetBm8563Time();
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[M5.Rtc.Second % valImages]);
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
+      if (EEPROM.read(6))
+      {
       setupSongs(M5.Rtc.Second % valsongs);
+      }
+      else
+      {
+        delay(1000);
+      }
 #endif
 #endif
 #endif
@@ -2939,7 +3009,8 @@ void writeCard() {
       Serial.printf("EEPROM 3 - TVBG Reg:   %d\n", EEPROM.read(3));
       Serial.printf("EEPROM 4 - FGColor:    %d\n", EEPROM.read(4));
       Serial.printf("EEPROM 5 - BGColor:    %d\n", EEPROM.read(5));
-      if (EEPROM.read(0) > 3 || EEPROM.read(1) > 240 || EEPROM.read(2) > 100 || EEPROM.read(3) > 1 || EEPROM.read(4) > 19 || EEPROM.read(5) > 19) {
+      Serial.printf("EEPROM 6 - Use Song:    %d\n", EEPROM.read(6));
+      if (EEPROM.read(0) > 3 || EEPROM.read(1) > 240 || EEPROM.read(2) > 100 || EEPROM.read(3) > 1 || EEPROM.read(4) > 19 || EEPROM.read(5) > 19 || EEPROM.read(6) > 1) {
 // Assume out-of-bounds settings are a fresh/corrupt EEPROM and write defaults for everything
 //Serial.println("EEPROM likely not properly configured. Writing defaults.");
 #if defined(CARDPUTER)
@@ -2952,6 +3023,7 @@ void writeCard() {
         EEPROM.write(3, 0);    // TVBG NA Region
         EEPROM.write(4, 11);   // FGColor Green
         EEPROM.write(5, 1);    // BGcolor Black
+        EEPROM.write(6, 1);    // uses song
         EEPROM.commit();
       }
       rotation = EEPROM.read(0);
