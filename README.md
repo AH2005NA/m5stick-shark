@@ -42,7 +42,7 @@ DEV 1.0.3 and older
 
 ## User Interface
 There are three main controls:
-* Home - Stops the current process and returns you to the menu from almost anywhere in NEMO
+* Home - Stops the current process and returns you to the menu from almost anywhere in SHARK
 * Next - Moves the cursor to the next menu option. In function modes, this usually stops the process and returns you to the previous menu.
 * Select - Activates the currently-selected menu option, and wakes up the dimmed screen in function modes  
 
