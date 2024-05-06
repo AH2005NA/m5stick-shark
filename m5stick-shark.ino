@@ -1238,48 +1238,21 @@ void check_menu_press() {
 
     MENU RFIDmenu[] = {
       { TXT_BACK, 27 },
-      { "Read", 28 },
-      { "Write", 28 },
-      { "Emulate", 28 },
+      { "Write", 0 },
+      { "Save to SD", 2 },
+      { "Emulate", 3 },
     };
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
  
 // -+-+-+-+ IncursioHack RFID START -+-+-+-+
 void displayReadMode() {
-  DISP.setTextColor(RED);
-  DISP.setTextSize(SMALL_TEXT);
-  DISP.println(F("  RFID2 I2C MFRC522"));
-  DISP.println("");
-  DISP.setTextColor(BLUE);
-  DISP.setTextSize(TINY_TEXT); // Reduce text size
-//  DISP.println(String(TXT_RFID_PRESSBTN_WRITE));
-  DISP.setTextSize(TINY_TEXT); // Reduce text size
-//  DISP.println(String(TXT_RFID_READY_READ));
-  DISP.println("");
-  DISP.setTextColor(FGCOLOR, BGCOLOR);
+  DISP.setCursor(0, 70);
+  displayUID();
 }
 
 void displayWriteMode() {
-  DISP.setTextColor(RED);
-  DISP.setTextSize(SMALL_TEXT);
-  DISP.println(F("  RFID2 I2C MFRC522"));
-  DISP.println("");
-  DISP.setTextColor(BLUE);
-  DISP.setTextSize(TINY_TEXT); // Reduce text size
-//  DISP.println(String(TXT_RFID_PRESSBTN_READ));
-  DISP.setTextSize(TINY_TEXT); // Reduce text size
-//  DISP.println(String(TXT_RFID_READY_WRITE));
-  DISP.println("");
-  DISP.setTextColor(FGCOLOR, BGCOLOR);
+  DISP.setCursor(0, 70);
   displayUID();
-
-}
-
-void cls() {
-  DISP.setTextColor(FGCOLOR, BGCOLOR);
-  DISP.setTextSize(SMALL_TEXT); // Reduce text size
-  DISP.fillScreen(BLACK);
-  DISP.setCursor(0, 0);
 }
 
     void RFID_setup() {
@@ -1287,6 +1260,7 @@ void cls() {
       mfrc522.PCD_Init();
       currentState = read_mode;
       displayReadMode();
+
       cursor = 0;
       rstOverride = true;
       drawmenu(RFIDmenu, RFIDmenu_size);
@@ -1294,32 +1268,62 @@ void cls() {
     }
 
     void RFID_loop() {
-  M5.update();
+      M5.update();
+      
+      if (check_select_press()) {
+        if (RFIDmenu[cursor].command == 0)
+        {
+          strcpy(RFIDmenu[cursor].name, "Write");
+          RFIDmenu[cursor].command = 1;
+          currentState = read_mode;
+          readUID = false;
+        }
+        if (RFIDmenu[cursor].command == 1 && readUID)
+        {
+          strcpy(RFIDmenu[cursor].name, "Read");
+          RFIDmenu[cursor].command = 0;
+          currentState = write_mode;
+          readUID = true;
+        }
+        if (RFIDmenu[cursor].command == 2)
+        {
+          //currentState = ;
+        }
+        drawmenu(RFIDmenu, RFIDmenu_size);
+        switch (currentState) {
+          case read_mode:
+            displayReadMode();
+            break;
+          case write_mode:
+            displayWriteMode();
+            break;
+        }
+        delay(250);
 
-  if (M5Cardputer.Keyboard.isKeyPressed(KEY_ENTER) && readUID) {
-    cls();
-    switch (currentState) {
-      case read_mode:
-        currentState = write_mode;
-        displayWriteMode();
-        delay(300);
-        break;
-      case write_mode:
-        currentState = read_mode;
-        displayReadMode();
-        readUID = false;
-        delay(300);
-        break;
-    }
-  }
+      }
+      if (check_next_press()) {
+        cursor++;
+        cursor = cursor % RFIDmenu_size;
+        drawmenu(RFIDmenu, RFIDmenu_size);
+        switch (currentState) {
+          case read_mode:
+            displayReadMode();
+            break;
+          case write_mode:
+            displayWriteMode();
+            break;
+        }
+
+        delay(250);
+      }
+  
 
   if (!mfrc522.PICC_IsNewCardPresent())
     return;
   if (!mfrc522.PICC_ReadCardSerial())
     return;
 
-  cls();
-
+  drawmenu(RFIDmenu, RFIDmenu_size);
   switch (currentState) {
     case read_mode:
       displayReadMode();
@@ -1332,17 +1336,7 @@ void cls() {
   }
 
   mfrc522.PICC_HaltA();
-      if (check_next_press()) {
-        cursor++;
-        cursor = cursor % RFIDmenu_size;
-        drawmenu(RFIDmenu, RFIDmenu_size);
-        delay(250);
-      }
-      if (check_select_press()) {
-        rstOverride = false;
-        isSwitching = true;
-        current_proc = RFIDmenu[cursor].command;
-      }
+
     }
 
 void readCard() {
@@ -1364,7 +1358,7 @@ void readCard() {
     DISP.setCursor(0, 0); // Reset cursor
     DISP.setTextColor(FGCOLOR, BGCOLOR);
 //    beep_error();
-    delay(1000);
+    delay(750);
   } else {
     DISP.println("");
     readUID = true;
@@ -1374,7 +1368,7 @@ void readCard() {
     }
     Serial.println();
     displayUID();
-    delay(1000);
+    delay(750);
   }
 }
 
@@ -1392,21 +1386,24 @@ void writeCard() {
   if (mfrc522.MIFARE_SetUid(UID, (byte)UIDLength, true)) {
     DISP.println();
     DISP.setTextSize(SMALL_TEXT); // Reduce text size
-    //DISP.println(String(TXT_RFID_WRITE));
+    DISP.println("RFID_WRITE");
     DISP.setTextSize(SMALL_TEXT); // Reduce text size
     DISP.println();
   } else {
     DISP.setTextColor(RED);
     DISP.setTextSize(SMALL_TEXT); // Reduce text size
     DISP.println();
-    //DISP.println(String(TXT_RFID_FAIL));
+    DISP.println("RFID_FAIL");
     DISP.setTextSize(SMALL_TEXT); // Reduce text size
     DISP.setTextColor(FGCOLOR, BGCOLOR);
   }
 
   mfrc522.PICC_HaltA();
-  delay(1000);
+  delay(750);
 }
+
+// -+-+-+-+ IncursioHack RFID stop -+-+-+-+
+
     int rotation = 1;
 #if defined(ROTATION)
     /// Rotation MENU ///
