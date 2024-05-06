@@ -11,6 +11,7 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 
 ## My Changelog
 DEV 1.0.4
+add an option to disable the Startupsound
 
 DEV 1.0.3 and older
 * Change everything to Shark
