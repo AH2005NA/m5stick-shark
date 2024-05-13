@@ -333,6 +333,7 @@ enum state {
 
 bool readUID = false;
 
+MFRC522::PICC_Type piccType;
 byte UID[20];
 uint8_t UIDLength = 0;
 // -+-+-+-+ RFID END-+-+-+-+
@@ -1292,7 +1293,6 @@ void check_menu_press() {
       { TXT_BACK, 27 },
       { "Write", 0 },
       { "Save to SD", 2 },
-      { "Emulate", 3 },
     };
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
  
@@ -1338,7 +1338,29 @@ void displayWriteMode() {
           readUID = true;
         }
         if (RFIDmenu[cursor].command == 2)
-        {
+        {//save to file
+        #if defined(SDCARD)
+          String uidString = String(piccType, DEC);
+          if (UIDLength <= 9)
+          {
+            uidString += "0";
+          }
+          uidString += String(UIDLength, DEC);
+          for (int i = 0; i < UIDLength; i++) {
+            if (UID[i] <= 0x0F)
+            {
+              uidString += "0";
+            }
+              uidString += String(UID[i], HEX);
+          }
+          uidString += "/n";
+          const char* uidStringch = uidString.c_str();
+          appendToFile(SD, "/RFID/01.txt", uidStringch);
+        #endif
+          //currentState = ;
+        }
+        if (RFIDmenu[cursor].command == 2)
+        {//Load from file
           //currentState = ;
         }
         drawmenu(RFIDmenu, RFIDmenu_size);
@@ -1392,7 +1414,7 @@ void displayWriteMode() {
     }
 
 void readCard() {
-  MFRC522::PICC_Type piccType = (MFRC522::PICC_Type)mfrc522.PICC_GetType(mfrc522.uid.sak);
+  piccType = (MFRC522::PICC_Type)mfrc522.PICC_GetType(mfrc522.uid.sak);
   DISP.setTextSize(SMALL_TEXT); // Reduce text size
   DISP.print(F(""));
   DISP.print(mfrc522.PICC_GetTypeName(piccType));
