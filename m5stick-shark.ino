@@ -328,7 +328,8 @@ MFRC522 mfrc522(0x28); // Create MFRC522 instance.
 
 enum state {
   read_mode,
-  write_mode
+  write_mode,
+  Explorer
 } currentState;
 
 bool readUID = false;
@@ -1359,8 +1360,9 @@ void displayWriteMode() {
         #endif
           //currentState = ;
         }
-        if (RFIDmenu[cursor].command == 2)
+        if (RFIDmenu[cursor].command == 3)
         {//Load from file
+          listDir(SD, "/RFID", 2);
           //currentState = ;
         }
         drawmenu(RFIDmenu, RFIDmenu_size);
