@@ -226,6 +226,7 @@ String platformName = "Cardputer";
 // 97 - Mount/UnMount SD Card on M5Stick devices, if SDCARD is declared
 
 const String contributors[] PROGMEM = {
+  "@FatherDivine",
   "@bicurico",
   "@bmorcelli",
   "@chr0m1ng",
@@ -1156,6 +1157,15 @@ void check_menu_press() {
     int IR_AH_Transmitmenu_size = sizeof(IR_AH_Transmitmenu) / sizeof(MENU);
 
     MENU IR_AH_Transmitremotes[] = {
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
       { TXT_BACK, 25 },
       { TXT_BACK, 25 },
       { TXT_BACK, 25 },
