@@ -14,6 +14,7 @@ DEV 1.0.4
 * M5Button(Btn G0 by Cardputer) presst while (After) Startup: no Startupsound
 * add an option to disable the Startupsound
 * 2 new language: Italian (IT_IT), French (FR_FR)
+* Fixed IRAH Bug
 
 DEV 1.0.3 and older
 * Change everything to Shark
