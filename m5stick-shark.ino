@@ -1152,6 +1152,7 @@ void check_menu_press() {
       { Name_Remote1, 1 },
       { Name_Remote2, 2 },
       { Name_Remote3, 3 },
+      { Name_Remote4, 4 },
     };
 
     int IR_AH_Transmitmenu_size = sizeof(IR_AH_Transmitmenu) / sizeof(MENU);
