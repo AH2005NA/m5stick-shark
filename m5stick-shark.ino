@@ -5,11 +5,11 @@
 // #define STICK_C_PLUS
 // #define STICK_C_PLUS2
 // #define STICK_C
-// #define CARDPUTER
+#define CARDPUTER
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
-// #define LANGUAGE_EN_US
+#define LANGUAGE_EN_US
 // #define LANGUAGE_PT_BR
 // #define LANGUAGE_GER
 // #define LANGUAGE_IT_IT
@@ -321,6 +321,8 @@ QRCODE qrcodes[] = {
   { "Rickroll", "https://youtu.be/dQw4w9WgXcQ" },
   { "HackerTyper", "https://hackertyper.net/" },
   { "ZomboCom", "https://html5zombo.com/" },
+  {"Chuck Norris Dance", "https://chuckdance.ytmnd.com/"},
+  {"Bobbing For Apples","https://www.newgrounds.com/portal/view/310038"},
 };
 
 
