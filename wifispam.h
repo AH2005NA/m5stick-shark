@@ -63,6 +63,7 @@ const char funnyssids[] PROGMEM = {
   "Life in the Fast LAN\n"
   "The Creep Next Door\n"
   "Ye Olde Internet\n"
+  "CIA-spypigeon6\n"
 };
 
 const char rickrollssids[] PROGMEM = {
