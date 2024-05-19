@@ -240,8 +240,7 @@ const String contributors[] PROGMEM = {
   "@unagironin",
   "@vladimirpetrov",
   "@vs4vijay",
-  "@AH2005NA",
-  "@FatherDivine"
+  "@AH2005NA"
 };
 
 int advtime = 0;
@@ -321,6 +320,8 @@ QRCODE qrcodes[] = {
   { "Rickroll", "https://youtu.be/dQw4w9WgXcQ" },
   { "HackerTyper", "https://hackertyper.net/" },
   { "ZomboCom", "https://html5zombo.com/" },
+  {"Chuck Norris Dance", "https://chuckdance.ytmnd.com/"},
+  {"Bobbing For Apples","https://www.newgrounds.com/portal/view/310038"},
 };
 
 
@@ -1152,6 +1153,7 @@ void check_menu_press() {
       { Name_Remote1, 1 },
       { Name_Remote2, 2 },
       { Name_Remote3, 3 },
+      { Name_Remote4, 4 },
     };
 
     int IR_AH_Transmitmenu_size = sizeof(IR_AH_Transmitmenu) / sizeof(MENU);
