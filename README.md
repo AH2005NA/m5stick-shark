@@ -10,11 +10,14 @@ Shark is a Projekt i started at the 29.2.2024 1:12 PM. I saw a tutorial for the 
 I decided to call this firmware shark. I gave it this name because i wanted to name it an other fish as reference to Nemo and i choose Shark because it is the easiest fish to get Images generated from AI 😁.
 
 ## My Changelog
+DEV 1.0.5
+
 DEV 1.0.4
 * M5Button(Btn G0 by Cardputer) presst while (After) Startup: no Startupsound
 * add an option to disable the Startupsound
 * 2 new language: Italian (IT_IT), French (FR_FR)
 * Fixed IRAH Bug
+* add IRAH remote
 
 DEV 1.0.3 and older
 * Change everything to Shark
