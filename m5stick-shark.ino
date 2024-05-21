@@ -578,7 +578,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
       { "IR AH", 24 },
-      //{ "Modules", 27 },
+      { "Modules", 27 },
       { TXT_SETTINGS, 2 },
     };
     int mmenu_size = sizeof(mmenu) / sizeof(MENU);
@@ -1305,7 +1305,7 @@ void check_menu_press() {
     MENU RFIDmenu[] = {
       { TXT_BACK, 27 },
       { "Write", 0 },
-      { "Save to SD", 2 },
+      { "Read  to  SD", 2 },
     };
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
  
@@ -1367,14 +1367,14 @@ void displayWriteMode() {
               uidString += String(UID[i], HEX);
           }
           uidString += "/n";
-          const char* uidStringch = uidString.c_str();
-          appendToFile(SD, "/RFID/01.txt", uidStringch);
+          String fullPath = "/RFID/" + Inputfilename("00") + ".txt";
+          appendToFile(SD, fullPath.c_str(), uidString.c_str());
         #endif
           //currentState = ;
         }
         if (RFIDmenu[cursor].command == 3)
         {//Load from file
-          listDir(SD, "/RFID", 2);
+          choosefile(SD, "/RFID", 2);
           //currentState = ;
         }
         drawmenu(RFIDmenu, RFIDmenu_size);
@@ -2852,7 +2852,7 @@ void writeCard() {
         delay(1000);
       }
 #elif defined(ESPTime)
-      DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[rtcp.getSecond() % valImages]);
+      DISP. (0, 0, 240, 135, (uint16_t *)AllImages[rtcp.getSecond() % valImages]);
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6

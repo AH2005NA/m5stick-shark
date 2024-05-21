@@ -31,7 +31,11 @@ bool sdcardMounted = false;
     }
   }
   
-void listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
+void choosefile(fs::FS &fs, const char *dirname, uint8_t levels) {
+  setTextSize(SMALL_TEXT);
+  fillScreen(BGCOLOR);
+  setCursor(0, 0, 1);
+  // scrolling menu
   Serial.printf("Listing directory: %s\n", dirname);
 
   File root = fs.open(dirname);
@@ -50,15 +54,19 @@ void listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
       Serial.print("  DIR : ");
       Serial.println(file.name());
       if (levels) {
-        listDir(fs, file.path(), levels - 1);
+        choosefile(fs, file.path(), levels - 1);
       }
     } else {
       Serial.print("  FILE: ");
       Serial.print(file.name());
+      printf(" %-25s\n", file.name());
       Serial.print("  SIZE: ");
       Serial.println(file.size());
     }
     file = root.openNextFile();
+  }
+  while(1)
+  {
   }
 }
 
@@ -170,4 +178,49 @@ bool setupSdCard() {
       delay(1500);
     }
   #endif
+#endif
+
+
+
+#ifdef CARDPUTER
+String Inputfilename(String defaultname){
+  DISP.fillScreen(BGCOLOR);
+  DISP.setSwapBytes(true);
+  DISP.setTextSize(MEDIUM_TEXT);
+  DISP.setTextColor(BGCOLOR, FGCOLOR);
+  DISP.setCursor(0, 0);
+  DISP.println("  File name  ");
+  DISP.setTextSize(TINY_TEXT);
+  DISP.setTextColor(FGCOLOR, BGCOLOR);
+  DISP.setTextSize(SMALL_TEXT);
+  uint8_t ssidTextCursorY = DISP.getCursorY();
+  String currentname = String(defaultname.c_str());
+  DISP.printf("%s", currentname.c_str());
+  bool ssid_ok = false;
+
+  while(!ssid_ok){
+    M5Cardputer.update();
+    if(M5Cardputer.Keyboard.isChange() && M5Cardputer.Keyboard.isPressed()) {
+      Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+      if(status.del) {
+        currentname.remove(currentname.length() - 1);
+      }
+      if(status.enter) {
+        ssid_ok = true;
+      }
+      if(currentname.length() >= 32) {
+        continue;
+      }
+      for(auto i : status.word) {
+        if(i != '?' && i != '$' && i != '\"' && i != '[' && i != '\\' && i != ']' && i != '+'){
+          currentname += i;
+        }
+      }
+      DISP.fillRect(0, ssidTextCursorY, DISP.width(), DISP.width()- ssidTextCursorY, BLACK);
+      DISP.setCursor(0, ssidTextCursorY);
+      DISP.printf("%s", currentname.c_str());
+    }
+  }
+  return currentname;
+}
 #endif
