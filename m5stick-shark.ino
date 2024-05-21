@@ -578,7 +578,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
       { "IR AH", 24 },
-      { "Modules", 27 },
+      //{ "Modules", 27 },
       { TXT_SETTINGS, 2 },
     };
     int mmenu_size = sizeof(mmenu) / sizeof(MENU);
