@@ -325,6 +325,30 @@ QRCODE qrcodes[] = {
 };
 
 
+    MENU Menubuffer[] = {
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+      { TXT_BACK, 25 },
+    };
+    int Menubuffer_size=sizeof(Menubuffer) / sizeof(MENU);
+
 // -+-+-+-+ RFID START-+-+-+-+
 MFRC522 mfrc522(0x28); // Create MFRC522 instance.
 
@@ -1158,30 +1182,8 @@ void check_menu_press() {
 
     int IR_AH_Transmitmenu_size = sizeof(IR_AH_Transmitmenu) / sizeof(MENU);
 
-    MENU IR_AH_Transmitremotes[] = {
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-      { TXT_BACK, 25 },
-    };
+
     uint8_t whichrwmote=0;
-    int IR_AH_Transmitremotes_size=sizeof(IR_AH_Transmitremotes) / sizeof(MENU);
 
     void IR_AH_Transmit_setup(void) {
       whichrwmote=0;
@@ -1197,8 +1199,8 @@ void check_menu_press() {
       {
         if (check_next_press()) {
           cursor++;
-          cursor = cursor % IR_AH_Transmitremotes_size;
-          drawmenu(IR_AH_Transmitremotes, IR_AH_Transmitremotes_size);
+          cursor = cursor % Menubuffer_size;
+          drawmenu(Menubuffer, Menubuffer_size);
           delay(250);
         }
         if (check_select_press()) {
@@ -1224,16 +1226,16 @@ void check_menu_press() {
           if (cursor) {
             whichrwmote=cursor;
             cursor = 0;
-            for(uint8_t i = 1; i < sizeof(IR_AH_Transmitremotes) / sizeof(MENU)+1; i++)
+            for(uint8_t i = 1; i < sizeof(Menubuffer) / sizeof(MENU)+1; i++)
             {
               if(Allremotes[whichrwmote-1][i-1].name == "1" && Allremotes[whichrwmote-1][i-1].Raw == (uint16_t*)1 && Allremotes[whichrwmote-1][i-1].kFrequency == 1)
               {
-                IR_AH_Transmitremotes_size=i;
+                Menubuffer_size=i;
                 break;
               }
-              strncpy(IR_AH_Transmitremotes[i].name, Allremotes[whichrwmote-1][i-1].name, 19);
+              strncpy(Menubuffer[i].name, Allremotes[whichrwmote-1][i-1].name, 19);
             }
-            drawmenu(IR_AH_Transmitremotes, IR_AH_Transmitremotes_size);
+            drawmenu(Menubuffer, Menubuffer_size);
             delay(250);
           } else {
           rstOverride = false;
@@ -1305,7 +1307,7 @@ void check_menu_press() {
     MENU RFIDmenu[] = {
       { TXT_BACK, 27 },
       { "Write", 0 },
-      { "Read  to  SD", 2 },
+      { "Read  to  SD", 3 },
     };
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
  
@@ -1336,6 +1338,8 @@ void displayWriteMode() {
       M5.update();
       
       if (check_select_press()) {
+      if (!(currentState == Explorer))
+      {
         if (RFIDmenu[cursor].command == 0)
         {
           strcpy(RFIDmenu[cursor].name, "Write");
@@ -1374,16 +1378,37 @@ void displayWriteMode() {
         }
         if (RFIDmenu[cursor].command == 3)
         {//Load from file
-          choosefile(SD, "/RFID", 2);
-          //currentState = ;
+        #if defined(SDCARD)
+          for (uint8_t i=0; i<200; i++)
+          {
+            String curname = choosefile(SD, "/RFID", i);
+            strncpy(Menubuffer[i].name, curname.c_str(), 19);
+            if (curname == "false")
+            {
+              Menubuffer_size = i;
+              break;
+            }
+          }
+            cursor = 0;
+            drawmenu(Menubuffer, Menubuffer_size);
+            delay(250);
+        #endif
+          currentState = Explorer;
         }
-        drawmenu(RFIDmenu, RFIDmenu_size);
+      } 
+
         switch (currentState) {
           case read_mode:
+            drawmenu(RFIDmenu, RFIDmenu_size);
             displayReadMode();
             break;
           case write_mode:
+            drawmenu(RFIDmenu, RFIDmenu_size);
             displayWriteMode();
+            break;
+          case Explorer:
+            //drawmenu(RFIDmenu, RFIDmenu_size);
+            //displayWriteMode();
             break;
         }
         delay(250);
@@ -1391,14 +1416,20 @@ void displayWriteMode() {
       }
       if (check_next_press()) {
         cursor++;
-        cursor = cursor % RFIDmenu_size;
-        drawmenu(RFIDmenu, RFIDmenu_size);
         switch (currentState) {
           case read_mode:
             displayReadMode();
+            cursor = cursor % RFIDmenu_size;
+            drawmenu(RFIDmenu, RFIDmenu_size);
             break;
           case write_mode:
             displayWriteMode();
+            cursor = cursor % RFIDmenu_size;
+            drawmenu(RFIDmenu, RFIDmenu_size);
+            break;
+          case Explorer:
+            cursor = cursor % Menubuffer_size;
+            drawmenu(Menubuffer, Menubuffer_size);
             break;
         }
 

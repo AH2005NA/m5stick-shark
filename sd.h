@@ -31,43 +31,37 @@ bool sdcardMounted = false;
     }
   }
   
-void choosefile(fs::FS &fs, const char *dirname, uint8_t levels) {
-  setTextSize(SMALL_TEXT);
-  fillScreen(BGCOLOR);
-  setCursor(0, 0, 1);
+String choosefile(fs::FS &fs, const char *dirname, uint8_t number) {
+  uint8_t numberindex=0;
   // scrolling menu
-  Serial.printf("Listing directory: %s\n", dirname);
 
   File root = fs.open(dirname);
   if (!root) {
     Serial.println("Failed to open directory");
-    return;
+    return "error";
   }
   if (!root.isDirectory()) {
     Serial.println("Not a directory");
-    return;
+    return "error";
   }
 
   File file = root.openNextFile();
   while (file) {
     if (file.isDirectory()) {
-      Serial.print("  DIR : ");
-      Serial.println(file.name());
-      if (levels) {
-        choosefile(fs, file.path(), levels - 1);
-      }
     } else {
+      if (numberindex == number)
+      {
       Serial.print("  FILE: ");
       Serial.print(file.name());
-      printf(" %-25s\n", file.name());
       Serial.print("  SIZE: ");
       Serial.println(file.size());
+        return file.name();
+      }
+      numberindex++;
     }
     file = root.openNextFile();
   }
-  while(1)
-  {
-  }
+  return "false";
 }
 
   void readFile(fs::FS &fs, const char * path){
