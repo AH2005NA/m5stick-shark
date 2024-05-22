@@ -2852,7 +2852,7 @@ void writeCard() {
         delay(1000);
       }
 #elif defined(ESPTime)
-      DISP. (0, 0, 240, 135, (uint16_t *)AllImages[rtcp.getSecond() % valImages]);
+      DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[rtcp.getSecond() % valImages]);
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
