@@ -1371,7 +1371,7 @@ void displayWriteMode() {
               uidString += String(UID[i], HEX);
           }
           uidString += "/n";
-          String fullPath = "/RFID/" + Inputfilename("00") + ".txt";
+          String fullPath = "/RFID/" + Inputfilename("0") + ".txt";
           appendToFile(SD, fullPath.c_str(), uidString.c_str());
         #endif
           //currentState = ;
@@ -1379,7 +1379,7 @@ void displayWriteMode() {
         if (RFIDmenu[cursor].command == 3)
         {//Load from file
         #if defined(SDCARD)
-          for (uint8_t i=0; i<200; i++)
+          for (uint8_t i=0; i<(sizeof(Menubuffer) / sizeof(MENU)); i++)
           {
             String curname = choosefile(SD, "/RFID", i);
             strncpy(Menubuffer[i].name, curname.c_str(), 19);
