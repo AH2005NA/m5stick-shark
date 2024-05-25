@@ -1393,6 +1393,7 @@ void displayWriteMode() {
             drawmenu(Menubuffer, Menubuffer_size);
             delay(250);
         #endif
+          M5.update();
           currentState = Explorer;
         }
       } 
@@ -1407,8 +1408,17 @@ void displayWriteMode() {
             displayWriteMode();
             break;
           case Explorer:
-            //drawmenu(RFIDmenu, RFIDmenu_size);
-            //displayWriteMode();
+            String fullPath = "/RFID/" + String(Menubuffer[cursor].name);
+            readFile(SD, fullPath.c_str());
+            const char* fullPathc = fullPath.c_str();
+            String numStr = String(fullPathc[2]) + String(fullPathc[2]);
+            DISP.print(numStr.toInt());
+            for(int i=0; i < numStr.toInt(); i++)
+            {
+              Serial.print(".");
+              //UID
+            }
+            currentState = write_mode;
             break;
         }
         delay(250);
