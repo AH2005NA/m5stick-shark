@@ -1409,9 +1409,10 @@ void displayWriteMode() {
             break;
           case Explorer:
             String fullPath = "/RFID/" + String(Menubuffer[cursor].name);
-            readFile(SD, fullPath.c_str());
-            const char* fullPathc = fullPath.c_str();
-            String numStr = String(fullPathc[2]) + String(fullPathc[2]);
+            String filedata = readFile(SD, fullPath.c_str());
+            const char* filedatac = filedata.c_str();
+            String numStr = String(filedatac[1]) + String(filedatac[2]);
+            Serial.print(numStr);
             DISP.print(numStr.toInt());
             for(int i=0; i < numStr.toInt(); i++)
             {
