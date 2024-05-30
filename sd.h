@@ -72,12 +72,15 @@ String choosefile(fs::FS &fs, const char *dirname, uint8_t number) {
         Serial.println("Failed to open file for reading");
         return "false";
     }
-
+    String rturnstr;
     Serial.print("Read from file: ");
     while(file.available()){
-        return String(file.read());
+        //Serial.write(file.read());
+        //rturnstr = rturnstr + String(file.read());
+        rturnstr = rturnstr + (char *)file.read();
     }
     file.close();
+    return rturnstr;
 }
 #endif
 
