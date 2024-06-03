@@ -1338,7 +1338,13 @@ void displayWriteMode() {
       M5.update();
       
       if (check_select_press()) {
-      if (!(currentState == Explorer))
+      if (RFIDmenu[cursor].command == 27)
+      {
+        rstOverride = false;
+        isSwitching = true;
+        current_proc = RFIDmenu[cursor].command;
+      }
+      else if (!(currentState == Explorer))
       {
         if (RFIDmenu[cursor].command == 0)
         {
