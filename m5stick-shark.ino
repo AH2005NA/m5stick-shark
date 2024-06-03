@@ -1375,7 +1375,11 @@ void displayWriteMode() {
               uidString += String(UID[i], HEX);
           }
           uidString += "/n";
+          #ifdef KB
           String fullPath = "/RFID/" + Inputfilename("0") + ".txt";
+          #else
+          String fullPath = "/RFID/" + Inputfilename("/RFID/") + ".txt";
+          #endif
           appendToFile(SD, fullPath.c_str(), uidString.c_str());
         #endif
           //currentState = ;

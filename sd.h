@@ -220,4 +220,16 @@ String Inputfilename(String defaultname){
   }
   return currentname;
 }
+#else
+String Inputfilename(String defaultname){
+  uint8_t i=0;
+  while (1)
+  {
+    i++;
+    if(!(readFile(SD, defaultname + String(i) + ".txt") == "false"))
+    {
+      return String(i);
+    }
+  }
+}
 #endif
