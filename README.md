@@ -11,6 +11,7 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 
 ## My Changelog
 DEV 1.0.5
+* RFID (With SD)
 
 DEV 1.0.4
 * M5Button(Btn G0 by Cardputer) presst while (After) Startup: no Startupsound
@@ -29,7 +30,6 @@ DEV 1.0.3 and older
 ## My ToDo list
 * IR_AH app (IR Receive)
 * IR_AH app (save remotes to SD card)
-* RFID
 * Windows app
 * ideas?
 
