@@ -77,7 +77,7 @@ String choosefile(fs::FS &fs, const char *dirname, uint8_t number) {
     while(file.available()){
         //Serial.write(file.read());
         //rturnstr = rturnstr + String(file.read());
-        rturnstr = rturnstr + (char *)file.read();
+        rturnstr += (char)file.read();
     }
     file.close();
     return rturnstr;

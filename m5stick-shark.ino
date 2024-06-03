@@ -1307,18 +1307,18 @@ void check_menu_press() {
     MENU RFIDmenu[] = {
       { TXT_BACK, 27 },
       { "Write", 0 },
-      { "Read  to  SD", 3 },
+      { "Load from SD", 3 },
     };
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
  
 // -+-+-+-+ IncursioHack RFID START -+-+-+-+
 void displayReadMode() {
-  DISP.setCursor(0, 70);
+  DISP.setCursor(0, 60);
   displayUID();
 }
 
 void displayWriteMode() {
-  DISP.setCursor(0, 70);
+  DISP.setCursor(0, 60);
   displayUID();
 }
 
@@ -1346,6 +1346,8 @@ void displayWriteMode() {
           RFIDmenu[cursor].command = 1;
           currentState = read_mode;
           readUID = false;
+          strcpy(RFIDmenu[2].name, "Load from SD");
+          RFIDmenu[2].command = 3;
         }
         if (RFIDmenu[cursor].command == 1 && readUID)
         {
@@ -1353,8 +1355,10 @@ void displayWriteMode() {
           RFIDmenu[cursor].command = 0;
           currentState = write_mode;
           readUID = true;
+          strcpy(RFIDmenu[2].name, "Save  to  SD");
+          RFIDmenu[2].command = 2;
         }
-        if (RFIDmenu[cursor].command == 2)
+        if (RFIDmenu[cursor].command == 2 && sdcardMounted)
         {//save to file
         #if defined(SDCARD)
           String uidString = String(piccType, DEC);
@@ -1376,7 +1380,7 @@ void displayWriteMode() {
         #endif
           //currentState = ;
         }
-        if (RFIDmenu[cursor].command == 3)
+        if (RFIDmenu[cursor].command == 3 && sdcardMounted)
         {//Load from file
         #if defined(SDCARD)
           for (uint8_t i=0; i<(sizeof(Menubuffer) / sizeof(MENU)); i++)
@@ -1397,7 +1401,26 @@ void displayWriteMode() {
           currentState = Explorer;
         }
       } 
-
+      else
+      {
+        #if defined(SDCARD)
+            String fullPath = "/RFID/" + String(Menubuffer[cursor].name);
+            String filedata = readFile(SD, fullPath.c_str());
+            Serial.print(filedata);
+            const char* filedatac = filedata.c_str();
+            String numStr = String(filedatac[1]) + String(filedatac[2]);
+            UIDLength = numStr.toInt();
+            Serial.print(UIDLength);
+            for(int i=0; i < UIDLength; i++)
+            {
+              numStr = String(filedatac[(i*2)+3]) + String(filedatac[(i*2)+4]);
+              UID[i] = strtol(numStr.c_str(), NULL, 16);
+            }
+            strcpy(RFIDmenu[1].name, "Read");
+            RFIDmenu[1].command = 0;
+            currentState = write_mode;
+        #endif
+      }
         switch (currentState) {
           case read_mode:
             drawmenu(RFIDmenu, RFIDmenu_size);
@@ -1408,36 +1431,22 @@ void displayWriteMode() {
             displayWriteMode();
             break;
           case Explorer:
-            String fullPath = "/RFID/" + String(Menubuffer[cursor].name);
-            String filedata = readFile(SD, fullPath.c_str());
-            Serial.print(filedata);
-            const char* filedatac = filedata.c_str();
-            String numStr = String(filedatac[1]) + String(filedatac[2]);
-            Serial.print(numStr);
-            DISP.print(numStr.toInt());
-            for(int i=0; i < numStr.toInt(); i++)
-            {
-              Serial.print(".");
-              //UID
-            }
-            currentState = write_mode;
             break;
         }
         delay(250);
-
       }
       if (check_next_press()) {
         cursor++;
         switch (currentState) {
           case read_mode:
-            displayReadMode();
             cursor = cursor % RFIDmenu_size;
             drawmenu(RFIDmenu, RFIDmenu_size);
+            displayReadMode();
             break;
           case write_mode:
-            displayWriteMode();
             cursor = cursor % RFIDmenu_size;
             drawmenu(RFIDmenu, RFIDmenu_size);
+            displayWriteMode();
             break;
           case Explorer:
             cursor = cursor % Menubuffer_size;
@@ -1457,6 +1466,9 @@ void displayWriteMode() {
   drawmenu(RFIDmenu, RFIDmenu_size);
   switch (currentState) {
     case read_mode:
+      strcpy(RFIDmenu[2].name, "Save  to  SD");
+      RFIDmenu[2].command = 2;
+      drawmenu(RFIDmenu, RFIDmenu_size);
       displayReadMode();
       readCard();
       break;
@@ -1498,7 +1510,6 @@ void readCard() {
       UID[i] = mfrc522.uid.uidByte[i];
     }
     Serial.println();
-    displayUID();
     delay(750);
   }
 }
@@ -1511,6 +1522,7 @@ void displayUID() {
     DISP.print(UID[i] < 0x10 ? " 0" : " ");
     DISP.print(UID[i], HEX);
   }
+  DISP.println("");
 }
 
 void writeCard() {
@@ -1524,7 +1536,7 @@ void writeCard() {
     DISP.setTextColor(RED);
     DISP.setTextSize(SMALL_TEXT); // Reduce text size
     DISP.println();
-    DISP.println("RFID_FAIL");
+    DISP.println("      RFID_FAIL");
     DISP.setTextSize(SMALL_TEXT); // Reduce text size
     DISP.setTextColor(FGCOLOR, BGCOLOR);
   }
