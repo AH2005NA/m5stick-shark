@@ -223,10 +223,12 @@ String Inputfilename(String defaultname){
 #else
 String Inputfilename(String defaultname){
   uint8_t i=0;
+  String name;
   while (1)
   {
     i++;
-    if(!(readFile(SD, defaultname + String(i) + ".txt") == "false"))
+    name =  defaultname + String(i) + ".txt";
+    if(!(readFile(SD, name.c_str()) == "false"))
     {
       return String(i);
     }
