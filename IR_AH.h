@@ -19,7 +19,7 @@ void TransmitIR(uint16_t RAWdata[], uint16_t freq)
 uint64_t RecIR(void)
 {
   delay(100);
-  IRrecv irrecv(IRREC);
+  IRrecv irrecv(PortBpinOUT);
   decode_results results;
   irrecv.enableIRIn();
   while(1)

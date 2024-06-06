@@ -57,7 +57,8 @@ String platformName = "StickC+";
 // -=-=- ALIASES -=-=-
 #define DISP M5.Lcd
 #define IRLED 9
-#define IRREC 26
+#define PortBpinIN 33
+#define PortBpinOUT 32
 #define SPEAKER M5.Beep
 //  #define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);// NOT TESTED YET
 #define BITMAP Serial.println("unsupported")
@@ -90,7 +91,8 @@ String platformName = "StickC+2";
 // -=-=- ALIASES -=-=-
 #define DISP M5.Lcd
 #define IRLED 19
-#define IRREC 26
+#define PortBpinIN 33
+#define PortBpinOUT 32
 #define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);
 #define M5_BUTTON_MENU 35
 #define M5_BUTTON_HOME 37
@@ -126,7 +128,8 @@ String platformName = "StickC";
 // -=-=- ALIASES -=-=-
 #define DISP M5.Lcd
 #define IRLED 9
-#define IRREC 26
+#define PortBpinIN 33
+#define PortBpinOUT 32
 #define BITMAP Serial.println("unsupported")
 #define SD_CLK_PIN 0
 #define SD_MISO_PIN 36
@@ -160,7 +163,8 @@ String platformName = "Cardputer";
 #define DISP M5Cardputer.Display
 #define UperBtn 0
 #define IRLED 44
-#define IRREC 26
+#define PortBpinIN 1
+#define PortBpinOUT 2
 #define BACKLIGHT 38
 #define MINBRIGHT 165
 #define SPEAKER M5Cardputer.Speaker
@@ -601,7 +605,6 @@ void check_menu_press() {
       { "Bluetooth", 16 },
       { "WiFi", 12 },
       { "QR Codes", 18 },
-      { "IR AH", 24 },
       { "Modules", 27 },
       { TXT_SETTINGS, 2 },
     };
@@ -1250,18 +1253,18 @@ void check_menu_press() {
     void IR_AH_Receive_setup(void) {
       rstOverride = true;
       isSwitching = false;
-      DISP.fillScreen(BGCOLOR);
-      DISP.setCursor(0, 0, SMALL_TEXT);
-      DISP.print(TXT_hw_to_conect);
-      DISP.setCursor(0, 68, TINY_TEXT);
-      DISP.print(TXT_snsor_req);
-      DISP.setCursor(0, 106, TINY_TEXT);
-      DISP.print("G");
-      DISP.setCursor(16, 106, TINY_TEXT);
-      DISP.print(String(IRREC));
-      DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 105, 0, 135, 5);
-      delay(250);
-      while(!check_select_press());
+      //DISP.fillScreen(BGCOLOR);
+      //DISP.setCursor(0, 0, SMALL_TEXT);
+      //DISP.print(TXT_hw_to_conect);
+      //DISP.setCursor(0, 68, TINY_TEXT);
+      //DISP.print(TXT_snsor_req);
+      //DISP.setCursor(0, 106, TINY_TEXT);
+      //DISP.print("G");
+      //DISP.setCursor(16, 106, TINY_TEXT);
+      //DISP.print(String(IRREC));
+      //DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 105, 0, 135, 5);
+      //delay(250);
+      //while(!check_select_press());
     }
 
     void IR_AH_Receive_loop(void) {
@@ -1279,6 +1282,7 @@ void check_menu_press() {
 
     MENU Modulesmenu[] = {
       { TXT_BACK, 1 },
+      { "IR AH", 24 },
       { "RFID", 28 },
     };
     int Modulesmenu_size = sizeof(Modulesmenu) / sizeof(MENU);
