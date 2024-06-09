@@ -102,6 +102,8 @@
   #define TXT_IR_RX "IR Receive"
   #define TXT_Song_dis "Song disabled"
   #define TXT_Song_en "Song enabled"
+  #define TXT_Savetosd "Save to SD"
+  #define TXT_Transmit "Transmit"
 #endif
 
 #if defined(LANGUAGE_GER)
@@ -208,6 +210,8 @@
   #define TXT_IR_RX "IR Empfangen"
   #define TXT_Song_dis "Song Aus"
   #define TXT_Song_en "Song Ein"
+  #define TXT_Savetosd "Auf SD speichern"
+  #define TXT_Transmit "Senden"
 #endif
 
 #if defined(LANGUAGE_PT_BR)
@@ -314,6 +318,8 @@
   #define TXT_IR_RX "IR Receber"
   #define TXT_Song_dis "Song desativada"
   #define TXT_Song_en "Song habilitado"
+  #define TXT_Savetosd "Salvar em SD"
+  #define TXT_Transmit "Transmite"
 #endif
 
 
@@ -421,6 +427,8 @@
   #define TXT_IR_RX "IR Ricevere"
   #define TXT_Song_dis "Song disabilitata"
   #define TXT_Song_en "Song abilitata"
+  #define TXT_Savetosd "Salva su SD"
+  #define TXT_Transmit "Trasmettere"
 #endif
 
 #if defined(LANGUAGE_FR_FR)
@@ -527,4 +535,6 @@
   #define TXT_IR_RX "IR Recevoir"
   #define TXT_Song_dis "Song désactivée"
   #define TXT_Song_en "Song activée"
+  #define TXT_Savetosd "Enregistrer sur SD"
+  #define TXT_Transmit "Transmettre"
 #endif

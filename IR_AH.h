@@ -1,3 +1,8 @@
+#include "esp32-hal.h"
+
+
+uint16_t RawIRBuffer[255];
+uint8_t LenRAWIR;
 
 void TransmitIR(uint16_t RAWdata[], uint16_t freq)
 {
@@ -16,32 +21,34 @@ void TransmitIR(uint16_t RAWdata[], uint16_t freq)
   //digitalWrite(IRLED, M5LED_OFF);
 }
 
-uint64_t RecIR(void)
+
+uint8_t RecIR(decode_results *results)
 {
-  delay(100);
-  IRrecv irrecv(PortBpinOUT);
-  decode_results results;
-  irrecv.enableIRIn();
-  while(1)
-  {
-    if (irrecv.decode(&results))
-    {
-      uint16_t *raw_array = resultToRawArray(&results);
+      uint16_t count = results->rawlen;
+      if (count>255)
+      {
+        count=255;
+      }
+      //uint16_t *raw_array = resultToRawArray(&results);
       // Print the raw received IR data to the serial monitor
       Serial.println("Raw IR data:");
-      for(uint8_t i=0; i<getCorrectedRawLength(&results); i++)
-      {
-        Serial.print(String(raw_array[i], HEX));
-        Serial.println(", ");
+          Serial.print(count);
+      Serial.println(":");
+      //serialPrintUint64(results.value, 16);
+      
+      for (uint8_t i = 1; i < count; i++) {
+        if (i % 100 == 0)
+          yield();  // Preemptive yield every 100th entry to feed the WDT.
+        if (i & 1) {
+          RawIRBuffer[i] = results->rawbuf[i] * kRawTick;
+          Serial.print(RawIRBuffer[i], HEX);
+        } else {
+          Serial.print(", ");
+          RawIRBuffer[i] = (uint32_t) results->rawbuf[i] * kRawTick;
+          Serial.print(RawIRBuffer[i], HEX);
+        }
       }
-      Serial.print("data: ");
-      serialPrintUint64(results.value, HEX);
-      Serial.println("");
-      irrecv.resume();
-      return results.value;
+      return 1;//results.value;
       //return results.value;
       // Enable the IR receiver for the next data
-    }
-    //delay(100);
-  }
 }

@@ -265,7 +265,7 @@ const byte PortalTickTimer = 1000;
 String apSsidName = String("");
 bool isSwitching = true;
 #if defined(RTC)
-int current_proc = 0;  // Start in Clock Mode
+int current_proc = 0;  //0 Start in Clock Mode
 #else
 int current_proc = 1;  // Start in Main Menu mode if no RTC
 #endif
@@ -368,6 +368,11 @@ MFRC522::PICC_Type piccType;
 byte UID[20];
 uint8_t UIDLength = 0;
 // -+-+-+-+ RFID END-+-+-+-+
+
+enum irstate {
+  Read,
+  savesend
+} IRcurState;
 
 
 void drawmenu(MENU thismenu[], int size) {
@@ -1155,6 +1160,7 @@ void check_menu_press() {
       DISP.setTextSize(SMALL_TEXT);
       cursor = 0;
       rstOverride = true;
+      isSwitching = false;
       delay(1000);
       drawmenu(IRAHmenu, IRAHmenu_size);
     }
@@ -1193,6 +1199,7 @@ void check_menu_press() {
       DISP.fillScreen(BGCOLOR);
       cursor = 0;
       rstOverride = true;
+      isSwitching = false;
       delay(250);
       drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
     }
@@ -1241,42 +1248,92 @@ void check_menu_press() {
             drawmenu(Menubuffer, Menubuffer_size);
             delay(250);
           } else {
-          rstOverride = false;
-          isSwitching = true;
+            isSwitching = false;
+            drawmenu(IRAHmenu, IRAHmenu_size);
             current_proc = IR_AH_Transmitmenu[cursor].command;
+            delay(250);
           }
         }
       }
     }
 
+    decode_results results;
+    IRrecv irrecv(PortBpinIN);
+
+    MENU IR_AH_RECmenu[] = {
+      { TXT_BACK, 0 },
+      { TXT_Savetosd, 1 },
+      { TXT_Transmit, 2 },
+    };
+
+    int IR_AH_RECmenu_size = sizeof(IR_AH_RECmenu) / sizeof(MENU);
 
     void IR_AH_Receive_setup(void) {
+      IRcurState = Read;
       rstOverride = true;
       isSwitching = false;
-      //DISP.fillScreen(BGCOLOR);
-      //DISP.setCursor(0, 0, SMALL_TEXT);
-      //DISP.print(TXT_hw_to_conect);
-      //DISP.setCursor(0, 68, TINY_TEXT);
-      //DISP.print(TXT_snsor_req);
-      //DISP.setCursor(0, 106, TINY_TEXT);
-      //DISP.print("G");
-      //DISP.setCursor(16, 106, TINY_TEXT);
-      //DISP.print(String(IRREC));
+      DISP.fillScreen(BGCOLOR);
+      DISP.setCursor(0, 0, BIG_TEXT);
+      DISP.print("   Waiting         for IR");
+      DISP.setCursor(0, 115, TINY_TEXT);
+      DISP.print("   UNIT connected?");
+      irrecv.enableIRIn();
       //DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 105, 0, 135, 5);
-      //delay(250);
-      //while(!check_select_press());
     }
 
     void IR_AH_Receive_loop(void) {
-      DISP.fillScreen(BGCOLOR);
-      DISP.setCursor(0, 0, 2);
-      uint64_t Buf = RecIR();
-      DISP.println(String(Buf, HEX));
-      //Serial.pintln(Buf);
-      if(check_next_press())
-      {
-        current_proc = 24;
-      }
+        switch (IRcurState) {
+          case Read:
+            if (irrecv.decode(&results))
+            {
+              LenRAWIR = RecIR(&results);
+              irrecv.resume();  // Receive the next value
+              cursor = 1;
+              IRcurState = savesend;
+              drawmenu(IR_AH_RECmenu, IR_AH_RECmenu_size);
+            }
+            //Serial.pintln(Buf);
+            if(check_next_press())
+            {
+              cursor = 0;
+              current_proc = 24;
+              drawmenu(IRAHmenu, IRAHmenu_size);
+              delay(100);
+            }
+          break;
+          case savesend:
+            if(check_select_press())
+            {
+              if (IR_AH_Transmitmenu[cursor].command == 0)
+              {
+                IRcurState = Read;
+                DISP.fillScreen(BGCOLOR);
+                DISP.setCursor(0, 0, BIG_TEXT);
+                DISP.print("   Waiting         for IR");
+                DISP.setCursor(0, 115, TINY_TEXT);
+                DISP.print("   UNIT connected?");
+              }
+              else if(IR_AH_Transmitmenu[cursor].command == 1)
+              {
+                IRcurState = Read;
+                DISP.fillScreen(BGCOLOR);
+              }
+              else
+              {
+                TransmitIR(RawIRBuffer, 38000);
+              }
+            }
+            if(check_next_press())
+            {
+              cursor ++;
+              drawmenu(IR_AH_RECmenu, IR_AH_RECmenu_size);
+              delay(250);
+            }
+          break;
+          //case read_mode:
+          //break;
+        }
+        delay(100);
     }
 
 
