@@ -1215,7 +1215,7 @@ void check_menu_press() {
         }
         if (check_select_press()) {
           if (cursor) {
-            TransmitIR(Allremotes[whichrwmote-1][cursor-1].Raw, Allremotes[whichrwmote-1][cursor-1].kFrequency);
+            TransmitIR(Allremotes[whichrwmote-1][cursor-1].Raw, 0, 38);// Allremotes[whichrwmote-1][cursor-1].kFrequency);
           } else {
             cursor=0;
             whichrwmote=0;
@@ -1320,7 +1320,7 @@ void check_menu_press() {
               }
               else
               {
-                TransmitIR(RawIRBuffer, 38000);
+                TransmitIR(RawIRBuffer, LenRAWIR, 38);
               }
             }
             if(check_next_press())

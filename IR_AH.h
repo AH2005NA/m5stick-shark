@@ -2,14 +2,21 @@
 
 
 uint16_t RawIRBuffer[255];
-uint8_t LenRAWIR;
+int LenRAWIR;
 
-void TransmitIR(uint16_t RAWdata[], uint16_t freq)
+void TransmitIR(uint16_t RAWdata[], int Numpairs, uint16_t freq)
 {
   IRsend irsender(IRLED);
   irsender.begin();
-  int Numpairs = sizeof(RAWdata);
+  if (Numpairs == 0)
+  {
+    Numpairs = sizeof(RAWdata);
+  }
   irsender.sendRaw(RAWdata, Numpairs, freq);
+  Serial.print(Numpairs);
+  Serial.print("WMW");
+  Serial.print(freq);
+
   //uint16_t Adress = 0xdadd;
   //uint16_t code = 0x4444;
   //irsender.sendNEC(Adress, 16, true);
@@ -32,7 +39,7 @@ uint8_t RecIR(decode_results *results)
       //uint16_t *raw_array = resultToRawArray(&results);
       // Print the raw received IR data to the serial monitor
       Serial.println("Raw IR data:");
-          Serial.print(count);
+      Serial.print(count);
       Serial.println(":");
       //serialPrintUint64(results.value, 16);
       
@@ -48,7 +55,7 @@ uint8_t RecIR(decode_results *results)
           Serial.print(RawIRBuffer[i], HEX);
         }
       }
-      return 1;//results.value;
+      return count;//results.value;
       //return results.value;
       // Enable the IR receiver for the next data
 }
