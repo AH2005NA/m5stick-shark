@@ -1215,7 +1215,7 @@ void check_menu_press() {
         }
         if (check_select_press()) {
           if (cursor) {
-            TransmitIR(Allremotes[whichrwmote-1][cursor-1].Raw, 0, 38);// Allremotes[whichrwmote-1][cursor-1].kFrequency);
+            TransmitIR(Allremotes[whichrwmote-1][cursor-1].Raw, 0, 100, 38);// Allremotes[whichrwmote-1][cursor-1].kFrequency);
           } else {
             cursor=0;
             whichrwmote=0;
@@ -1238,7 +1238,7 @@ void check_menu_press() {
             cursor = 0;
             for(uint8_t i = 1; i < sizeof(Menubuffer) / sizeof(MENU)+1; i++)
             {
-              if(Allremotes[whichrwmote-1][i-1].name == "1" && Allremotes[whichrwmote-1][i-1].Raw == (uint16_t*)1 && Allremotes[whichrwmote-1][i-1].kFrequency == 1)
+              if((Allremotes[whichrwmote-1][i-1].name == "1") && (Allremotes[whichrwmote-1][i-1].Raw == (uint16_t*)1) && (Allremotes[whichrwmote-1][i-1].kFrequency == 1))
               {
                 Menubuffer_size=i;
                 break;
@@ -1281,12 +1281,13 @@ void check_menu_press() {
       //DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 105, 0, 135, 5);
     }
 
+  uint8_t dcodetype;
     void IR_AH_Receive_loop(void) {
         switch (IRcurState) {
           case Read:
             if (irrecv.decode(&results))
             {
-              LenRAWIR = RecIR(&results);
+              dcodetype = RecIR(&results);
               irrecv.resume();  // Receive the next value
               cursor = 1;
               IRcurState = savesend;
@@ -1320,7 +1321,7 @@ void check_menu_press() {
               }
               else
               {
-                TransmitIR(RawIRBuffer, LenRAWIR, 38);
+                TransmitIR(RawIRBuffer, dcodetype, LenRAWIR, 38);
               }
             }
             if(check_next_press())
