@@ -3,7 +3,7 @@
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
-// #define STICK_C_PLUS2
+ #define STICK_C_PLUS2
 // #define STICK_C
 // #define CARDPUTER
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
@@ -1281,10 +1281,12 @@ void check_menu_press() {
       //DISP.qrcode("https://github.com/AH2005NA/m5stick-shark/blob/main/IR_AH_Remotes/README.md", 105, 0, 135, 5);
     }
 
-  uint8_t dcodetype;
+  uint8_t dcodetype = 0;
     void IR_AH_Receive_loop(void) {
         switch (IRcurState) {
           case Read:
+          while(1)
+          {
             if (irrecv.decode(&results))
             {
               dcodetype = RecIR(&results);
@@ -1292,6 +1294,7 @@ void check_menu_press() {
               cursor = 1;
               IRcurState = savesend;
               drawmenu(IR_AH_RECmenu, IR_AH_RECmenu_size);
+              break;
             }
             //Serial.pintln(Buf);
             if(check_next_press())
@@ -1300,7 +1303,9 @@ void check_menu_press() {
               current_proc = 24;
               drawmenu(IRAHmenu, IRAHmenu_size);
               delay(100);
+              break;
             }
+          }
           break;
           case savesend:
             if(check_select_press())
@@ -1327,6 +1332,7 @@ void check_menu_press() {
             if(check_next_press())
             {
               cursor ++;
+              cursor = cursor % IR_AH_RECmenu_size;
               drawmenu(IR_AH_RECmenu, IR_AH_RECmenu_size);
               delay(250);
             }
@@ -3165,6 +3171,7 @@ void writeCard() {
 
     /// ENTRY ///
     void setup() {
+    Serial.begin(115200);
 #if defined(CARDPUTER)
       auto cfg = M5.config();
       M5Cardputer.begin(cfg, true);

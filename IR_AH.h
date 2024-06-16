@@ -7,10 +7,14 @@ uint64_t reslt;
 
 void TransmitIR(uint16_t RAWdata[], uint8_t decodetype, uint16_t Numpairs, uint16_t freq)
 {
+  delay_ten_us(30500);
   IRsend irsender(IRLED);
   irsender.begin();
+  digitalWrite(IRLED, M5LED_OFF);
+    Serial.print(decodetype);
+    //Serial.print(reslt);
   if (decodetype == 0) {
-    irsender.sendRaw(RAWdata, Numpairs, freq);
+    irsender.sendRaw(RAWdata, Numpairs/*2*/, freq);
     Serial.print(Numpairs);
     Serial.printf("WMW");
     Serial.print(freq);
@@ -25,7 +29,7 @@ void TransmitIR(uint16_t RAWdata[], uint8_t decodetype, uint16_t Numpairs, uint1
   } else if (decodetype == 5) {
     irsend.sendRCMM(reslt);
   } else if (decodetype == 6) {
-    irsend.sendPANASONIC(reslt);
+    //irsend.sendPANASONIC(reslt);
   }
   if (Numpairs == 0)
   {
@@ -47,7 +51,7 @@ void TransmitIR(uint16_t RAWdata[], uint8_t decodetype, uint16_t Numpairs, uint1
 uint8_t RecIR(decode_results *results)
 {
   uint8_t decoding;
-  if (results->decode_type == UNKNOWN) {
+
       LenRAWIR = results->rawlen;
       //uint16_t *raw_array = resultToRawArray(&results);
       // Print the raw received IR data to the serial monitor
@@ -69,6 +73,8 @@ uint8_t RecIR(decode_results *results)
         }
       }
     decoding = 0;
+    /*
+  if (results->decode_type == UNKNOWN) {
   } else if (results->decode_type == NEC) {
     Serial.print("Decoded NEC: ");
     decoding = 1;
@@ -109,7 +115,10 @@ uint8_t RecIR(decode_results *results)
     Serial.print("Decoded Nikai: ");
     decoding = 13;
   }
+  */
   reslt = (uint64_t)results->value;
   serialPrintUint64(reslt, 16);
+    Serial.print("decoding");
+    Serial.print(decoding);
   return decoding;
 }
