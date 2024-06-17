@@ -16,7 +16,7 @@ on:
         description: 'Board to Compile'
         type: choice
         required: true
-        default: 'M5Cardputer'
+        default: 'M5Dial'
         options: ['M5Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC']
 
 jobs:
