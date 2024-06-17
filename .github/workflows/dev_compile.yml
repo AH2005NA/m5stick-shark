@@ -38,7 +38,7 @@ jobs:
               name: "Dial",
               fqbn: "m5stack:esp32:",
               extra_flags: "-DDial",
-              libraries: "M5CardputerM5Dial IRRemoteESP8266 M5Unified ",
+              libraries: "M5Dial IRRemoteESP8266 M5Unified ",
               partitions: {
                 bootloader_addr: "0x0000",
               },
