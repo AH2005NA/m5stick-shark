@@ -17,7 +17,7 @@ on:
         type: choice
         required: true
         default: 'M5Cardputer'
-        options: ['Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC',]
+        options: ['M5Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC',]
 
 jobs:
   compile_sketch:
@@ -35,8 +35,8 @@ jobs:
           - it-it
         board:
           - {
-              name: "Dial",
-              fqbn: "m5stack:esp32:m5dial",
+              name: "M5Dial",
+              fqbn: "m5stack:esp32:m5stack_dial",
               extra_flags: "-DDial",
               libraries: "M5Dial IRRemoteESP8266 M5Unified ",
               partitions: {
