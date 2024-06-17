@@ -24,7 +24,7 @@ jobs:
     name: Build ${{ matrix.board.name }} (${{ matrix.locale }})
     runs-on: ubuntu-latest
     strategy:
-      # max-parallel: 4
+      # max-parallel: 5
       fail-fast: false
       matrix:
         locale:
