@@ -205,7 +205,7 @@ String platformName = "Dial";
 #define BACKLIGHT 9
 #define MINBRIGHT 165
 #define SPEAKER M5Dial.Speaker
-#define BITMAP DISP.pushImage(0, 50, 240, 135, (uint16_t *)SHARKMatrix);
+#define BITMAP DISP.pushImage(0, 0, 240, 240, (uint16_t *)SHARKMatrix);
 #define VBAT_PIN 15
 #define M5_BUTTON_HOME 46
 #define M5LED_ON LOW
@@ -3099,7 +3099,11 @@ void writeCard() {
 #if defined(RTC)
 #if defined(DTime)
       auto dt = DTget.getDateTime();
+#if defined(DIAL)
+      DISP.pushImage(0, 50, 240, 135, (uint16_t *)AllImages[dt.time.seconds % valImages]);
+#else
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[dt.time.seconds % valImages]);
+#endif
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
