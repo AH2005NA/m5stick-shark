@@ -25,8 +25,8 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL)
-// #define STICK_C_PLUS2
- #define CARDPUTER
+ #define DIAL
+// #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER) && !defined(LANGUAGE_IT_IT) && !defined(LANGUAGE_FR_FR)

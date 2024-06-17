@@ -17,7 +17,7 @@ on:
         type: choice
         required: true
         default: 'M5Dial'
-        options: ['M5Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC',]
+        options: ['M5Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC']
 
 jobs:
   compile_sketch:
