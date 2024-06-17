@@ -6,7 +6,7 @@
 // #define STICK_C_PLUS2
 // #define STICK_C
 // #define CARDPUTER
- #define Dial
+// #define Dial
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
