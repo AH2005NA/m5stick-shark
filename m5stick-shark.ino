@@ -6,7 +6,7 @@
 // #define STICK_C_PLUS2
 // #define STICK_C
 // #define CARDPUTER
-// #define Dial
+// #define DIAL
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
@@ -24,7 +24,7 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #define SHARK_VERSION "dev 1.0.5"
 #endif
 
-#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(Dial)
+#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL)
 // #define STICK_C_PLUS2
  #define CARDPUTER
 #endif
@@ -182,7 +182,7 @@ String platformName = "Cardputer";
 #endif
 
 
-#if defined(Dial)
+#if defined(DIAL)
 #include <M5Dial.h>
 // -=-=- Display -=-=-
 String platformName = "Dial";
@@ -411,7 +411,7 @@ enum irstate {
 } IRcurState;
 
 
-#ifdef Dial
+#ifdef DIAL
 
 void drawmenu(MENU thismenu[], int size) {
   DISP.setTextSize(SMALL_TEXT);
@@ -646,7 +646,7 @@ void check_menu_press() {
 #if defined(KB)
     if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
 #endif
-#if defined(Dial)
+#if defined(DIAL)
       M5Dial.update();
       auto t = M5Dial.Touch.getDetail();
       if (t.isHolding()) {
@@ -680,7 +680,7 @@ void check_menu_press() {
         dimtimer();
         return true;
       }
-#elif defined(Dial)
+#elif defined(DIAL)
   M5Dial.update();
   int newPosition = M5Dial.Encoder.read();
   if (-2 > newPosition)
@@ -712,7 +712,7 @@ void check_menu_press() {
         dimtimer();
         return true;
       }
-#elif defined(Dial)
+#elif defined(DIAL)
       M5Dial.update();
       auto t = M5Dial.Touch.getDetail();
       if (t.isPressed()) {
@@ -3103,7 +3103,7 @@ void writeCard() {
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
-      #ifdef Dial
+      #ifdef DIAL
       if (EEPROM.read(6))
       #else
       if (EEPROM.read(6) && digitalRead(M5_BUTTON_HOME))
@@ -3306,7 +3306,7 @@ void writeCard() {
 #if defined(CARDPUTER)
       auto cfg = M5.config();
       M5Cardputer.begin(cfg, true);
-#elif defined(Dial)
+#elif defined(DIAL)
     auto cfg = M5.config();
     M5Dial.begin(cfg, true, false);
 #else
