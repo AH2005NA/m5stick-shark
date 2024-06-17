@@ -36,7 +36,7 @@ jobs:
         board:
           - {
               name: "Dial",
-              fqbn: "m5stack:esp32:",
+              fqbn: "m5stack:esp32:m5dial",
               extra_flags: "-DDial",
               libraries: "M5Dial IRRemoteESP8266 M5Unified",
               partitions: {
