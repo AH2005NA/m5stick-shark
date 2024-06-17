@@ -178,7 +178,7 @@ bool setupSdCard() {
 #endif
 
 
-
+#ifdef SDCARD
 #ifdef CARDPUTER
 String Inputfilename(String defaultname){
   DISP.fillScreen(BGCOLOR);
@@ -234,4 +234,5 @@ String Inputfilename(String defaultname){
     }
   }
 }
+#endif
 #endif

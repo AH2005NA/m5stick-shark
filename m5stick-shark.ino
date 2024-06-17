@@ -3,9 +3,10 @@
 
 // -=-=-=-=-=-=- Uncomment the platform you're building for -=-=-=-=-=-=-
 // #define STICK_C_PLUS
- #define STICK_C_PLUS2
+// #define STICK_C_PLUS2
 // #define STICK_C
 // #define CARDPUTER
+ #define Dial
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
@@ -23,7 +24,7 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #define SHARK_VERSION "dev 1.0.5"
 #endif
 
-#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C)
+#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(Dial)
 // #define STICK_C_PLUS2
  #define CARDPUTER
 #endif
@@ -83,6 +84,8 @@ String platformName = "StickC+2";
 #define M5LED 19
 #define ROTATION
 #define USE_EEPROM
+#define DTime
+#define DTget StickCP2.Rtc
 #define RTC     //TODO: plus2 has a BM8563 RTC but the class isn't the same, needs work.
 #define SDCARD  //Requires a custom-built adapter
 #define PWRMGMT
@@ -176,6 +179,39 @@ String platformName = "Cardputer";
 #define VBAT_PIN 10
 #define M5LED_ON LOW
 #define M5LED_OFF HIGH
+#endif
+
+
+#if defined(Dial)
+#include <M5Dial.h>
+// -=-=- Display -=-=-
+String platformName = "Dial";
+#define BIG_TEXT 4
+#define MEDIUM_TEXT 3
+#define SMALL_TEXT 2
+#define TINY_TEXT 1
+// -=-=- FEATURES -=-=-
+#define DTime
+#define DTget M5Dial.Rtc
+#define RTC
+#define USE_EEPROM
+#define SONG
+// -=-=- ALIASES -=-=-
+#define DISP M5Dial.Display
+#define UperBtn 0
+#define PortBpinIN 1
+#define PortBpinOUT 2
+#define IRLED 2
+#define BACKLIGHT 9
+#define MINBRIGHT 165
+#define SPEAKER M5Dial.Speaker
+#define BITMAP DISP.pushImage(0, 50, 240, 135, (uint16_t *)SHARKMatrix);
+#define VBAT_PIN 15
+#define M5_BUTTON_HOME 46
+#define M5LED_ON LOW
+#define M5LED_OFF HIGH
+int abstand[] = {60, 50, 33, 23, 0, 23, 35, 55, 60, 10, 10};
+float Helligkeit[] = {0.3, 0.5, 0.7, 0.85, 1, 0.85, 0.7, 0.5, 0.3, 0, 0};
 #endif
 
 // -=-=-=-=-=- LIST OF CURRENTLY DEFINED FEATURES -=-=-=-=-=-
@@ -375,6 +411,70 @@ enum irstate {
 } IRcurState;
 
 
+#ifdef Dial
+
+void drawmenu(MENU thismenu[], int size) {
+  DISP.setTextSize(SMALL_TEXT);
+  DISP.fillScreen(BGCOLOR);
+  DISP.setCursor(0, 0, 1);
+  // scrolling menu
+  if (cursor < 0) {
+    cursor = size - 1;  // rollover hack for up-arrow on cardputer
+  }
+  if (cursor > 4)
+  {
+    for (int i = 0 + (cursor - 4); i < size; i++) {
+  DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30 - 10, 1);
+      DISP.setTextColor(adjustBrightness(FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+      DISP.setTextSize(MEDIUM_TEXT);
+      DISP.print(">");
+      }
+      if (cursor < i) {
+  DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30, 1);
+      }
+      DISP.print(thismenu[i].name);
+      DISP.setTextSize(SMALL_TEXT);
+    } 
+  } else{
+    for (int i = 0; i < size; i++) {
+  DISP.setCursor(abstand[(4 - cursor) + i], (110 - (cursor * 30))+ (i*30), 1);
+      DISP.setTextColor(adjustBrightness(FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+      DISP.setTextSize(MEDIUM_TEXT);
+      DISP.print(">");
+      }
+      if (cursor < i) {
+  DISP.setCursor(abstand[(4 - cursor) + i], (120 - (cursor * 30))+ (i*30), 1);
+      }
+      DISP.print(thismenu[i].name);
+      DISP.setTextSize(SMALL_TEXT);
+    } 
+  }
+}
+
+
+uint16_t adjustBrightness(uint16_t color, float brightnessFactor) {
+    // Extract RGB components
+    uint8_t red = (color >> 11) & 0x1F;   // 5 bits for red
+    uint8_t green = (color >> 5) & 0x3F;  // 6 bits for green
+    uint8_t blue = color & 0x1F;          // 5 bits for blue
+
+    // Scale down each color component
+    red = (uint8_t)(red * brightnessFactor);
+    green = (uint8_t)(green * brightnessFactor);
+    blue = (uint8_t)(blue * brightnessFactor);
+
+    // Ensure components stay within valid range
+    red = (red > 0x1F) ? 0x1F : red;
+    green = (green > 0x3F) ? 0x3F : green;
+    blue = (blue > 0x1F) ? 0x1F : blue;
+
+    // Reconstruct the RGB565 color
+    uint16_t newColor = (red << 11) | (green << 5) | blue;
+    return newColor;
+}
+#else
 void drawmenu(MENU thismenu[], int size) {
   setTextSize(SMALL_TEXT);
   fillScreen(BGCOLOR);
@@ -412,8 +512,8 @@ void drawmenu(MENU thismenu[], int size) {
   //time
 #if defined(RTC)
 setCursor(180, 0, 1);
-#if defined(STICK_C_PLUS2)
-      auto dt = StickCP2.Rtc.getDateTime();
+#if defined(DTime)
+      auto dt = DTget.getDateTime();
       DISP.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
 #elif defined(ESPTime)
       DISP.printf("%02d:%02d\n", rtcp.getHour(), rtcp.getMinute());
@@ -448,7 +548,7 @@ setCursor(180, 0, 1);
   #endif
   print("%");
 }
-
+#endif
 #ifdef CARDPUTER
 
 void number_drawmenu(int nums) {
@@ -546,6 +646,11 @@ void check_menu_press() {
 #if defined(KB)
     if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
 #endif
+#if defined(Dial)
+      M5Dial.update();
+      auto t = M5Dial.Touch.getDetail();
+      if (t.isHolding()) {
+#endif
 #if defined(M5_BUTTON_MENU)
       if (digitalRead(M5_BUTTON_MENU) == LOW) {
 #endif
@@ -561,7 +666,6 @@ void check_menu_press() {
         delay(100);
       }
     }
-
     bool check_next_press() {
 #if defined(KB)
       M5Cardputer.update();
@@ -576,6 +680,22 @@ void check_menu_press() {
         dimtimer();
         return true;
       }
+#elif defined(Dial)
+  M5Dial.update();
+  int newPosition = M5Dial.Encoder.read();
+  if (-2 > newPosition)
+  {
+    M5Dial.Encoder.write(0);
+    cursor = cursor - 2;
+    dimtimer();
+    return true;
+  }
+  if (2 < newPosition)
+  {
+    M5Dial.Encoder.write(0);
+    dimtimer();
+    return true;
+  }
 #else
   if (digitalRead(M5_BUTTON_RST) == LOW) {
     dimtimer();
@@ -592,6 +712,13 @@ void check_menu_press() {
         dimtimer();
         return true;
       }
+#elif defined(Dial)
+      M5Dial.update();
+      auto t = M5Dial.Touch.getDetail();
+      if (t.isPressed()) {
+    dimtimer();
+    return true;
+  }
 #else
   if (digitalRead(M5_BUTTON_HOME) == LOW) {
     dimtimer();
@@ -1984,8 +2111,8 @@ void writeCard() {
       DISP.setCursor(40, 40, 2);
 #endif
 
-#if defined(STICK_C_PLUS2)
-      auto dt = StickCP2.Rtc.getDateTime();
+#if defined(DTime)
+      auto dt = DTget.getDateTime();
       DISP.printf("%02d:%02d:%02d\n", dt.time.hours, dt.time.minutes, dt.time.seconds);
 #elif defined(ESPTime)
       DISP.printf("%02d:%02d:%02d\n", rtcp.getHour(), rtcp.getMinute(), rtcp.getSecond());
@@ -2006,8 +2133,8 @@ void writeCard() {
     }
 
     void timeset_loop() {
-#if defined(STICK_C_PLUS2)
-      auto dt = StickCP2.Rtc.getDateTime();
+#if defined(DTime)
+      auto dt = DTget.getDateTime();
       cursor = dt.time.hours;
 #elif defined(ESPTime)
       cursor = rtcp.getHour();
@@ -2040,7 +2167,7 @@ void writeCard() {
       DISP.setCursor(0, 0);
       DISP.println(TXT_SET_MIN);
       delay(2000);
-#if defined(STICK_C_PLUS2)
+#if defined(DTime)
       cursor = dt.time.minutes;
 #elif defined(ESPTime)
       cursor = rtcp.getMinute();
@@ -2070,8 +2197,8 @@ void writeCard() {
       int minute = cursor;
       DISP.fillScreen(BGCOLOR);
       DISP.setCursor(0, 0);
-#if defined(STICK_C_PLUS2)
-      StickCP2.Rtc.setDateTime({ { dt.date.year, dt.date.month, dt.date.date }, { hour, minute, 0 } });
+#if defined(DTime)
+      DTget.setDateTime({ { dt.date.year, dt.date.month, dt.date.date }, { hour, minute, 0 } });
 #elif defined(ESPTime)
       rtcp.setTime(0, minute, hour, 17, 1, 2021);
 #else
@@ -2970,13 +3097,17 @@ void writeCard() {
       screenBrightness(100);
 #ifdef SONG
 #if defined(RTC)
-#if defined(STICK_C_PLUS2)
-      auto dt = StickCP2.Rtc.getDateTime();
+#if defined(DTime)
+      auto dt = DTget.getDateTime();
       DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[dt.time.seconds % valImages]);
       delay(1000);
       BITMAP;
       //Random Startupsound 0...6
+      #ifdef Dial
+      if (EEPROM.read(6))
+      #else
       if (EEPROM.read(6) && digitalRead(M5_BUTTON_HOME))
+      #endif
       {
         setupSongs(dt.time.seconds % valsongs);
       }
@@ -3175,13 +3306,18 @@ void writeCard() {
 #if defined(CARDPUTER)
       auto cfg = M5.config();
       M5Cardputer.begin(cfg, true);
+#elif defined(Dial)
+    auto cfg = M5.config();
+    M5Dial.begin(cfg, true, false);
 #else
   M5.begin();
 #endif
 #if defined(BACKLIGHT)
       pinMode(BACKLIGHT, OUTPUT);  // Backlight analogWrite range ~150 - 255
 #endif
+    Serial.print("2");
       if (check_next_press()) {
+          Serial.print("3");
         clearSettings();
       }
 #if defined(USE_EEPROM)
@@ -3227,8 +3363,10 @@ void writeCard() {
       pinMode(IRLED, OUTPUT);
       digitalWrite(IRLED, M5LED_OFF);  //LEDOFF
 #endif
-#if !defined(KB)
+#if defined(M5_BUTTON_HOME)
       pinMode(M5_BUTTON_HOME, INPUT);
+#endif
+#if defined(M5_BUTTON_RST)
       pinMode(M5_BUTTON_RST, INPUT);
 #endif
 #if defined(M5_BUTTON_MENU)

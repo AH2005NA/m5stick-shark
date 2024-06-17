@@ -17,7 +17,7 @@ on:
         type: choice
         required: true
         default: 'M5Cardputer'
-        options: ['M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC']
+        options: ['Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC']
 
 jobs:
   compile_sketch:
@@ -34,6 +34,15 @@ jobs:
           - fr-fr
           - it-it
         board:
+          - {
+              name: "Dial",
+              fqbn: "m5stack:esp32:",
+              extra_flags: "-DDial",
+              libraries: "M5CardputerM5Dial IRRemoteESP8266 M5Unified",
+              partitions: {
+                bootloader_addr: "0x0000",
+              },
+            }
           - {
               name: "M5Cardputer",
               fqbn: "m5stack:esp32:m5stack_cardputer",
