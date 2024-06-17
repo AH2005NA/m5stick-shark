@@ -104,6 +104,8 @@
   #define TXT_Song_en "Song enabled"
   #define TXT_Savetosd "Save to SD"
   #define TXT_Transmit "Transmit"
+  #define TXT_TOP "Top"
+  #define TXT_BOTTOM "Bottom"
 #endif
 
 #if defined(LANGUAGE_GER)

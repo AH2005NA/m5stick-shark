@@ -196,6 +196,7 @@ String platformName = "Dial";
 #define RTC
 #define USE_EEPROM
 #define SONG
+#define ROTATION
 // -=-=- ALIASES -=-=-
 #define DISP M5Dial.Display
 #define UperBtn 0
@@ -203,7 +204,7 @@ String platformName = "Dial";
 #define PortBpinOUT 2
 #define IRLED 2
 #define BACKLIGHT 9
-#define MINBRIGHT 165
+#define MINBRIGHT 20
 #define SPEAKER M5Dial.Speaker
 #define BITMAP DISP.pushImage(0, 0, 240, 240, (uint16_t *)SHARKMatrix);
 #define VBAT_PIN 15
@@ -412,6 +413,12 @@ enum irstate {
 
 
 #ifdef DIAL
+
+uint8_t CenterText(String Text, uint8_t Textsize) {
+  Serial.print(sizeof(Text));
+  //return 120 - ((uint16_t)sizeof(Text)*Textsize*3);
+  return (240 - ((uint16_t)8*Textsize*6))/2;
+}
 
 void drawmenu(MENU thismenu[], int size) {
   DISP.setTextSize(SMALL_TEXT);
@@ -1757,7 +1764,9 @@ void writeCard() {
     /// Rotation MENU ///
     MENU rmenu[] = {
       { TXT_BACK, rotation },
+      { TXT_BOTTOM, 0 },
       { TXT_RIGHT, 1 },
+      { TXT_TOP, 2 },
       { TXT_LEFT, 3 },
     };
     int rmenu_size = sizeof(rmenu) / sizeof(MENU);
@@ -3165,9 +3174,17 @@ void writeCard() {
 #endif
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(BIG_TEXT);
+#if defined(DIAL)
+      DISP.setCursor(24, 55);
+#else
       DISP.setCursor(40, 0);
+#endif
       DISP.println("M5-SHARK");
+#if defined(DIAL)
+      DISP.setCursor(120 - ((uint16_t)sizeof(String(SHARK_VERSION + platformName))*5), 90);
+#else
       DISP.setCursor(10, 30);
+#endif
       DISP.setTextSize(SMALL_TEXT);
       DISP.printf("%s-%s\n", SHARK_VERSION, platformName);
       screenBrightness(brightness);
@@ -3186,6 +3203,15 @@ void writeCard() {
           break;
         }
       }
+#elif defined(DIAL)
+  DISP.setCursor(10, 110);
+  DISP.println(TXT_STK_NXT);
+  DISP.setCursor(10, 130);
+  DISP.println(TXT_STK_SEL);
+  DISP.setCursor(10, 150);
+  DISP.println(TXT_STK_HOME);
+  while (true) {
+  }
 #else
   DISP.println(TXT_STK_NXT);
   DISP.println(TXT_STK_SEL);
