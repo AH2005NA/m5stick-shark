@@ -105,7 +105,7 @@ String platformName = "StickC+2";
 #define SD_CLK_PIN 0
 #define SD_MISO_PIN 36
 #define SD_MOSI_PIN 26
-#define SD_CS_PIN 14  //can be -1, but sends a lot of messages of error in serial monitor
+#define SD_CS_PIN -1  //can be -1, but sends a lot of messages of error in serial monitor
 #define M5LED_ON HIGH
 #define M5LED_OFF LOW
 #define SCREEN_WIDTH 80
@@ -301,7 +301,11 @@ bool activeQR = false;
 const byte PortalTickTimer = 1000;
 String apSsidName = String("");
 bool isSwitching = true;
-#if defined(RTC)
+#if defined(CARDPUTER)
+int current_proc = 1;  // Start in Main Menu mode 
+#elif defined(DIAL)
+int current_proc = 1;  // Start in Main Menu mode 
+#elif defined(RTC)
 int current_proc = 0;  //0 Start in Clock Mode
 #else
 int current_proc = 1;  // Start in Main Menu mode if no RTC
@@ -432,54 +436,87 @@ void drawmenu(MENU thismenu[], int size) {
   {
     for (int i = 0 + (cursor - 4); i < size; i++) {
   DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30 - 10, 1);
-      DISP.setTextColor(adjustBrightness(FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
       if (cursor == i) {
-      DISP.setTextSize(MEDIUM_TEXT);
-      DISP.print(">");
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        for (uint8_t n=0; n<11; n++)
+        {
+          DISP.print(thismenu[i].name[n]);
+        }
+        DISP.setTextSize(SMALL_TEXT);
+        if (thismenu[i].name[11] != 0)
+        {
+          DISP.setCursor(210, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(218, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(226, 117, 1);
+          DISP.print(".");
+        }
       }
-      if (cursor < i) {
-  DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30, 1);
+      else {
+        if (cursor < i) {
+          DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30, 1);
+        }
+        DISP.print(thismenu[i].name);
       }
-      DISP.print(thismenu[i].name);
-      DISP.setTextSize(SMALL_TEXT);
     } 
   } else{
     for (int i = 0; i < size; i++) {
   DISP.setCursor(abstand[(4 - cursor) + i], (110 - (cursor * 30))+ (i*30), 1);
-      DISP.setTextColor(adjustBrightness(FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
       if (cursor == i) {
-      DISP.setTextSize(MEDIUM_TEXT);
-      DISP.print(">");
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        for (uint8_t n=0; n<11; n++)
+        {
+          DISP.print(thismenu[i].name[n]);
+        }
+        DISP.setTextSize(SMALL_TEXT);
+        if (thismenu[i].name[11] != 0)
+        {
+          DISP.setCursor(210, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(218, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(226, 117, 1);
+          DISP.print(".");
+        }
       }
-      if (cursor < i) {
-  DISP.setCursor(abstand[(4 - cursor) + i], (120 - (cursor * 30))+ (i*30), 1);
+      else {
+        if (cursor < i) {
+          DISP.setCursor(abstand[(4 - cursor) + i], (120 - (cursor * 30))+ (i*30), 1);
+        }
+        DISP.print(thismenu[i].name);
       }
-      DISP.print(thismenu[i].name);
-      DISP.setTextSize(SMALL_TEXT);
     } 
   }
 }
 
 
-uint16_t adjustBrightness(uint16_t color, float brightnessFactor) {
-    // Extract RGB components
-    uint8_t red = (color >> 11) & 0x1F;   // 5 bits for red
-    uint8_t green = (color >> 5) & 0x3F;  // 6 bits for green
-    uint8_t blue = color & 0x1F;          // 5 bits for blue
+uint16_t blendTowardsBackground(uint16_t color, uint16_t backgroundColor, float factor) {
+  // Clamp the factor between 0 and 1
+  if (factor < 0.0) factor = 0.0;
+  if (factor > 1.0) factor = 1.0;
 
-    // Scale down each color component
-    red = (uint8_t)(red * brightnessFactor);
-    green = (uint8_t)(green * brightnessFactor);
-    blue = (uint8_t)(blue * brightnessFactor);
+  // Extract the red, green, and blue components from the color
+  uint8_t r = (color >> 11) & 0x1F;
+  uint8_t g = (color >> 5) & 0x3F;
+  uint8_t b = color & 0x1F;
 
-    // Ensure components stay within valid range
-    red = (red > 0x1F) ? 0x1F : red;
-    green = (green > 0x3F) ? 0x3F : green;
-    blue = (blue > 0x1F) ? 0x1F : blue;
+  // Extract the red, green, and blue components from the background color
+  uint8_t br = (backgroundColor >> 11) & 0x1F;
+  uint8_t bg = (backgroundColor >> 5) & 0x3F;
+  uint8_t bb = backgroundColor & 0x1F;
 
-    // Reconstruct the RGB565 color
-    uint16_t newColor = (red << 11) | (green << 5) | blue;
-    return newColor;
+  // Blend the color towards the background color
+  r = r + factor * (br - r);
+  g = g + factor * (bg - g);
+  b = b + factor * (bb - b);
+
+  // Combine the components back into a single RGB565 color
+  return (r << 11) | (g << 5) | b;
 }
 #else
 void drawmenu(MENU thismenu[], int size) {
@@ -2109,8 +2146,15 @@ void writeCard() {
 
 #if defined(RTC)
     void clock_setup() {
+      rstOverride = true;
+      isSwitching = false;
       DISP.fillScreen(BGCOLOR);
+    #ifdef DIAL
+      DISP.setTextSize(BIG_TEXT);
+      DISP.setTextColor(FGCOLOR, BGCOLOR);
+    #else
       DISP.setTextSize(MEDIUM_TEXT);
+    #endif
     }
 
     void clock_loop() {
@@ -2122,7 +2166,13 @@ void writeCard() {
 
 #if defined(DTime)
       auto dt = DTget.getDateTime();
-      DISP.printf("%02d:%02d:%02d\n", dt.time.hours, dt.time.minutes, dt.time.seconds);
+      #if defined(DIAL)
+        DISP.setCursor(24, 108, 1);
+        delay(1);
+        DISP.printf("%02d:%02d:%02d\n", dt.time.hours, dt.time.minutes, dt.time.seconds);
+      #else
+        DISP.printf("%02d:%02d:%02d\n", dt.time.hours, dt.time.minutes, dt.time.seconds);
+      #endif
 #elif defined(ESPTime)
       DISP.printf("%02d:%02d:%02d\n", rtcp.getHour(), rtcp.getMinute(), rtcp.getSecond());
 #else
@@ -3175,18 +3225,18 @@ void writeCard() {
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(BIG_TEXT);
 #if defined(DIAL)
-      DISP.setCursor(24, 55);
+      DISP.setCursor((240 - DISP.textWidth("M5-SHARK"))/2, 55);
 #else
       DISP.setCursor(40, 0);
 #endif
       DISP.println("M5-SHARK");
+      DISP.setTextSize(SMALL_TEXT);
 #if defined(DIAL)
-      DISP.setCursor(120 - ((uint16_t)sizeof(String(SHARK_VERSION + platformName))*5), 90);
+      DISP.setCursor((240 - DISP.textWidth(String(SHARK_VERSION + platformName) + "-"))/2, 90);
 #else
       DISP.setCursor(10, 30);
 #endif
-      DISP.setTextSize(SMALL_TEXT);
-      DISP.printf("%s-%s\n", SHARK_VERSION, platformName);
+      DISP.printf("%s-%s", SHARK_VERSION, platformName);
       screenBrightness(brightness);
 #if defined(CARDPUTER)
       DISP.println(TXT_INST_NXT);
@@ -3205,12 +3255,18 @@ void writeCard() {
       }
 #elif defined(DIAL)
   DISP.setCursor(10, 110);
-  DISP.println(TXT_STK_NXT);
+  DISP.println(TXT_DIAL_NXT);
   DISP.setCursor(10, 130);
-  DISP.println(TXT_STK_SEL);
+  DISP.println(TXT_DIAL_SEL);
   DISP.setCursor(10, 150);
-  DISP.println(TXT_STK_HOME);
+  DISP.println(TXT_DIAL_HOME);
   while (true) {
+  M5Dial.update();
+  auto t = M5Dial.Touch.getDetail();
+  if (t.isPressed()) {
+    break;
+  }
+  delay(10);
   }
 #else
   DISP.println(TXT_STK_NXT);
@@ -3345,9 +3401,7 @@ void writeCard() {
 #if defined(BACKLIGHT)
       pinMode(BACKLIGHT, OUTPUT);  // Backlight analogWrite range ~150 - 255
 #endif
-    Serial.print("2");
       if (check_next_press()) {
-          Serial.print("3");
         clearSettings();
       }
 #if defined(USE_EEPROM)
