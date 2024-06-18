@@ -447,8 +447,6 @@ void drawmenu(MENU thismenu[], int size) {
         DISP.setTextSize(SMALL_TEXT);
         if (thismenu[i].name[11] != 0)
         {
-          DISP.setCursor(210, 117, 1);
-          DISP.print(".");
           DISP.setCursor(218, 117, 1);
           DISP.print(".");
           DISP.setCursor(226, 117, 1);
@@ -476,8 +474,6 @@ void drawmenu(MENU thismenu[], int size) {
         DISP.setTextSize(SMALL_TEXT);
         if (thismenu[i].name[11] != 0)
         {
-          DISP.setCursor(210, 117, 1);
-          DISP.print(".");
           DISP.setCursor(218, 117, 1);
           DISP.print(".");
           DISP.setCursor(226, 117, 1);
