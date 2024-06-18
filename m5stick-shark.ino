@@ -773,10 +773,15 @@ void check_menu_press() {
 #if defined(RTC)
       { TXT_CLOCK, 0 },
 #endif
+#ifndef DIAL
       { "TV-B-Gone", 13 },  // We jump to the region menu first
+#endif
       { "Bluetooth", 16 },
       { "WiFi", 12 },
       { "QR Codes", 18 },
+#ifdef DIAL
+      { "RFID", 28 },
+#endif
       { "Modules", 27 },
       { TXT_SETTINGS, 2 },
     };
@@ -1514,7 +1519,12 @@ void check_menu_press() {
     MENU Modulesmenu[] = {
       { TXT_BACK, 1 },
       { "IR AH", 24 },
+#ifdef DIAL
+      { "TV-B-Gone", 13 },  // We jump to the region menu first
+#endif
+#ifndef DIAL
       { "RFID", 28 },
+#endif
     };
     int Modulesmenu_size = sizeof(Modulesmenu) / sizeof(MENU);
 
@@ -1542,7 +1552,9 @@ void check_menu_press() {
     MENU RFIDmenu[] = {
       { TXT_BACK, 27 },
       { "Write", 0 },
+    #ifdef SDCARD
       { "Load from SD", 3 },
+    #endif
     };
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
  
@@ -1558,13 +1570,18 @@ void displayWriteMode() {
 }
 
     void RFID_setup() {
+    #ifdef DIAL
+      Wire.begin(11, 12);
+    #else
       Wire.begin();
+    #endif
       mfrc522.PCD_Init();
       currentState = read_mode;
       displayReadMode();
 
       cursor = 0;
       rstOverride = true;
+      isSwitching = true;
       drawmenu(RFIDmenu, RFIDmenu_size);
       delay(1000);
     }
