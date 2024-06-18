@@ -66,6 +66,9 @@
   #define TXT_STK_NXT "Next: Side Button"
   #define TXT_STK_SEL "Sel : M5 Button"
   #define TXT_STK_HOME "Home: Power Button"
+  #define TXT_DIAL_NXT "Next: Rotary"
+  #define TXT_DIAL_SEL "Sel : Press Screen"
+  #define TXT_DIAL_HOME "Home: Hold Screen"
   #define TXT_SDCARD "Mount/Unmount SD"
   #define TXT_DEAUTH_START "Select>Start DEAUTH\n"
   #define TXT_DEAUTH_STOP "Select>Stop DEAUTH \n"
@@ -176,6 +179,9 @@
   #define TXT_STK_NXT "Next: Seitentaste"
   #define TXT_STK_SEL "Sel : M5 Taste"
   #define TXT_STK_HOME "Home: Power Taste"
+  #define TXT_DIAL_NXT "Next: Rotary"
+  #define TXT_DIAL_SEL "Sel : Screen Drücken"
+  #define TXT_DIAL_HOME "Home: Screen Halten"
   #define TXT_SDCARD "Mount/Unmount SD"
   #define TXT_DEAUTH_START "Select>Start DEAUTH\n"
   #define TXT_DEAUTH_STOP "Select>Stop DEAUTH \n"
@@ -214,6 +220,8 @@
   #define TXT_Song_en "Song Ein"
   #define TXT_Savetosd "Auf SD speichern"
   #define TXT_Transmit "Senden"
+  #define TXT_TOP "Oben"
+  #define TXT_BOTTOM "Unten"
 #endif
 
 #if defined(LANGUAGE_PT_BR)
@@ -284,6 +292,9 @@
   #define TXT_STK_NXT "Prox: Botao do Lado"
   #define TXT_STK_SEL "Sel : Botao M5"
   #define TXT_STK_HOME "Home: Botao Power"
+  #define TXT_DIAL_NXT "Prox: Rotary"
+  #define TXT_DIAL_SEL "Sel : Pressione tela"
+  #define TXT_DIAL_HOME "Home: Segurar tela"
   #define TXT_SDCARD "Monta/Desmonta SD"
   #define TXT_DEAUTH_START "Sel: Iniciar DEAUTH\n"
   #define TXT_DEAUTH_STOP "Sel: Parar DEAUTH  \n"
@@ -322,6 +333,8 @@
   #define TXT_Song_en "Song habilitado"
   #define TXT_Savetosd "Salvar em SD"
   #define TXT_Transmit "Transmite"
+  #define TXT_TOP "Principal"
+  #define TXT_BOTTOM "fundo"
 #endif
 
 
@@ -393,6 +406,9 @@
   #define TXT_STK_NXT "Avanti: Side Button"
   #define TXT_STK_SEL "Seleziona : M5 Button"
   #define TXT_STK_HOME "Home: Tasto Accensione"
+  #define TXT_DIAL_NXT "Avanti: Rotary"
+  #define TXT_DIAL_SEL "Seleziona : Premere Schermo"
+  #define TXT_DIAL_HOME "Home: Tieni schermo"
   #define TXT_SDCARD "Mount/Unmount SD"
   #define TXT_DEAUTH_START "Seleziona>Start DEAUTH\n"
   #define TXT_DEAUTH_STOP "Seleziona>Stop DEAUTH \n"
@@ -431,6 +447,8 @@
   #define TXT_Song_en "Song abilitata"
   #define TXT_Savetosd "Salva su SD"
   #define TXT_Transmit "Trasmettere"
+  #define TXT_TOP "Sopra"
+  #define TXT_BOTTOM "sotto"
 #endif
 
 #if defined(LANGUAGE_FR_FR)
@@ -501,6 +519,9 @@
   #define TXT_STK_NXT "Suivant: Touche Bas"
   #define TXT_STK_SEL "Select.: Touche M5"
   #define TXT_STK_HOME "Accueil: Touche M5"
+  #define TXT_DIAL_NXT "Suivant: Rotary"
+  #define TXT_DIAL_SEL "Select : Touche Screen"
+  #define TXT_DIAL_HOME "Accueil: Prise Screen"
   #define TXT_SDCARD "Monter/demont. SD"
   #define TXT_DEAUTH_START "Choix>Lancer DEAUTH\n"
   #define TXT_DEAUTH_STOP "Choix>Stopper DEAUTH \n"
@@ -539,4 +560,6 @@
   #define TXT_Song_en "Song activée"
   #define TXT_Savetosd "Enregistrer sur SD"
   #define TXT_Transmit "Transmettre"
+  #define TXT_TOP "au-dessus de"
+  #define TXT_BOTTOM "ci-dessous"
 #endif
