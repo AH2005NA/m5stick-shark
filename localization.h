@@ -32,7 +32,11 @@
   #define TXT_SET_MIN "SET MINUTE"
   #define TXT_ADV "Advertising:\n"  
   #define TXT_SP_RND "Swift Pair Random"
+#ifdef DIAL
+  #define TXT_SEL_EXIT2 "Next: Exit"
+#else
   #define TXT_SEL_EXIT2 "\n\nNext: Exit"
+#endif
   #define TXT_BT_SPAM "BT Spam"
   #define TXT_SA_CRASH "SourApple Crash"
   #define TXT_CMB_BT_SPAM " Combined BT Spam"
@@ -145,7 +149,11 @@
   #define TXT_SET_MIN "Minuten waehlen"
   #define TXT_ADV "Werbung:\n"  
   #define TXT_SP_RND "Schnelles Paar zufaellig"
+#ifdef DIAL
+  #define TXT_SEL_EXIT2 "Next: Exit"
+#else
   #define TXT_SEL_EXIT2 "\n\nNext: Exit"
+#endif
   #define TXT_BT_SPAM "BT Spam"
   #define TXT_SA_CRASH "SourApple Crash"
   #define TXT_CMB_BT_SPAM " Kombinierter BT Spam"
@@ -258,7 +266,11 @@
   #define TXT_SET_MIN "AJUSTAR MINUTO"
   #define TXT_ADV "Aviso:\n"  
   #define TXT_SP_RND "Swift Pair Aleatorio"
+#ifdef DIAL
+  #define TXT_SEL_EXIT2 "Prox: Sair"
+#else
   #define TXT_SEL_EXIT2 "\n\nProx: Sair"
+#endif
   #define TXT_BT_SPAM "Bluetooth Spam"
   #define TXT_SA_CRASH "SourApple Crash"
   #define TXT_CMB_BT_SPAM "BT Spam Combinado"
@@ -372,7 +384,11 @@
   #define TXT_SET_MIN "IMPOSTA MINUTI"
   #define TXT_ADV "Avviso:\n"  
   #define TXT_SP_RND "Swift Pair Random"
+#ifdef DIAL
+  #define TXT_SEL_EXIT2 "Prossimo: Esci"
+#else
   #define TXT_SEL_EXIT2 "\n\nProssimo: Esci"
+#endif
   #define TXT_BT_SPAM "BT Spam"
   #define TXT_SA_CRASH "SourApple Crash"
   #define TXT_CMB_BT_SPAM "BT Spam Misto"
@@ -485,7 +501,11 @@
   #define TXT_SET_MIN "REGLER LES MINUTES"
   #define TXT_ADV "Notification:\n"
   #define TXT_SP_RND "Swift Pair Aleatoire"
+#ifdef DIAL
+  #define TXT_SEL_EXIT2 "Suivant: Quitter"
+#else
   #define TXT_SEL_EXIT2 "\n\nSuivant: Quitter"
+#endif
   #define TXT_BT_SPAM "BT Spam"
   #define TXT_SA_CRASH "SourApple Crash"
   #define TXT_CMB_BT_SPAM " BT Spam Combine"

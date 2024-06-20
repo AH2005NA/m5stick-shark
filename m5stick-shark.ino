@@ -780,7 +780,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
 #ifdef DIAL
-      { "RFID", 28 },
+      //{ "RFID", 28 },
 #endif
       { "Modules", 27 },
       { TXT_SETTINGS, 2 },
@@ -2322,12 +2322,22 @@ void writeCard() {
         int option = btmenu[cursor].command;
         DISP.fillScreen(BGCOLOR);
         DISP.setTextSize(MEDIUM_TEXT);
-        DISP.setCursor(0, 0);
+      #ifdef DIAL
+        DISP.setCursor(0, 50);
+        DISP.setTextColor(BGCOLOR, FGCOLOR);
+        DISP.printf("   %-10s\n", TXT_BT_SPAM);
+        DISP.setTextColor(FGCOLOR, BGCOLOR);
+        DISP.setTextSize(SMALL_TEXT);
+        DISP.setCursor((240 - DISP.textWidth(TXT_ADV))/2, 80);
+        DISP.print(TXT_ADV);
+      #else
+        DISP.setCursor(0, 50);
         DISP.setTextColor(BGCOLOR, FGCOLOR);
         DISP.printf(" %-12s\n", TXT_BT_SPAM);
         DISP.setTextColor(FGCOLOR, BGCOLOR);
         DISP.setTextSize(SMALL_TEXT);
         DISP.print(TXT_ADV);
+      #endif
 
         switch (option) {
           case 0:
@@ -2341,7 +2351,13 @@ void writeCard() {
             current_proc = 9;  // jump straight to appleJuice Advertisement
             rstOverride = false;
             isSwitching = true;
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_SP_RND))/2, 100);
+      #endif
             DISP.print(TXT_SP_RND);
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2))/2, 130);
+      #endif
             DISP.print(TXT_SEL_EXIT2);
             break;
           case 2:
@@ -2349,15 +2365,30 @@ void writeCard() {
             current_proc = 9;  // jump straight to appleJuice Advertisement
             rstOverride = false;
             isSwitching = true;
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_SA_CRASH))/2, 100);
+      #endif
             DISP.print(TXT_SA_CRASH);
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2))/2, 120);
+      #endif
             DISP.print(TXT_SEL_EXIT2);
             break;
           case 3:
             rstOverride = false;
             isSwitching = true;
             current_proc = 17;  // Maelstrom
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth("Bluetooth Maelstrom"))/2, 100);
+      #endif
             DISP.print("Bluetooth Maelstrom\n");
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_CMB_BT_SPAM))/2, 120);
+      #endif
             DISP.print(TXT_CMB_BT_SPAM);
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2))/2, 140);
+      #endif
             DISP.print(TXT_SEL_EXIT2);
             break;
           case 4:
@@ -2365,7 +2396,13 @@ void writeCard() {
             current_proc = 9;  // jump straight to appleJuice Advertisement
             rstOverride = false;
             isSwitching = true;
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_AD_SPAM))/2, 100);
+      #endif
             DISP.print(TXT_AD_SPAM);
+      #ifdef DIAL
+            DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2))/2, 120);
+      #endif
             DISP.print(TXT_SEL_EXIT2);
             break;
 
@@ -2416,9 +2453,14 @@ void writeCard() {
     void aj_setup() {
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(MEDIUM_TEXT);
-      DISP.setCursor(0, 0);
       DISP.setTextColor(BGCOLOR, FGCOLOR);
+    #ifdef DIAL
+      DISP.setCursor(0, 50);
       DISP.println(" AppleJuice  ");
+    #else
+      DISP.setCursor(0, 0);
+      DISP.println(" AppleJuice  ");
+    #endif
       DISP.setTextColor(FGCOLOR, BGCOLOR);
       delay(1000);
       cursor = 0;
@@ -2540,13 +2582,27 @@ void writeCard() {
         if (current_proc == 8 && isSwitching == false) {
           DISP.fillScreen(BGCOLOR);
           DISP.setTextSize(MEDIUM_TEXT);
-          DISP.setCursor(0, 0);
           DISP.setTextColor(BGCOLOR, FGCOLOR);
+        #ifdef DIAL
+          DISP.setCursor(0, 50);
           DISP.println(" AppleJuice  ");
+        #else
+          DISP.setCursor(0, 0);
+          DISP.println(" AppleJuice  ");
+        #endif
           DISP.setTextColor(FGCOLOR, BGCOLOR);
           DISP.setTextSize(SMALL_TEXT);
+        #ifdef DIAL
+              DISP.setCursor((240 - DISP.textWidth(TXT_ADV))/2, 100);
+        #endif
           DISP.print(TXT_ADV);
+        #ifdef DIAL
+              DISP.setCursor((240 - DISP.textWidth(ajmenu[cursor].name))/2, 120);
+        #endif
           DISP.print(ajmenu[cursor].name);
+        #ifdef DIAL
+              DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2))/2, 140);
+        #endif
           DISP.print(TXT_SEL_EXIT2);
           isSwitching = true;
           current_proc = 9;  // Jump over to the AppleJuice BLE beacon loop
@@ -3321,7 +3377,11 @@ void writeCard() {
         } else if (activeQR == false) {
           activeQR = true;
           DISP.fillScreen(WHITE);
+         #ifdef DIAL
+          DISP.qrcode(qrcodes[cursor].url, 28, 28, 184, 5);
+        #else
           DISP.qrcode(qrcodes[cursor].url, (DISP.width() - DISP.height()) / 2, 0, DISP.height(), 5);
+        #endif
           delay(500);
         } else {
           isSwitching = true;
