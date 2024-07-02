@@ -409,7 +409,9 @@ enum state {
 
 bool readUID = false;
 
-#ifndef DIAL
+#ifdef DIAL
+uint8_t piccType;
+#else
 MFRC522::PICC_Type piccType;
 #endif
 byte UID[20];
@@ -1695,7 +1697,7 @@ void displayWriteMode() {
     }
 
 void readCard() {
-  piccType = (MFRC522::PICC_Type)M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
+  piccType = M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
   DISP.setTextSize(SMALL_TEXT); // Reduce text size
   DISP.print(F(""));
   DISP.print(M5Dial.Rfid.PICC_GetTypeName(piccType));
