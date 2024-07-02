@@ -788,7 +788,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
 #ifdef DIAL
-      { "RFID", 28 },
+      //{ "RFID", 28 },
 #endif
       { "Modules", 27 },
       { TXT_SETTINGS, 2 },
@@ -2203,7 +2203,11 @@ void writeCard() {
     void tvbgone_setup() {
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(BIG_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth("TV-B-Gone"))/2, 70);
+    #else
       DISP.setCursor(0, 0);
+    #endif
       DISP.println("TV-B-Gone");
       DISP.setTextSize(SMALL_TEXT);
       irsend.begin();
@@ -2212,11 +2216,23 @@ void writeCard() {
 
       delay_ten_us(5000);
       if (region == NA) {
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(TXT_RG_AMERICAS))/2, 100);
+    #endif
         DISP.print(TXT_RG_AMERICAS);
       } else {
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(TXT_RG_EMEA))/2, 115);
+    #endif
         DISP.println(TXT_RG_EMEA);
       }
+    #ifdef DIAL
+      DISP.print(" ");
+    #endif
       DISP.println(TXT_SEL_GO_PAUSE);
+    #ifdef DIAL
+      DISP.print(" ");
+    #endif
       DISP.println(TXT_SEL_EXIT);
       delay(1000);
     }
@@ -2298,9 +2314,16 @@ void writeCard() {
         const uint8_t numpairs = powerCode->numpairs;
         DISP.fillScreen(BGCOLOR);
         DISP.setTextSize(BIG_TEXT);
-        DISP.setCursor(0, 0);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth("TV-B-Gone"))/2, 65);
+    #else
+      DISP.setCursor(0, 0);
+    #endif
         DISP.println("TV-B-Gone");
         DISP.setTextSize(SMALL_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(TXT_FK_GP))/2, 95);
+    #endif
         DISP.println(TXT_FK_GP);
         const uint8_t bitcompression = powerCode->bitcompression;
         code_ptr = 0;
@@ -2315,6 +2338,9 @@ void writeCard() {
       offtime = powerCode->times[ti + 1];  // read word 2 - offtime
 #endif
           DISP.setTextSize(TINY_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth("rti = 0 Pair = 10, 100"))/2, DISP.getCursorY());
+    #endif
           DISP.printf("rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
           //Serial.printf("TVBG: rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
           rawData[k * 2] = offtime * 10;
@@ -2349,10 +2375,20 @@ void writeCard() {
       }
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(BIG_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth("TV-B-Gone"))/2, 70);
+    #else
       DISP.setCursor(0, 0);
+    #endif
       DISP.println("TV-B-Gone");
       DISP.setTextSize(SMALL_TEXT);
+    #ifdef DIAL
+      DISP.print(" ");
+    #endif
       DISP.println(TXT_SEL_GO_PAUSE);
+    #ifdef DIAL
+      DISP.print(" ");
+    #endif
       DISP.println(TXT_SEL_EXIT);
     }
 
@@ -3851,7 +3887,7 @@ else {
       M5Cardputer.begin(cfg, true);
 #elif defined(DIAL)
     auto cfg = M5.config();
-    M5Dial.begin(cfg, true, true);
+    M5Dial.begin(cfg, true, false);
 #else
   M5.begin();
 #endif
