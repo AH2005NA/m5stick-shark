@@ -409,7 +409,7 @@ enum state {
 
 bool readUID = false;
 
-#ifdef DIAL
+#ifndef DIAL
 MFRC522::PICC_Type piccType;
 #endif
 byte UID[20];
