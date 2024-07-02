@@ -33,6 +33,7 @@ jobs:
           - ger
           - fr-fr
           - it-it
+          - nl_nl
         board:
           - {
               name: "M5Dial",

