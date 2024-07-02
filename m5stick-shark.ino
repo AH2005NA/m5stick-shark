@@ -15,7 +15,7 @@
 // #define LANGUAGE_GER
 // #define LANGUAGE_IT_IT
 // #define LANGUAGE_FR_FR
- #define LANGUAGE_NL_NL
+// #define LANGUAGE_NL_NL
 
 // -- DEPRECATED - THESE ARE NOW EEPROM DEFINED -- //
 uint16_t BGCOLOR = 0x0001;  // placeholder
