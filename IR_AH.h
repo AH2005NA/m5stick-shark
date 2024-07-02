@@ -1,7 +1,7 @@
 #include "esp32-hal.h"
 
 
-uint16_t RawIRBuffer[255];
+uint16_t RawIRBuffer[1024];
 int LenRAWIR;
 uint64_t reslt;
 
@@ -14,7 +14,8 @@ void TransmitIR(uint16_t RAWdata[], uint8_t decodetype, uint16_t Numpairs, uint1
     Serial.print(decodetype);
     //Serial.print(reslt);
   if (decodetype == 0) {
-    irsender.sendRaw(RAWdata, Numpairs/*2*/, freq);
+    irsend.sendRaw(RAWdata, Numpairs, 38000);
+    //irsender.sendRaw(RAWdata, Numpairs/*2*/, freq);
     Serial.print(Numpairs);
     Serial.printf("WMW");
     Serial.print(freq);
@@ -48,30 +49,30 @@ void TransmitIR(uint16_t RAWdata[], uint8_t decodetype, uint16_t Numpairs, uint1
 }
 
 
-uint8_t RecIR(decode_results *results)
+uint8_t RecIR(decode_results *result)
 {
   uint8_t decoding;
 
-      LenRAWIR = results->rawlen;
-      //uint16_t *raw_array = resultToRawArray(&results);
+      //enRAWIR = getCorrectedRawLength(&result);
+      //int16_t *raw_array = resultToRawArray(&result);
       // Print the raw received IR data to the serial monitor
       Serial.println("Raw IR data:");
       Serial.print(LenRAWIR);
       Serial.println(":");
       //serialPrintUint64(results.value, 16);
       
-      for (uint8_t i = 1; i < LenRAWIR; i++) {
-        if (i % 100 == 0)
-          yield();  // Preemptive yield every 100th entry to feed the WDT.
-        if (i & 1) {
-          RawIRBuffer[i] = results->rawbuf[i] * kRawTick;
-          Serial.print(RawIRBuffer[i], HEX);
-        } else {
-          Serial.print(", ");
-          RawIRBuffer[i] = (uint32_t) results->rawbuf[i] * kRawTick;
-          Serial.print(RawIRBuffer[i], HEX);
-        }
-      }
+      //for (uint8_t i = 1; i < LenRAWIR; i++) {
+      //  if (i % 100 == 0)
+      //    yield();  // Preemptive yield every 100th entry to feed the WDT.
+      //  if (i & 1) {
+      //    RawIRBuffer[i] = results->rawbuf[i] * kRawTick;
+      //    Serial.print(RawIRBuffer[i], HEX);
+      //  } else {
+      //    Serial.print(", ");
+      //    RawIRBuffer[i] = (uint32_t) results->rawbuf[i] * kRawTick;
+      //    Serial.print(RawIRBuffer[i], HEX);
+      //  }
+      //}
     decoding = 0;
     /*
   if (results->decode_type == UNKNOWN) {
@@ -116,7 +117,7 @@ uint8_t RecIR(decode_results *results)
     decoding = 13;
   }
   */
-  reslt = (uint64_t)results->value;
+  reslt = (uint64_t)result->value;
   serialPrintUint64(reslt, 16);
     Serial.print("decoding");
     Serial.print(decoding);

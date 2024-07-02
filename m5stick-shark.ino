@@ -15,6 +15,7 @@
 // #define LANGUAGE_GER
 // #define LANGUAGE_IT_IT
 // #define LANGUAGE_FR_FR
+ #define LANGUAGE_NL_NL
 
 // -- DEPRECATED - THESE ARE NOW EEPROM DEFINED -- //
 uint16_t BGCOLOR = 0x0001;  // placeholder
@@ -29,7 +30,7 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 // #define CARDPUTER
 #endif
 
-#if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER) && !defined(LANGUAGE_IT_IT) && !defined(LANGUAGE_FR_FR)
+#if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER) && !defined(LANGUAGE_IT_IT) && !defined(LANGUAGE_FR_FR) && !defined(LANGUAGE_NL_NL)
  #define LANGUAGE_EN_US
 #endif
 
@@ -267,6 +268,7 @@ float Helligkeit[] = {0.3, 0.5, 0.7, 0.85, 1, 0.85, 0.7, 0.5, 0.3, 0, 0};
 // 97 - Mount/UnMount SD Card on M5Stick devices, if SDCARD is declared
 
 const String contributors[] PROGMEM = {
+  "@PizzaPve",
   "@FatherDivine",
   "@bicurico",
   "@bmorcelli",
@@ -647,6 +649,53 @@ void number_drawmenu(int nums) {
   DISP.fillScreen(BGCOLOR);
   DISP.setCursor(20, 20);
   DISP.print(String(cursor, DEC));
+}
+
+#elif defined(DIAL)
+void number_drawmenu(int nums) {
+  if (cursor < 0) {
+    cursor = nums - 1;  // rollover hack for up-arrow on cardputer
+  }
+  if (cursor > 4)
+  DISP.setTextSize(SMALL_TEXT);
+  DISP.fillScreen(BGCOLOR);
+  DISP.setCursor(0, 0, 1);
+  if (cursor > 4)
+  {
+    for (int i = 0 + (cursor - 4); i < nums; i++) {
+  DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30 - 10, 1);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        DISP.printf("%d", i);
+        DISP.setTextSize(SMALL_TEXT);
+      }
+      else {
+        if (cursor < i) {
+          DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30, 1);
+        }
+        DISP.printf("%d", i);
+      }
+    } 
+  } else{
+    for (int i = 0; i < nums; i++) {
+  DISP.setCursor(abstand[(4 - cursor) + i], (110 - (cursor * 30))+ (i*30), 1);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        DISP.printf("%d", i);
+        DISP.setTextSize(SMALL_TEXT);
+      }
+      else {
+        if (cursor < i) {
+          DISP.setCursor(abstand[(4 - cursor) + i], (120 - (cursor * 30))+ (i*30), 1);
+        }
+        DISP.printf("%d", i);
+      }
+    } 
+  }
 }
 
 #else
@@ -1399,7 +1448,7 @@ void check_menu_press() {
         }
         if (check_select_press()) {
           if (cursor) {
-            TransmitIR(Allremotes[whichrwmote-1][cursor-1].Raw, 0, 100, 38);// Allremotes[whichrwmote-1][cursor-1].kFrequency);
+            TransmitIR(Allremotes[whichrwmote-1][cursor-1].Raw, 0, 100, 38000);// Allremotes[whichrwmote-1][cursor-1].kFrequency);
           } else {
             cursor=0;
             whichrwmote=0;
@@ -1474,6 +1523,9 @@ void check_menu_press() {
             if (irrecv.decode(&results))
             {
               dcodetype = RecIR(&results);
+      LenRAWIR = getCorrectedRawLength(&results);
+      uint16_t *rawArrayPtr = resultToRawArray(&results);
+      memcpy(RawIRBuffer, rawArrayPtr, LenRAWIR * sizeof(uint16_t));
               irrecv.resume();  // Receive the next value
               cursor = 1;
               IRcurState = savesend;
@@ -1510,7 +1562,7 @@ void check_menu_press() {
               }
               else
               {
-                TransmitIR(RawIRBuffer, dcodetype, LenRAWIR, 38);
+                TransmitIR(RawIRBuffer, dcodetype, LenRAWIR, 38000);
               }
             }
             if(check_next_press())
@@ -2986,20 +3038,38 @@ void writeCard() {
     /// CREDITS ///
     void credits_setup() {
       DISP.fillScreen(WHITE);
+    #ifdef DIAL
+      DISP.qrcode("https://github.com/AH2005NA/m5stick-shark", 145, 65, 100, 5);
+    #else
       DISP.qrcode("https://github.com/AH2005NA/m5stick-shark", 145, 22, 100, 5);
+    #endif
       DISP.setTextColor(BLACK, WHITE);
       DISP.setTextSize(MEDIUM_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(" M5-SHARK"))/2, 40);
+    #else
       DISP.setCursor(0, 10);
+    #endif
       DISP.print(" M5-SHARK\n");
       DISP.setTextSize(SMALL_TEXT);
+    #ifdef DIAL
+      DISP.setCursor(15, 65);
+    #endif
       DISP.printf("  %s\n", SHARK_VERSION);
       DISP.println(" For M5Stack");
       DISP.printf(" %s\n\n", platformName);
       DISP.println("Contributors:");
+    #ifdef DIAL
+      DISP.setCursor(155, 155);
+      DISP.println("GitHub");
+    #else
       DISP.setCursor(155, 5);
       DISP.println("GitHub");
+    #endif
+    #ifndef DIAL
       DISP.setCursor(155, 17);
       DISP.println("Source:");
+    #endif
       delay(250);
       cursor = 0;
       advtime = 0;
@@ -3008,9 +3078,17 @@ void writeCard() {
     void credits_loop() {
       if (millis() > advtime) {
         DISP.setTextColor(BLACK, WHITE);
+      #ifdef DIAL
+        DISP.setCursor(25, 180);
+      #else
         DISP.setCursor(0, 115);
+      #endif
         DISP.println("                   ");
+      #ifdef DIAL
+        DISP.setCursor(25, 180);
+      #else
         DISP.setCursor(0, 115);
+      #endif
         DISP.println(contributors[cursor]);
         cursor++;
         cursor = cursor % (sizeof(contributors) / sizeof(contributors[0]));
