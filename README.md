@@ -12,6 +12,8 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 ## My Changelog
 DEV 1.0.5
 * RFID (With SD)
+* Add Dutch
+* Add Support to the M5Dial
 
 DEV 1.0.4
 * M5Button(Btn G0 by Cardputer) presst while (After) Startup: no Startupsound
