@@ -341,7 +341,9 @@ bool clone_flg = false;
 #include "IMAGESMatrix.h"
 #include "songs.h"
 #include "localization.h"
+#ifndef DIAL
 #include "MFRC522_I2C.h"
+#endif
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #if defined(DEAUTHER)
@@ -395,7 +397,9 @@ QRCODE qrcodes[] = {
     int Menubuffer_size=sizeof(Menubuffer) / sizeof(MENU);
 
 // -+-+-+-+ RFID START-+-+-+-+
+#ifndef DIAL
 MFRC522 mfrc522(0x28); // Create MFRC522 instance.
+#endif
 
 enum state {
   read_mode,
@@ -405,7 +409,9 @@ enum state {
 
 bool readUID = false;
 
+#ifdef DIAL
 MFRC522::PICC_Type piccType;
+#endif
 byte UID[20];
 uint8_t UIDLength = 0;
 // -+-+-+-+ RFID END-+-+-+-+
@@ -780,7 +786,7 @@ void check_menu_press() {
       { "WiFi", 12 },
       { "QR Codes", 18 },
 #ifdef DIAL
-      //{ "RFID", 28 },
+      { "RFID", 28 },
 #endif
       { "Modules", 27 },
       { TXT_SETTINGS, 2 },
@@ -1559,6 +1565,7 @@ void check_menu_press() {
     int RFIDmenu_size = sizeof(RFIDmenu) / sizeof(MENU);
  
 // -+-+-+-+ IncursioHack RFID START -+-+-+-+
+#ifdef DIAL
 void displayReadMode() {
   DISP.setCursor(0, 60);
   displayUID();
@@ -1570,11 +1577,195 @@ void displayWriteMode() {
 }
 
     void RFID_setup() {
-    #ifdef DIAL
-      Wire.begin(11, 12);
-    #else
+      //Wire.begin(11, 12);
+      //mfrc522.PCD_Init();
+      currentState = read_mode;
+      displayReadMode();
+
+      cursor = 0;
+      rstOverride = true;
+      isSwitching = true;
+      drawmenu(RFIDmenu, RFIDmenu_size);
+      delay(1000);
+    }
+
+    void RFID_loop() {
+      M5Dial.update();
+      
+      if (check_select_press()) {
+      if (RFIDmenu[cursor].command == 27)
+      {
+        rstOverride = false;
+        isSwitching = true;
+        current_proc = RFIDmenu[cursor].command;
+      }
+      else if (!(currentState == Explorer))
+      {
+        if (RFIDmenu[cursor].command == 0)
+        {
+          strcpy(RFIDmenu[cursor].name, "Write");
+          RFIDmenu[cursor].command = 1;
+          currentState = read_mode;
+          readUID = false;
+          strcpy(RFIDmenu[2].name, "Load from SD");
+          RFIDmenu[2].command = 3;
+        }
+        if (RFIDmenu[cursor].command == 1 && readUID)
+        {
+          strcpy(RFIDmenu[cursor].name, "Read");
+          RFIDmenu[cursor].command = 0;
+          currentState = write_mode;
+          readUID = true;
+          strcpy(RFIDmenu[2].name, "Save  to  SD");
+          RFIDmenu[2].command = 2;
+        }
+        if (RFIDmenu[cursor].command == 2 && sdcardMounted)
+        {//save to file
+        }
+        if (RFIDmenu[cursor].command == 3 && sdcardMounted)
+        {//Load from file
+        }
+      } 
+      else
+      {
+      }
+        switch (currentState) {
+          case read_mode:
+            drawmenu(RFIDmenu, RFIDmenu_size);
+            displayReadMode();
+            break;
+          case write_mode:
+            drawmenu(RFIDmenu, RFIDmenu_size);
+            displayWriteMode();
+            break;
+          case Explorer:
+            break;
+        }
+        delay(250);
+      }
+      if (check_next_press()) {
+        cursor++;
+        switch (currentState) {
+          case read_mode:
+            cursor = cursor % RFIDmenu_size;
+            drawmenu(RFIDmenu, RFIDmenu_size);
+            displayReadMode();
+            break;
+          case write_mode:
+            cursor = cursor % RFIDmenu_size;
+            drawmenu(RFIDmenu, RFIDmenu_size);
+            displayWriteMode();
+            break;
+          case Explorer:
+            cursor = cursor % Menubuffer_size;
+            drawmenu(Menubuffer, Menubuffer_size);
+            break;
+        }
+
+        delay(250);
+      }
+  
+
+  if (!M5Dial.Rfid.PICC_IsNewCardPresent())
+    return;
+  if (!M5Dial.Rfid.PICC_ReadCardSerial())
+    return;
+
+  drawmenu(RFIDmenu, RFIDmenu_size);
+  switch (currentState) {
+    case read_mode:
+      strcpy(RFIDmenu[2].name, "Save  to  SD");
+      RFIDmenu[2].command = 2;
+      drawmenu(RFIDmenu, RFIDmenu_size);
+      displayReadMode();
+      readCard();
+      break;
+    case write_mode:
+      displayWriteMode();
+      writeCard();
+      break;
+  }
+
+  M5Dial.Rfid.PICC_HaltA();
+
+    }
+
+void readCard() {
+  piccType = (MFRC522::PICC_Type)M5Dial.Rfid.PICC_GetType(M5Dial.Rfid.uid.sak);
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  DISP.print(F(""));
+  DISP.print(M5Dial.Rfid.PICC_GetTypeName(piccType));
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  DISP.print(F(" (SAK "));
+  DISP.print(M5Dial.Rfid.uid.sak);
+  DISP.print(")\r\n");
+  if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
+      piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
+      piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
+    DISP.setTextColor(RED);
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.setCursor(0, 80); // Move the error message down
+//    DISP.println(String(TXT_RFID_NOTMIFARE));
+    DISP.setCursor(0, 0); // Reset cursor
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
+//    beep_error();
+    delay(750);
+  } else {
+    DISP.println("");
+    readUID = true;
+    UIDLength = M5Dial.Rfid.uid.size;
+    for (byte i = 0; i < UIDLength; i++) {
+      UID[i] = M5Dial.Rfid.uid.uidByte[i];
+    }
+    Serial.println();
+    delay(750);
+  }
+}
+
+void displayUID() {
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  DISP.println(F("User ID:"));
+  DISP.setTextSize(SMALL_TEXT); // Reduce text size
+  for (byte i = 0; i < UIDLength; i++) {
+    DISP.print(UID[i] < 0x10 ? " 0" : " ");
+    DISP.print(UID[i], HEX);
+  }
+  DISP.println("");
+}
+
+void writeCard() {
+  if (M5Dial.Rfid.MIFARE_SetUid(UID, (byte)UIDLength, true)) {
+    DISP.println();
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.println("RFID_WRITE");
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.println();
+  } else {
+    DISP.setTextColor(RED);
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.println();
+    DISP.println("      RFID_FAIL");
+    DISP.setTextSize(SMALL_TEXT); // Reduce text size
+    DISP.setTextColor(FGCOLOR, BGCOLOR);
+  }
+
+  M5Dial.Rfid.PICC_HaltA();
+  delay(750);
+}
+#else
+
+void displayReadMode() {
+  DISP.setCursor(0, 60);
+  displayUID();
+}
+
+void displayWriteMode() {
+  DISP.setCursor(0, 60);
+  displayUID();
+}
+
+    void RFID_setup() {
       Wire.begin();
-    #endif
       mfrc522.PCD_Init();
       currentState = read_mode;
       displayReadMode();
@@ -1806,6 +1997,7 @@ void writeCard() {
   mfrc522.PICC_HaltA();
   delay(750);
 }
+#endif
 
 // -+-+-+-+ IncursioHack RFID stop -+-+-+-+
 
@@ -3467,7 +3659,7 @@ void writeCard() {
       M5Cardputer.begin(cfg, true);
 #elif defined(DIAL)
     auto cfg = M5.config();
-    M5Dial.begin(cfg, true, false);
+    M5Dial.begin(cfg, true, true);
 #else
   M5.begin();
 #endif
