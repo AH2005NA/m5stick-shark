@@ -211,7 +211,7 @@ String platformName = "Dial";
 #define M5_BUTTON_HOME 46
 #define M5LED_ON LOW
 #define M5LED_OFF HIGH
-int abstand[] = {60, 50, 33, 23, 0, 23, 35, 55, 60, 10, 10};
+int abstand[] = {60, 50, 33, 23, 0, 23, 35, 50, 60, 10, 10};
 float Helligkeit[] = {0.3, 0.5, 0.7, 0.85, 1, 0.85, 0.7, 0.5, 0.3, 0, 0};
 #endif
 
@@ -1333,7 +1333,11 @@ void check_menu_press() {
     void IR_AH_setup(void) {
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(8);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth("IR AH"))/2, 80);
+    #else
       DISP.setCursor(0, 39);
+    #endif
       DISP.println("IR AH");
       DISP.setTextSize(SMALL_TEXT);
       cursor = 0;
@@ -2234,7 +2238,11 @@ void writeCard() {
     void tvbgmenu_setup() {
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(BIG_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth("TV-B-Gone"))/2, 80);
+    #else
       DISP.setCursor(0, 0);
+    #endif
       DISP.println("TV-B-Gone");
       DISP.setTextSize(MEDIUM_TEXT);
       DISP.println(TXT_REGION);
@@ -2998,7 +3006,11 @@ void writeCard() {
 
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(BIG_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(TXT_WF_SP))/2, 70);
+    #else
       DISP.setCursor(0, 0);
+    #endif
       DISP.println(TXT_WF_SP);
       delay(1000);
       DISP.setTextSize(TINY_TEXT);
@@ -3144,12 +3156,115 @@ void writeCard() {
         }
       }
     }
-
+#ifdef DIAL
     void wscan_drawmenu() {
       char ssid[19];
       DISP.setTextSize(SMALL_TEXT);
       DISP.fillScreen(BGCOLOR);
-      DISP.setCursor(0, 0);
+  DISP.setCursor(0, 0, 1);
+  if (cursor < 0) {
+    cursor = wifict + 1;  // rollover hack for up-arrow on cardputer
+  }
+  if (cursor > 4)
+  {
+      // scrolling menu
+    for (int i = 0 + (cursor - 4); i < wifict; i++) {
+  DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30 - 10, 1);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        for (uint8_t n=0; n<11; n++)
+        {
+          DISP.print((WiFi.SSID(i).c_str())[n]);
+        }
+        DISP.setTextSize(SMALL_TEXT);
+        if ((WiFi.SSID(i).c_str()) != 0)
+        {
+          DISP.setCursor(218, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(226, 117, 1);
+          DISP.print(".");
+        }
+      }
+      else {
+        if (cursor < i) {
+          DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30, 1);
+        }
+        DISP.print(WiFi.SSID(i).substring(0, 19));
+      }
+    } 
+  }
+else {
+    for (int i = 0; i < wifict; i++) {
+  DISP.setCursor(abstand[(4 - cursor) + i], (110 - (cursor * 30))+ (i*30), 1);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        for (uint8_t n=0; n<11; n++)
+        {
+          DISP.print((WiFi.SSID(i).c_str())[n]);
+        }
+        DISP.setTextSize(SMALL_TEXT);
+        if ((WiFi.SSID(i).c_str()) != 0)
+        {
+          DISP.setCursor(218, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(226, 117, 1);
+          DISP.print(".");
+        }
+      }
+      else {
+      if (cursor < i) {
+        DISP.setCursor(abstand[(4 - cursor) + i], (120 - (cursor * 30))+ (i*30), 1);
+      }
+        DISP.print(WiFi.SSID(i).substring(0, 19));
+      }
+    }
+      }
+      if (DISP.getCursorY() <= 60) {
+      DISP.setCursor(abstand[(3) ], DISP.getCursorY()+30, 1);
+      }else if (DISP.getCursorY() <= 80) { 
+      DISP.setCursor(abstand[(4) ], 110, 1);
+      }else if (DISP.getCursorY() >= 110) {
+      DISP.setCursor(abstand[(5) ], DISP.getCursorY()+30, 1);
+      }else if (DISP.getCursorY() >= 140) {
+      DISP.setCursor(abstand[6 ], DISP.getCursorY()+30, 1);
+      }else {
+      DISP.setCursor(abstand[7 ], DISP.getCursorY()+30, 1);
+      }
+
+      if (cursor == wifict) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+      }
+      DISP.println(TXT_WF_RESCAN);
+      DISP.setTextSize(SMALL_TEXT);
+
+      if (DISP.getCursorY() <= 100) {
+      DISP.setCursor(abstand[(4) ], 110, 1);
+      }else if (DISP.getCursorY() >= 110) {
+      DISP.setCursor(abstand[(5) ], DISP.getCursorY(), 1);
+      }else if (DISP.getCursorY() >= 140) {
+      DISP.setCursor(abstand[6], DISP.getCursorY()+40, 1);
+      }else{
+      DISP.setCursor(abstand[7], DISP.getCursorY()+40, 1);
+      }
+
+      if (cursor == wifict + 1) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+      }
+      DISP.println(String(TXT_BACK));
+      DISP.setTextSize(SMALL_TEXT);
+    }
+#else
+    void wscan_drawmenu() {
+      char ssid[19];
+      DISP.setTextSize(SMALL_TEXT);
+      DISP.fillScreen(BGCOLOR);
+  DISP.setCursor(0, 0, 1);
       // scrolling menu
       if (cursor > 4) {
         for (int i = 0 + (cursor - 4); i < wifict; i++) {
@@ -3181,6 +3296,7 @@ void writeCard() {
       DISP.println(String(TXT_BACK));
       DISP.setTextColor(FGCOLOR, BGCOLOR);
     }
+#endif
 
     void wscan_result_setup() {
       cursor = 0;
@@ -3267,7 +3383,11 @@ void writeCard() {
       cursor = 0;
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(BIG_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(TXT_WF_SCN))/2, 70);
+    #else
       DISP.setCursor(0, 0);
+    #endif
       DISP.println(TXT_WF_SCN);
       delay(2000);
     }
@@ -3275,7 +3395,11 @@ void writeCard() {
     void wscan_loop() {
       DISP.fillScreen(BGCOLOR);
       DISP.setTextSize(MEDIUM_TEXT);
+    #ifdef DIAL
+      DISP.setCursor((240 - DISP.textWidth(TXT_WF_SCNING))/2, 70);
+    #else
       DISP.setCursor(0, 0);
+    #endif
       DISP.println(TXT_WF_SCNING);
       wifict = WiFi.scanNetworks();
       DISP.fillScreen(BGCOLOR);
@@ -3536,7 +3660,73 @@ void writeCard() {
   delay(3000);
 #endif
     }
-
+#ifdef DIAL
+    void qrmenu_drawmenu() {
+      DISP.setTextSize(SMALL_TEXT);
+      DISP.fillScreen(BGCOLOR);
+      DISP.setCursor(0, 8, 1);
+  // scrolling menu
+  if (cursor < 0) {
+    cursor = sizeof(qrcodes) / sizeof(QRCODE) - 1;  // rollover hack for up-arrow on cardputer
+  }
+  if (cursor > 4)
+  {
+    for (int i = 0 + (cursor - 4); i < sizeof(qrcodes) / sizeof(QRCODE); i++) {
+  DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30 - 10, 1);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        for (uint8_t n=0; n<11; n++)
+        {
+          DISP.print(qrcodes[i].name[n]);
+        }
+        DISP.setTextSize(SMALL_TEXT);
+        if (qrcodes[i].name[11] != 0)
+        {
+          DISP.setCursor(218, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(226, 117, 1);
+          DISP.print(".");
+        }
+      }
+      else {
+        if (cursor < i) {
+          DISP.setCursor(abstand[i-(cursor - 4)], (i-(cursor - 4))*30, 1);
+        }
+        DISP.print(qrcodes[i].name);
+      }
+    } 
+  } else{
+    for (int i = 0; i < sizeof(qrcodes) / sizeof(QRCODE); i++) {
+  DISP.setCursor(abstand[(4 - cursor) + i], (110 - (cursor * 30))+ (i*30), 1);
+      DISP.setTextColor(blendTowardsBackground(BGCOLOR, FGCOLOR, Helligkeit[(4 - cursor) + i]), BGCOLOR);
+      if (cursor == i) {
+        DISP.setTextSize(MEDIUM_TEXT);
+        DISP.print(">");
+        for (uint8_t n=0; n<11; n++)
+        {
+          DISP.print(qrcodes[i].name[n]);
+        }
+        DISP.setTextSize(SMALL_TEXT);
+        if (qrcodes[i].name[11] != 0)
+        {
+          DISP.setCursor(218, 117, 1);
+          DISP.print(".");
+          DISP.setCursor(226, 117, 1);
+          DISP.print(".");
+        }
+      }
+      else {
+        if (cursor < i) {
+          DISP.setCursor(abstand[(4 - cursor) + i], (120 - (cursor * 30))+ (i*30), 1);
+        }
+        DISP.print(qrcodes[i].name);
+      }
+    } 
+  }
+    }
+#else
     void qrmenu_drawmenu() {
       DISP.setTextSize(SMALL_TEXT);
       DISP.fillScreen(BGCOLOR);
@@ -3546,7 +3736,7 @@ void writeCard() {
         DISP.println(qrcodes[i].name);
       }
     }
-
+#endif
     void qrmenu_setup() {
       cursor = 0;
       rstOverride = true;
