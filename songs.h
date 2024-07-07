@@ -256,6 +256,12 @@ int divider = 0, noteDuration = 0;
     SPEAKER.tone(melody[thisNote]*4, noteDuration*0.9);
     // Wait for the specief duration before playing the next note.
     delay(noteDuration);
+#elif defined(CoreInk)
+    // playing 2 octave up (2^2) due to proximity of frequencies and high noise on low freqs
+    SPEAKER.tone(melody[thisNote]*4, noteDuration*0.9);
+    // Wait for the specief duration before playing the next note.
+    delay(noteDuration);
+    SPEAKER.mute();
 #endif
     
   }

@@ -7,6 +7,7 @@
 // #define STICK_C
 // #define CARDPUTER
 // #define DIAL
+// #define CoreInk
 // -=-=- Uncommenting more than one at a time will result in errors -=-=-
 
 // -=-=- Shark Language for Menu and Portal -=- Thanks, @marivaaldo and @Mmatuda! -=-=-
@@ -25,8 +26,9 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #define SHARK_VERSION "dev 1.0.5"
 #endif
 
-#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL)
- #define DIAL
+#if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL) && !defined(CoreInk)
+ #define CoreInk
+// #define DIAL
 // #define CARDPUTER
 #endif
 
@@ -215,6 +217,45 @@ String platformName = "Dial";
 int abstand[] = {60, 50, 33, 23, 0, 23, 35, 50, 60, 10, 10};
 float Helligkeit[] = {0.3, 0.5, 0.7, 0.85, 1, 0.85, 0.7, 0.5, 0.3, 0, 0};
 #endif
+
+#if defined(CoreInk)
+#include <M5CoreInk.h>
+// -=-=- Display -=-=-
+Ink_Sprite PageSprite(&M5.M5Ink);
+String platformName = "CoreInk";
+#define BIG_TEXT 3
+#define MEDIUM_TEXT 2
+#define SMALL_TEXT 2
+#define TINY_TEXT 1
+// -=-=- FEATURES -=-=-
+#define RTC
+#define HID
+#define ACTIVE_LOW_IR
+#define USE_EEPROM
+#define SDCARD
+#define SONG
+#define ROTATION
+// -=-=- ALIASES -=-=-
+#define DISP M5.M5Ink
+#define UperBtn 0
+#define IRLED 44
+#define PortBpinIN 32
+#define PortBpinOUT 33
+#define M5_BUTTON_MENU 5
+#define M5_BUTTON_HOME 38
+#define M5_BUTTON_RST 39
+#define M5_BUTTON_UP 37
+#define SPEAKER M5.Speaker
+#define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);
+#define SD_CLK_PIN 40
+#define SD_MISO_PIN 39
+#define SD_MOSI_PIN 14
+#define SD_CS_PIN 12
+#define VBAT_PIN 10
+#define M5LED_ON LOW
+#define M5LED_OFF HIGH
+#endif
+
 
 // -=-=-=-=-=- LIST OF CURRENTLY DEFINED FEATURES -=-=-=-=-=-
 // M5LED      - A visible LED (Red) exposed on this pin number
@@ -524,6 +565,82 @@ uint16_t blendTowardsBackground(uint16_t color, uint16_t backgroundColor, float 
   // Combine the components back into a single RGB565 color
   return (r << 11) | (g << 5) | b;
 }
+#elif defined(CoreInk)
+void drawmenu(MENU thismenu[], int size) {
+  PageSprite.setTextSize(SMALL_TEXT);
+  PageSprite.fillScreen(BGCOLOR);
+  PageSprite.setCursor(0, 0, 1);
+  // scrolling menu
+  if (cursor < 0) {
+    cursor = size - 1;  // rollover hack for up-arrow on cardputer
+  }
+  if (cursor > 5) {
+    for (int i = 0 + (cursor - 5); i < size; i++) {
+      if (cursor == i) {
+        PageSprite.setTextColor(BGCOLOR, FGCOLOR);
+      }
+      #ifdef STICK_C
+      PageSprite.printf(" %-25s\n", thismenu[i].name);
+      #else
+      PageSprite.printf(" %-19s\n", thismenu[i].name);
+      #endif
+      PageSprite.setTextColor(FGCOLOR, BGCOLOR);
+    }
+  } else {
+    for (
+      int i = 0; i < size; i++) {
+      if (cursor == i) {
+        PageSprite.setTextColor(BGCOLOR, FGCOLOR);
+      }
+      #ifdef STICK_C
+      PageSprite.printf(" %-25s\n", thismenu[i].name);
+      #else
+      PageSprite.printf(" %-19s\n", thismenu[i].name);
+      #endif
+      PageSprite.setTextColor(FGCOLOR, BGCOLOR);
+    }
+  }
+  //time
+#if defined(RTC)
+PageSprite.setCursor(180, 0, 1);
+#if defined(DTime)
+      auto dt = DTget.getDateTime();
+      PageSprite.printf("%02d:%02d\n", dt.time.hours, dt.time.minutes);
+#elif defined(ESPTime)
+      PageSprite.printf("%02d:%02d\n", rtcp.getHour(), rtcp.getMinute());
+#elif defined(STICK_C)
+      setCursor(130, 0, 1);
+      M5.Rtc.GetBm8563Time();
+      PageSprite.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+#else
+      M5.Rtc.GetBm8563Time();
+      PageSprite.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+#endif
+#endif
+  //Baterie
+  #if defined(PWRMGMT)
+  PageSprite.setCursor(191, 16, 1);
+  PageSprite.print(String(M5.Power.getBatteryLevel()));
+  #endif
+  #ifdef AXP
+  PageSprite.setCursor(191, 16, 1);
+  float c = M5.Axp.GetVapsData() * 1.4 / 1000;
+  float b = M5.Axp.GetVbatData() * 1.1 / 1000;
+  int battery = ((b - 3.0) / 1.2) * 100;
+  #ifdef STICK_C
+  PageSprite.setCursor(141, 16, 1);
+  #endif
+  PageSprite.print(String(battery));
+  #endif
+  #if defined(CARDPUTER)
+  PageSprite.setCursor(191, 16, 1);
+  uint8_t battery = ((((analogRead(VBAT_PIN)) - 1842) * 100) / 738);
+  PageSprite.print(String(battery));
+  #endif
+  PageSprite.print("%");
+  PageSprite.pushSprite();
+}
+
 #else
 void drawmenu(MENU thismenu[], int size) {
   setTextSize(SMALL_TEXT);
@@ -795,6 +912,13 @@ void check_menu_press() {
   }
 #else
   if (digitalRead(M5_BUTTON_RST) == LOW) {
+    dimtimer();
+    return true;
+  }
+#endif
+#ifdef M5_BUTTON_UP
+  if (digitalRead(M5_BUTTON_UP) == LOW) {
+    cursor = cursor - 2;
     dimtimer();
     return true;
   }
@@ -2082,6 +2206,7 @@ void writeCard() {
       if (check_next_press()) {
         cursor++;
         cursor = cursor % rmenu_size;
+        DISP.setRotation(rmenu[cursor].command);
         drawmenu(rmenu, rmenu_size);
         delay(250);
       }
@@ -3968,6 +4093,9 @@ else {
     M5Dial.begin(cfg, true, false);
 #else
   M5.begin();
+#if defined(CoreInk)
+PageSprite.creatSprite(0, 0, 200, 200);
+#endif
 #endif
 #if defined(BACKLIGHT)
       pinMode(BACKLIGHT, OUTPUT);  // Backlight analogWrite range ~150 - 255
@@ -3989,6 +4117,8 @@ else {
 //Serial.println("EEPROM likely not properly configured. Writing defaults.");
 #if defined(CARDPUTER)
         EEPROM.write(0, 1);  // Right rotation for cardputer
+#elif  defined(CoreInk)
+        EEPROM.write(0, 0);  // Left rotation
 #else
         EEPROM.write(0, 3);  // Left rotation
 #endif
@@ -4056,6 +4186,9 @@ else {
 
       // Switcher
       if (isSwitching) {
+        #if defined(CoreInk)
+        DISP.clear();
+        #endif
         isSwitching = false;
         //Serial.printf("Switching To Task: %d\n", current_proc);
         switch (current_proc) {
@@ -4286,4 +4419,17 @@ else {
   DISP.pushRect(0, 0, 160, 80, *buffer);
   Serial.write("Start");
   Serial.write((uint8_t *)buffer, 160*80*2);*/
+  #ifdef CoreInk
+        M5.update();
+        digitalWrite(LED_EXT_PIN, LOW);
+        if (M5.BtnPWR.isPressed()) {
+        delay(1500);
+        M5.update();
+        if (M5.BtnPWR.isPressed()) {
+            DISP.pushImage(0, 0, 200, 200, (uint16_t *)Screensaver);
+            digitalWrite(LED_EXT_PIN, LOW);
+            M5.shutdown();
+        }
+        }
+  #endif
     }
