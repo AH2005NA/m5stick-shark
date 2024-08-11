@@ -18,9 +18,6 @@
 // #define LANGUAGE_FR_FR
 // #define LANGUAGE_NL_NL
 
-// -- DEPRECATED - THESE ARE NOW EEPROM DEFINED -- //
-uint16_t BGCOLOR = 0x0001;  // placeholder
-uint16_t FGCOLOR = 0xFFF1;  // placeholder
 
 #ifndef SHARK_VERSION
 #define SHARK_VERSION "dev 1.0.5"
@@ -34,6 +31,15 @@ uint16_t FGCOLOR = 0xFFF1;  // placeholder
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER) && !defined(LANGUAGE_IT_IT) && !defined(LANGUAGE_FR_FR) && !defined(LANGUAGE_NL_NL)
 #define LANGUAGE_EN_US
+#endif
+
+// -- DEPRECATED - THESE ARE NOW EEPROM DEFINED -- //
+#ifdef CoreInk
+uint16_t BGCOLOR = 0x0000;  // placeholder
+uint16_t FGCOLOR = 0xFFFF;  // placeholder
+#else
+uint16_t BGCOLOR = 0x0001;  // placeholder
+uint16_t FGCOLOR = 0xFFF1;  // placeholder
 #endif
 
 // -=-=- DEAUTHER -=-  @bmorcelli -=-=- | Discord: Pirata#5263 bmorcelli
@@ -246,7 +252,7 @@ String platformName = "CoreInk";
 #define M5_BUTTON_RST 39
 #define M5_BUTTON_UP 37
 #define SPEAKER M5.Speaker
-#define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);
+#define BITMAP DISP.pushImage(-20, 32, 240, 135, (uint16_t *)SHARKMatrix);
 #define SD_CLK_PIN 25
 #define SD_MISO_PIN 36
 #define SD_MOSI_PIN 26
@@ -570,17 +576,31 @@ void drawmenu(MENU thismenu[], int size) {
   if (cursor > 5) {
     for (int i = 0 + (cursor - 5); i < size; i++) {
       if (cursor == i) {
-        PageSprite.print(">");
+      PageSprite.printf("> %-19s", thismenu[i].name);
+      PageSprite.setCursor(0, PageSprite.getCursorY());
+      PageSprite.print("     \n");
       }
-      PageSprite.printf(" %-19s\n", thismenu[i].name);
+      else
+      {
+      PageSprite.printf(" %-19s", thismenu[i].name);
+      PageSprite.setCursor(0, PageSprite.getCursorY());
+      PageSprite.print("     \n");
+      }
     }
   } else {
     for (
       int i = 0; i < size; i++) {
       if (cursor == i) {
-        PageSprite.print(">");
+      PageSprite.printf("> %-19s", thismenu[i].name);
+      PageSprite.setCursor(0, PageSprite.getCursorY());
+      PageSprite.print("     \n");
       }
-      PageSprite.printf(" %-19s\n", thismenu[i].name);
+      else
+      {
+      PageSprite.printf(" %-19s", thismenu[i].name);
+      PageSprite.setCursor(0, PageSprite.getCursorY());
+      PageSprite.print("     \n");
+      }
     }
   }
   //time
@@ -934,7 +954,9 @@ void check_menu_press() {
         { TXT_CLOCK, 0 },
 #endif
 #ifndef DIAL
+#ifndef CoreInk
         { "TV-B-Gone", 13 },  // We jump to the region menu first
+#endif
 #endif
         { "Bluetooth", 16 },
         { "WiFi", 12 },
@@ -1118,9 +1140,17 @@ void check_menu_press() {
 #if defined(USE_EEPROM)
         if (EEPROM.read(6)) {
           for (int i = 0; i < smenu_size; i++) {
-          }
           if (smenu[i].command == 96) {
             strcpy(smenu[i].name, TXT_Song_en);
+          }
+          }
+        }
+        else
+        {
+          for (int i = 0; i < smenu_size; i++) {
+          if (smenu[i].command == 96) {
+            strcpy(smenu[i].name, TXT_Song_dis);
+          }
           }
         }
 #endif
@@ -1660,6 +1690,9 @@ void check_menu_press() {
         { TXT_BACK, 1 },
         { "IR AH", 24 },
 #ifdef DIAL
+        { "TV-B-Gone", 13 },  // We jump to the region menu first
+#endif
+#ifdef CoreInk
         { "TV-B-Gone", 13 },  // We jump to the region menu first
 #endif
 #ifndef DIAL
@@ -2528,7 +2561,15 @@ void writeCard() {
         DISP.printf("%02d:%02d:%02d\n", rtcp.getHour(), rtcp.getMinute(), rtcp.getSecond());
 #else
         M5.Rtc.GetBm8563Time();
+        #ifdef CoreInk
+        PageSprite.fillScreen(BGCOLOR);
+        PageSprite.setTextSize(BIG_TEXT);
+        PageSprite.setCursor(3, 75, 4);
+        PageSprite.printf("%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute);
+        PageSprite.pushSprite();
+        #else
         DISP.printf("%02d:%02d:%02d\n", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
+        #endif
 #endif
         delay(250);
       }
@@ -2656,9 +2697,9 @@ void writeCard() {
         }
         if (check_select_press()) {
           int option = btmenu[cursor].command;
+#ifdef DIAL
           DISP.fillScreen(BGCOLOR);
           DISP.setTextSize(MEDIUM_TEXT);
-#ifdef DIAL
           DISP.setCursor(0, 50);
           DISP.setTextColor(BGCOLOR, FGCOLOR);
           DISP.printf("   %-10s\n", TXT_BT_SPAM);
@@ -2666,7 +2707,18 @@ void writeCard() {
           DISP.setTextSize(SMALL_TEXT);
           DISP.setCursor((240 - DISP.textWidth(TXT_ADV)) / 2, 80);
           DISP.print(TXT_ADV);
+#elif defined(CoreInk)
+    PageSprite.fillScreen(BGCOLOR);
+    PageSprite.setTextSize(BIG_TEXT);
+    PageSprite.setCursor(0, 0);
+    PageSprite.setTextColor(BGCOLOR, FGCOLOR);
+    PageSprite.printf("  %-9s\n", TXT_BT_SPAM);
+    PageSprite.setTextColor(FGCOLOR, BGCOLOR);
+    PageSprite.setTextSize(SMALL_TEXT);
+    PageSprite.print(TXT_ADV);
 #else
+    DISP.fillScreen(BGCOLOR);
+    DISP.setTextSize(MEDIUM_TEXT);
     DISP.setCursor(0, 50);
     DISP.setTextColor(BGCOLOR, FGCOLOR);
     DISP.printf(" %-12s\n", TXT_BT_SPAM);
@@ -2687,6 +2739,11 @@ void writeCard() {
               current_proc = 9;  // jump straight to appleJuice Advertisement
               rstOverride = false;
               isSwitching = true;
+#ifdef CoreInk
+              PageSprite.print(TXT_SP_RND);
+              PageSprite.print(TXT_SEL_EXIT2);
+              PageSprite.pushSprite();
+#else
 #ifdef DIAL
               DISP.setCursor((240 - DISP.textWidth(TXT_SP_RND)) / 2, 100);
 #endif
@@ -2695,12 +2752,18 @@ void writeCard() {
               DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2)) / 2, 130);
 #endif
               DISP.print(TXT_SEL_EXIT2);
+#endif
               break;
             case 2:
               sourApple = true;
               current_proc = 9;  // jump straight to appleJuice Advertisement
               rstOverride = false;
               isSwitching = true;
+#ifdef CoreInk
+              PageSprite.print(TXT_SA_CRASH);
+              PageSprite.print(TXT_SEL_EXIT2);
+              PageSprite.pushSprite();
+#else
 #ifdef DIAL
               DISP.setCursor((240 - DISP.textWidth(TXT_SA_CRASH)) / 2, 100);
 #endif
@@ -2709,11 +2772,18 @@ void writeCard() {
               DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2)) / 2, 120);
 #endif
               DISP.print(TXT_SEL_EXIT2);
+#endif
               break;
             case 3:
               rstOverride = false;
               isSwitching = true;
               current_proc = 17;  // Maelstrom
+#ifdef CoreInk
+              PageSprite.print("Bluetooth Maelstrom\n");
+              PageSprite.print(TXT_CMB_BT_SPAM);
+              PageSprite.print(TXT_SEL_EXIT2);
+              PageSprite.pushSprite();
+#else
 #ifdef DIAL
               DISP.setCursor((240 - DISP.textWidth("Bluetooth Maelstrom")) / 2, 100);
 #endif
@@ -2726,12 +2796,18 @@ void writeCard() {
               DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2)) / 2, 140);
 #endif
               DISP.print(TXT_SEL_EXIT2);
+#endif
               break;
             case 4:
               androidPair = true;
               current_proc = 9;  // jump straight to appleJuice Advertisement
               rstOverride = false;
               isSwitching = true;
+#ifdef CoreInk
+              PageSprite.print(TXT_AD_SPAM);
+              PageSprite.print(TXT_SEL_EXIT2);
+              PageSprite.pushSprite();
+#else
 #ifdef DIAL
               DISP.setCursor((240 - DISP.textWidth(TXT_AD_SPAM)) / 2, 100);
 #endif
@@ -2740,6 +2816,7 @@ void writeCard() {
               DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2)) / 2, 120);
 #endif
               DISP.print(TXT_SEL_EXIT2);
+#endif
               break;
 
             case 5:
@@ -2787,6 +2864,15 @@ void writeCard() {
       int ajmenu_size = sizeof(ajmenu) / sizeof(MENU);
 
       void aj_setup() {
+#ifdef CoreInk
+        PageSprite.fillScreen(BGCOLOR);
+        PageSprite.setTextSize(MEDIUM_TEXT);
+        PageSprite.setTextColor(BGCOLOR, FGCOLOR);
+        PageSprite.setCursor(0, 0);
+        PageSprite.println("   AppleJuice   ");
+        PageSprite.pushSprite();
+        PageSprite.setTextColor(FGCOLOR, BGCOLOR);
+#else
         DISP.fillScreen(BGCOLOR);
         DISP.setTextSize(MEDIUM_TEXT);
         DISP.setTextColor(BGCOLOR, FGCOLOR);
@@ -2796,6 +2882,7 @@ void writeCard() {
 #else
   DISP.setCursor(0, 0);
   DISP.println(" AppleJuice  ");
+#endif
 #endif
         DISP.setTextColor(FGCOLOR, BGCOLOR);
         delay(1000);
@@ -2916,6 +3003,19 @@ void writeCard() {
               break;
           }
           if (current_proc == 8 && isSwitching == false) {
+#ifdef CoreInk
+        PageSprite.fillScreen(BGCOLOR);
+        PageSprite.setTextSize(MEDIUM_TEXT);
+        PageSprite.setTextColor(BGCOLOR, FGCOLOR);
+        PageSprite.setCursor(0, 0);
+        PageSprite.println("   AppleJuice   ");
+        PageSprite.setTextColor(FGCOLOR, BGCOLOR);
+        PageSprite.setTextSize(SMALL_TEXT);
+        PageSprite.print(TXT_ADV);
+        PageSprite.print(TXT_SEL_EXIT2);
+        PageSprite.pushSprite();
+        PageSprite.setTextColor(FGCOLOR, BGCOLOR);
+#else
             DISP.fillScreen(BGCOLOR);
             DISP.setTextSize(MEDIUM_TEXT);
             DISP.setTextColor(BGCOLOR, FGCOLOR);
@@ -2940,6 +3040,7 @@ void writeCard() {
             DISP.setCursor((240 - DISP.textWidth(TXT_SEL_EXIT2)) / 2, 140);
 #endif
             DISP.print(TXT_SEL_EXIT2);
+#endif
             isSwitching = true;
             current_proc = 9;  // Jump over to the AppleJuice BLE beacon loop
           }
@@ -3063,7 +3164,8 @@ void writeCard() {
           digitalWrite(M5LED, M5LED_OFF);  //LED OFF on Stick C Plus
 #endif
         }
-        if (check_next_press()) {
+        if (check_next_press())
+        {
           if (sourApple || swiftPair || androidPair || maelstrom) {
             isSwitching = true;
             current_proc = 16;
@@ -3733,7 +3835,9 @@ void wscan_drawmenu() {
         }
 #else
         M5.Rtc.GetBm8563Time();
+#ifndef CoreInk
         DISP.pushImage(0, 0, 240, 135, (uint16_t *)AllImages[M5.Rtc.Second % valImages]);
+#endif
         delay(1000);
         BITMAP;
         //Random Startupsound 0...6
@@ -3762,15 +3866,27 @@ void wscan_drawmenu() {
 #else
   DISP.setCursor(40, 0);
 #endif
+#if defined(CoreInk)
+        PageSprite.setTextSize(BIG_TEXT);
+        PageSprite.setCursor(40, 0);
+        PageSprite.println("M5-SHARK");
+        PageSprite.setTextSize(TINY_TEXT);
+#else
         DISP.println("M5-SHARK");
         DISP.setTextSize(SMALL_TEXT);
+#endif
 #if defined(DIAL)
         DISP.setCursor((240 - DISP.textWidth(String(SHARK_VERSION + platformName) + "-")) / 2, 90);
 #else
   DISP.setCursor(10, 30);
 #endif
+#if defined(CoreInk)
+        PageSprite.setCursor(0, 30);
+        PageSprite.printf("%s-%s\n", SHARK_VERSION, platformName);
+#else
         DISP.printf("%s-%s", SHARK_VERSION, platformName);
         screenBrightness(brightness);
+#endif
 #if defined(CARDPUTER)
         DISP.println(TXT_INST_NXT);
         DISP.println(TXT_INST_PRV);
@@ -3801,11 +3917,19 @@ void wscan_drawmenu() {
     }
     delay(10);
   }
+#elif defined(CoreInk)
+  PageSprite.println(TXT_INK_NXT);
+  PageSprite.println(TXT_INK_SEL);
+  PageSprite.println(TXT_INK_HOME);
+  PageSprite.println(TXT_INK_OFF);
+  PageSprite.pushSprite();
+  delay(3000);
 #else
   DISP.println(TXT_STK_NXT);
   DISP.println(TXT_STK_SEL);
   DISP.println(TXT_STK_HOME);
   delay(3000);
+
 #endif
       }
 #ifdef DIAL
@@ -4025,7 +4149,11 @@ Serial.println("EEPROM likely not properly configured. Writing defaults.");
           EEPROM.write(1, 15);   // 15 second auto dim time
           EEPROM.write(2, 100);  // 100% brightness
           EEPROM.write(3, 0);    // TVBG NA Region
+          #ifdef CoreInk
+          EEPROM.write(4, 16);   // FGColor Green
+          #else
           EEPROM.write(4, 11);   // FGColor Green
+          #endif
           EEPROM.write(5, 1);    // BGcolor Black
           EEPROM.write(6, 1);    // uses song
           EEPROM.commit();
@@ -4087,7 +4215,7 @@ Serial.println("EEPROM likely not properly configured. Writing defaults.");
         // Switcher
         if (isSwitching) {
 #if defined(CoreInk)
-          DISP.clear();
+          //DISP.clear();
 #endif
           isSwitching = false;
           Serial.printf("Switching To Task: %d\n", current_proc);
@@ -4326,8 +4454,17 @@ Serial.println("EEPROM likely not properly configured. Writing defaults.");
           delay(1500);
           M5.update();
           if (M5.BtnPWR.isPressed()) {
-            DISP.pushImage(0, 0, 200, 200, (uint16_t *)Screensaver);
             digitalWrite(LED_EXT_PIN, LOW);
+            //BITMAP;
+            DISP.qrcode(qrcodes[1].url, 0, 0, 66, 1);
+            DISP.qrcode(qrcodes[2].url, 0, 66, 66, 1);
+            DISP.qrcode(qrcodes[3].url, 0, 132, 66, 1);
+            DISP.qrcode(qrcodes[4].url, 66, 0, 66, 1);
+            DISP.qrcode(qrcodes[5].url, 66, 66, 66, 1);
+            DISP.qrcode(qrcodes[6].url, 66, 132, 66, 1);
+            DISP.qrcode(qrcodes[3].url, 132, 0, 66, 1);
+            DISP.qrcode(qrcodes[1].url, 132, 66, 66, 1);
+            DISP.qrcode(qrcodes[6].url, 132, 132, 66, 1);
             M5.shutdown();
           }
         }
