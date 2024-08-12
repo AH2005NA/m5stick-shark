@@ -37,7 +37,7 @@ jobs:
         board:
           - {
               name: "CoreInk",
-              fqbn: "m5stack:esp32:m5stack_CoreInk",
+              fqbn: "m5stack:esp32:m5stack_coreink",
               extra_flags: "-DCoreInk",
               libraries: "M5Core-Ink IRRemoteESP8266 M5Stack-SD-Updater M5Unified ",
               partitions: {
