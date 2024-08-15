@@ -3,6 +3,7 @@
 // Retaining the Portuguese translations since this project has a large
 // fan base in Brazil. Shouts to CyberJulio as well.
 
+#include "../sdfunc.h"
 #define DEFAULT_AP_SSID_NAME "Nemo Free WiFi"
 #define SD_CREDS_PATH "/nemo-portal-creds.txt"
 
