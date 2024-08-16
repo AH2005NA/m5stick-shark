@@ -5,6 +5,15 @@ struct MENU {
   char name[19];
   int command;
 };
+#if defined(CARDPUTER)
+int current_proc = 1;  // Start in Main Menu mode
+#elif defined(DIAL)
+int current_proc = 1;  // Start in Main Menu mode
+#elif defined(RTC)
+int current_proc = 0;  //0 Start in Clock Mode
+#else
+int current_proc = 1;  // Start in Main Menu mode if no RTC
+#endif
       bool screen_dim_dimmed = false;
       int screen_dim_time = 30;
       int screen_dim_current = 0;
@@ -455,35 +464,6 @@ void switcher_button_proc() {
   }
 }
 
-// Tap the power button from pretty much anywhere to get to the main menu
-void check_menu_press() {
-#if defined(AXP)
-  if (M5.Axp.GetBtnPress()) {
-#endif
-#if defined(KB)
-    if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
-#endif
-#if defined(DIAL)
-      M5Dial.update();
-      auto t = M5Dial.Touch.getDetail();
-      if (t.isHolding()) {
-#endif
-#if defined(M5_BUTTON_MENU)
-        if (digitalRead(M5_BUTTON_MENU) == LOW) {
-#endif
-          dimtimer();
-          if (portal_active) {
-            // just in case we escape the portal with the main menu button
-            shutdownWebServer();
-            portal_active = false;
-          }
-          isSwitching = true;
-          rstOverride = false;
-          current_proc = 1;
-          delay(100);
-        }
-      }
-
       bool check_select_press() {
 #if defined(KB)
         M5Cardputer.update();
@@ -506,3 +486,26 @@ void check_menu_press() {
 #endif
         return false;
       }
+
+// Tap the power button from pretty much anywhere to get to the main menu
+bool check_m_press() {
+#if defined(AXP)
+  if (M5.Axp.GetBtnPress()) {
+#endif
+#if defined(KB)
+        M5Cardputer.update();
+    if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
+#endif
+#if defined(DIAL)
+      M5Dial.update();
+      auto t = M5Dial.Touch.getDetail();
+      if (t.isHolding()) {
+#endif
+#if defined(M5_BUTTON_MENU)
+        if (digitalRead(M5_BUTTON_MENU) == LOW) {
+#endif
+          return true;
+          dimtimer();
+        }
+        return false;
+    }

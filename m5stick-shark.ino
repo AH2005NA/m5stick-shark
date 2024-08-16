@@ -74,15 +74,6 @@ bool activeQR = false;
 const byte PortalTickTimer = 1000;
 String apSsidName = String("");
 bool isSwitching = true;
-#if defined(CARDPUTER)
-int current_proc = 1;  // Start in Main Menu mode
-#elif defined(DIAL)
-int current_proc = 1;  // Start in Main Menu mode
-#elif defined(RTC)
-int current_proc = 0;  //0 Start in Clock Mode
-#else
-int current_proc = 1;  // Start in Main Menu mode if no RTC
-#endif
 // DEAUTH vars
 uint8_t channel;
 String apMac = String("");
@@ -120,7 +111,6 @@ bool clone_flg = false;
 #include "sdfunc.h"
 #include "IMAGESMatrix.h"
 #include "songs.h"
-#include "globalfunc.h"
 #include "localization.h"
 
 #ifndef DIAL
@@ -199,6 +189,35 @@ enum irstate {
   savesend
 } IRcurState;
 
+
+// Tap the power button from pretty much anywhere to get to the main menu
+void check_menu_press() {
+#if defined(AXP)
+  if (M5.Axp.GetBtnPress()) {
+#endif
+#if defined(KB)
+    if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
+#endif
+#if defined(DIAL)
+      M5Dial.update();
+      auto t = M5Dial.Touch.getDetail();
+      if (t.isHolding()) {
+#endif
+#if defined(M5_BUTTON_MENU)
+        if (digitalRead(M5_BUTTON_MENU) == LOW) {
+#endif
+          dimtimer();
+          if (portal_active) {
+            // just in case we escape the portal with the main menu button
+            shutdownWebServer();
+            portal_active = false;
+          }
+          isSwitching = true;
+          rstOverride = false;
+          current_proc = 1;
+          delay(100);
+        }
+      }
 
       /// MAIN MENU ///
       MENU mmenu[] = {

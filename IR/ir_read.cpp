@@ -38,25 +38,24 @@ void IrRead::setup() {
     //}
     //if(count==0) gsetIrRxPin(true); // Open dialog to choose IrRx pin
     
-    pinMode(IrRx, INPUT);
+    pinMode(PortBpinIN, INPUT);
     begin();
     return loop();
 }
 
 void IrRead::loop() {
     while(1) {
-      M5Cardputer.update();
-        //if (check_menu_press()) {
-            //returnToMenu=true;
-        //    break;
-        //}
+		if(check_m_press())
+		{
+			current_proc = 24;
+		}
 
         if (check_select_press())
         {save_device();}
         if (check_next_press())
         {save_signal();}
-        if (M5Cardputer.Keyboard.isKeyPressed('.'))
-        {discard_signal();}
+        //if (switcher_button_proc)
+        //{discard_signal();}
 
         read_signal();
     }
@@ -75,17 +74,17 @@ void IrRead::begin() {
 
 void IrRead::cls() {
     //drawMainBorder();
-    DISP.setCursor(10, 28);
+	DISP.fillScreen(BGCOLOR);
+    DISP.setCursor(0, 0);
     DISP.setTextColor(FGCOLOR, BGCOLOR);
 }
 
 void IrRead::display_banner() {
     cls();
     DISP.setTextSize(MEDIUM_TEXT);
-    Serial.println("IR Read");
+    DISP.println("IR_AH Receive");
 
-    DISP.setTextSize(SMALL_TEXT);
-    DISP.println("--------------");
+    DISP.setTextSize(TINY_TEXT);
     DISP.println("Signals captured: " + String(signals_read));
     DISP.println("");
 }
@@ -100,11 +99,10 @@ void IrRead::display_btn_options() {
     if (signals_read > 0) {
 	    DISP.println("Press [OK]   to save device");
     }
-	DISP.println("Press [ESC]  to exit");
 }
 
 void IrRead::dump_signal_details() {
-    DISP.println("HEX: 0x");
+    DISP.print("  HEX: 0x");
     DISP.println(results.value, HEX);
 }
 

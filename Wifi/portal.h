@@ -4,6 +4,7 @@
 // fan base in Brazil. Shouts to CyberJulio as well.
 
 #include "../sdfunc.h"
+#include "../globalfunc.h"
 #define DEFAULT_AP_SSID_NAME "Nemo Free WiFi"
 #define SD_CREDS_PATH "/nemo-portal-creds.txt"
 
