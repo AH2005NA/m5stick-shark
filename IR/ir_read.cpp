@@ -48,6 +48,9 @@ void IrRead::loop() {
 		if(check_m_press())
 		{
 			current_proc = 24;
+			isSwitching = true;
+			delay(250);
+			break;
 		}
 
         if (check_select_press())
@@ -128,7 +131,7 @@ void IrRead::discard_signal() {
 void IrRead::save_signal() {
     if (!_read_signal) return;
 
-    String btn_name = "hallooo";//keyboard("Btn"+String(signals_read), 30, "Btn name:");
+    String btn_name = Inputfilename("Btn"+String(signals_read));
 
     append_to_file_str(btn_name, parse_signal());
 
@@ -168,7 +171,7 @@ void IrRead::append_to_file_str(String btn_name, String signal_code) {
 void IrRead::save_device() {
     if (signals_read == 0) return;
 
-    String filename ="hallooo";// keyboard("MyDevice", 30, "File name:");
+    String filename = Inputfilename("MyDevice");
 
     display_banner();
 
@@ -185,35 +188,35 @@ void IrRead::save_device() {
 }
 
 bool IrRead::write_file(String filename) {
-    //FS *fs;
-    //if(setupSdCard()) fs=&SD;
+    FS *fs;
+    if(setupSdCard()) fs=&SD;
     //else {
     //    if(checkLittleFsSize()) fs=&LittleFS;
     //    else {
     //        return false;
-    //    }
+     //   }
     //}
-//
-    //if (!(*fs).exists("/BruceIR")) (*fs).mkdir("/BruceIR");
-    //if ((*fs).exists("/BruceIR/" + filename + ".ir")) {
-    //    int i = 1;
-    //    filename += "_";
-    //    while((*fs).exists("/BruceIR/" + filename + String(i) + ".ir")) i++;
-    //    filename += String(i);
-    //}
-    //File file = (*fs).open("/BruceIR/"+ filename + ".ir", FILE_WRITE);
-//
-    //if(!file) {
-    //    return false;
-    //}
-//
-    //file.println("Filetype: Bruce IR File");
-    //file.println("Version 1");
-    //file.println("#");
-    //file.println("# " + filename);
-    //file.print(strDeviceContent);
-//
-    //file.close();
+
+    if (!(*fs).exists("/BruceIR")) (*fs).mkdir("/BruceIR");
+    if ((*fs).exists("/BruceIR/" + filename + ".ir")) {
+        int i = 1;
+        filename += "_";
+        while((*fs).exists("/BruceIR/" + filename + String(i) + ".ir")) i++;
+        filename += String(i);
+    }
+    File file = (*fs).open("/BruceIR/"+ filename + ".ir", FILE_WRITE);
+
+    if(!file) {
+        return false;
+    }
+
+    file.println("Filetype: Shark IR File (same as Bruce)");
+    file.println("Version 1");
+    file.println("#");
+    file.println("# " + filename);
+    file.print(strDeviceContent);
+
+    file.close();
     delay(100);
     return true;
 }

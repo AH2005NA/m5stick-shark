@@ -196,6 +196,7 @@ void check_menu_press() {
   if (M5.Axp.GetBtnPress()) {
 #endif
 #if defined(KB)
+        M5Cardputer.update();
     if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
 #endif
 #if defined(DIAL)

@@ -7,13 +7,13 @@
  */
 
 #include <IRrecv.h>
-#define IrRx 1
+//#define IrRx 1
 //#include "core/globals.h"
 
 
 class IrRead {
 public:
-	IRrecv irrecv = IRrecv(IrRx);
+	IRrecv irrecv = IRrecv(PortBpinIN);
 
 
 	/////////////////////////////////////////////////////////////////////////////////////
