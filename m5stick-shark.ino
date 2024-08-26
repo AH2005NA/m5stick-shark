@@ -231,7 +231,9 @@ void check_menu_press() {
 #endif
 #endif
         { "Bluetooth", 16 },
+#ifndef CoreInk//other controller...
         { "WiFi", 12 },
+#endif
         { "QR Codes", 18 },
 #ifdef DIAL
       //{ "RFID", 28 },
@@ -3238,13 +3240,17 @@ void wscan_drawmenu() {
       }
 #else
 void qrmenu_drawmenu() {
-  DISP.setTextSize(SMALL_TEXT);
-  DISP.fillScreen(BGCOLOR);
-  DISP.setCursor(0, 8, 1);
+  PageSprite.setTextSize(SMALL_TEXT);
+  PageSprite.fillScreen(BGCOLOR);
+  PageSprite.setCursor(0, 8, 1);
   for (int i = 0; i < (sizeof(qrcodes) / sizeof(QRCODE)); i++) {
-    DISP.print((cursor == i) ? ">" : " ");
-    DISP.println(qrcodes[i].name);
+    PageSprite.print((cursor == i) ? "> " : " ");
+    PageSprite.print(qrcodes[i].name);
+    PageSprite.println("      ");
+    PageSprite.setCursor(0, PageSprite.getCursorY());
+    PageSprite.println("      ");
   }
+  PageSprite.pushSprite();
 }
 #endif
       void qrmenu_setup() {
@@ -3285,7 +3291,7 @@ void qrmenu_drawmenu() {
 
       /// NEMO PORTAL
 
-      void portal_setup() {
+      void portal_setup() { 
         setupWiFi();
         setupWebServer();
         portal_active = true;

@@ -22,9 +22,9 @@
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL) && !defined(CoreInk)
-// #define CoreInk
+ #define CoreInk
 // #define DIAL
- #define CARDPUTER
+// #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER) && !defined(LANGUAGE_IT_IT) && !defined(LANGUAGE_FR_FR) && !defined(LANGUAGE_NL_NL)
@@ -242,7 +242,7 @@ String platformName = "CoreInk";
 #define DISP M5.M5Ink
 #define VBAT_PIN 35
 #define UperBtn 0
-#define IRLED 44
+#define IRLED 33
 #define PortBpinIN 32
 #define PortBpinOUT 33
 #define M5_BUTTON_MENU 5

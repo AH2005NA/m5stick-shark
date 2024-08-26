@@ -237,7 +237,7 @@ void drawmenu(MENU thismenu[], int size) {
   uint8_t battery = map(analogRead(VBAT_PIN), 0, 1023, 0, 100);
   Serial.print(battery);
   //uint8_t battery = ((((analogRead(VBAT_PIN))) * 100) / 1023);
-  PageSprite.Print(String(battery));
+  PageSprite.print(String(battery));
   PageSprite.print("%");
   PageSprite.pushSprite();
 }
