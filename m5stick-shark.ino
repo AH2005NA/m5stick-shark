@@ -1160,12 +1160,12 @@ void check_menu_press() {
 #else
 
 void displayReadMode() {
-  DISP.setCursor(0, 60);
+  PageSprite.setCursor(0, 60);
   displayUID();
 }
 
 void displayWriteMode() {
-  DISP.setCursor(0, 60);
+  PageSprite.setCursor(0, 60);
   displayUID();
 }
 
@@ -1324,7 +1324,66 @@ void RFID_loop() {
 
   mfrc522.PICC_HaltA();
 }
+#ifdef CoreInk
+void readCard() {
+  piccType = (MFRC522::PICC_Type)mfrc522.PICC_GetType(mfrc522.uid.sak);
+  PageSprite.setTextSize(SMALL_TEXT);  // Reduce text size
+  PageSprite.print(F(""));
+  PageSprite.print(mfrc522.PICC_GetTypeName(piccType));
+  PageSprite.print(F(" (SAK "));
+  PageSprite.print(mfrc522.uid.sak);
+  PageSprite.print(")\r\n");
+  if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI && piccType != MFRC522::PICC_TYPE_MIFARE_1K && piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
+    PageSprite.setTextSize(SMALL_TEXT);  // Reduce text size
+    PageSprite.setCursor(0, 80);         // Move the error message down
+                                   //    DISP.println(String(TXT_RFID_NOTMIFARE));
+    PageSprite.setCursor(0, 0);          // Reset cursor
+    PageSprite.setTextColor(FGCOLOR, BGCOLOR);
+  PageSprite.pushSprite();
+    //    beep_error();
+    delay(750);
+  } else {
+    PageSprite.println("");
+    readUID = true;
+    UIDLength = mfrc522.uid.size;
+    for (byte i = 0; i < UIDLength; i++) {
+      UID[i] = mfrc522.uid.uidByte[i];
+    }
+  PageSprite.pushSprite();
+    Serial.println();
+    delay(750);
+  }
+}
 
+void displayUID() {
+   // PageSprite.setCursor(0, 120);          // Reset cursor
+  PageSprite.setTextSize(SMALL_TEXT);  // Reduce text size
+  PageSprite.println(F("User ID:"));
+  for (byte i = 0; i < UIDLength; i++) {
+    PageSprite.print(UID[i] < 0x10 ? " 0" : " ");
+    PageSprite.print(UID[i], HEX);
+  }
+  PageSprite.println("");
+  PageSprite.pushSprite();
+}
+
+void writeCard() {
+  if (mfrc522.MIFARE_SetUid(UID, (byte)UIDLength, true)) {
+    PageSprite.println();
+    PageSprite.setTextSize(SMALL_TEXT);  // Reduce text size
+    PageSprite.println("RFID_WRITE");
+    PageSprite.println();
+  } else {
+    PageSprite.setTextSize(SMALL_TEXT);  // Reduce text size
+    PageSprite.println();
+    PageSprite.println("      RFID_FAIL");
+  }
+  PageSprite.pushSprite();
+
+  mfrc522.PICC_HaltA();
+  delay(750);
+}
+#else
 void readCard() {
   piccType = (MFRC522::PICC_Type)mfrc522.PICC_GetType(mfrc522.uid.sak);
   DISP.setTextSize(SMALL_TEXT);  // Reduce text size
@@ -1385,6 +1444,7 @@ void writeCard() {
   mfrc522.PICC_HaltA();
   delay(750);
 }
+#endif
 #endif
 
       // -+-+-+-+ IncursioHack RFID stop -+-+-+-+
@@ -1695,19 +1755,33 @@ void writeCard() {
           }
           const uint8_t freq = powerCode->timer_val;
           const uint8_t numpairs = powerCode->numpairs;
-          DISP.fillScreen(BGCOLOR);
-          DISP.setTextSize(BIG_TEXT);
 #ifdef DIAL
           DISP.setCursor((240 - DISP.textWidth("TV-B-Gone")) / 2, 65);
 #else
     DISP.setCursor(0, 0);
 #endif
+#ifdef CoreInk
+          PageSprite.setCursor(0, 0);
+          PageSprite.fillScreen(BGCOLOR);
+          PageSprite.setTextSize(BIG_TEXT);
+          PageSprite.println("TV-B-Gone");
+          PageSprite.setTextSize(SMALL_TEXT);
+#else
+          DISP.fillScreen(BGCOLOR);
+          DISP.setTextSize(BIG_TEXT);
           DISP.println("TV-B-Gone");
           DISP.setTextSize(SMALL_TEXT);
+#endif
 #ifdef DIAL
           DISP.setCursor((240 - DISP.textWidth(TXT_FK_GP)) / 2, 95);
 #endif
+#ifdef CoreInk
+          PageSprite.println(TXT_FK_GP);
+          PageSprite.pushSprite();
+          DISP.setCursor(0, 70);
+#else
           DISP.println(TXT_FK_GP);
+#endif
           const uint8_t bitcompression = powerCode->bitcompression;
           code_ptr = 0;
           for (uint8_t k = 0; k < numpairs; k++) {
@@ -1727,6 +1801,7 @@ void writeCard() {
 #ifndef CoreInk
             DISP.printf("rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
 #endif
+            DISP.printf("rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
             //Serial.printf("TVBG: rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
             rawData[k * 2] = offtime * 10;
             rawData[(k * 2) + 1] = ontime * 10;

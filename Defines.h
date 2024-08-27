@@ -22,8 +22,8 @@
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL) && !defined(CoreInk)
-// #define CoreInk
- #define DIAL
+ #define CoreInk
+// #define DIAL
 // #define CARDPUTER
 #endif
 
