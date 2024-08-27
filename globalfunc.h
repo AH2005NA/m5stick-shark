@@ -91,6 +91,29 @@ uint8_t CenterText(String Text, uint8_t Textsize) {
   //return 120 - ((uint16_t)sizeof(Text)*Textsize*3);
   return (240 - ((uint16_t)8 * Textsize * 6)) / 2;
 }
+uint16_t blendTowardsBackground(uint16_t color, uint16_t backgroundColor, float factor) {
+  // Clamp the factor between 0 and 1
+  if (factor < 0.0) factor = 0.0;
+  if (factor > 1.0) factor = 1.0;
+
+  // Extract the red, green, and blue components from the color
+  uint8_t r = (color >> 11) & 0x1F;
+  uint8_t g = (color >> 5) & 0x3F;
+  uint8_t b = color & 0x1F;
+
+  // Extract the red, green, and blue components from the background color
+  uint8_t br = (backgroundColor >> 11) & 0x1F;
+  uint8_t bg = (backgroundColor >> 5) & 0x3F;
+  uint8_t bb = backgroundColor & 0x1F;
+
+  // Blend the color towards the background color
+  r = r + factor * (br - r);
+  g = g + factor * (bg - g);
+  b = b + factor * (bb - b);
+
+  // Combine the components back into a single RGB565 color
+  return (r << 11) | (g << 5) | b;
+}
 
 void drawmenu(MENU thismenu[], int size) {
   DISP.setTextSize(SMALL_TEXT);
@@ -152,29 +175,6 @@ void drawmenu(MENU thismenu[], int size) {
 }
 
 
-uint16_t blendTowardsBackground(uint16_t color, uint16_t backgroundColor, float factor) {
-  // Clamp the factor between 0 and 1
-  if (factor < 0.0) factor = 0.0;
-  if (factor > 1.0) factor = 1.0;
-
-  // Extract the red, green, and blue components from the color
-  uint8_t r = (color >> 11) & 0x1F;
-  uint8_t g = (color >> 5) & 0x3F;
-  uint8_t b = color & 0x1F;
-
-  // Extract the red, green, and blue components from the background color
-  uint8_t br = (backgroundColor >> 11) & 0x1F;
-  uint8_t bg = (backgroundColor >> 5) & 0x3F;
-  uint8_t bb = backgroundColor & 0x1F;
-
-  // Blend the color towards the background color
-  r = r + factor * (br - r);
-  g = g + factor * (bg - g);
-  b = b + factor * (bb - b);
-
-  // Combine the components back into a single RGB565 color
-  return (r << 11) | (g << 5) | b;
-}
 #elif defined(CoreInk)
 void drawmenu(MENU thismenu[], int size) {
   PageSprite.setTextSize(SMALL_TEXT);

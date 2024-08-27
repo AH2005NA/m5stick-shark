@@ -1,4 +1,6 @@
 #include "esp32-hal.h"
+#include <IRremoteESP8266.h>
+#include <IRsend.h>
 
 
 uint16_t RawIRBuffer[1024];
@@ -8,9 +10,9 @@ uint64_t reslt;
 void TransmitIR(uint16_t RAWdata[], uint8_t decodetype, uint16_t Numpairs, uint16_t freq)
 {
   delay_ten_us(30500);
+  digitalWrite(IRLED, M5LED_OFF);
   IRsend irsender(IRLED);
   irsender.begin();
-  digitalWrite(IRLED, M5LED_OFF);
     Serial.print(decodetype);
     //Serial.print(reslt);
   if (decodetype == 0) {
@@ -45,7 +47,7 @@ void TransmitIR(uint16_t RAWdata[], uint8_t decodetype, uint16_t Numpairs, uint1
   //irsend.sendNEC(0xD11F363F);
   //irsend.sendRaw(0xD11F, (/*numpairs*/4 * 2) , /*freq*/38000);
   //irsend.sendRaw(0x363F, (/*numpairs*/4 * 2) , /*freq*/38000);
-  //digitalWrite(IRLED, M5LED_OFF);
+  digitalWrite(IRLED, M5LED_OFF);
 }
 
 

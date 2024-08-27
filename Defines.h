@@ -22,8 +22,8 @@
 #endif
 
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL) && !defined(CoreInk)
- #define CoreInk
-// #define DIAL
+// #define CoreInk
+ #define DIAL
 // #define CARDPUTER
 #endif
 
@@ -184,8 +184,8 @@ String platformName = "Cardputer";
 #define SD_MOSI_PIN 14
 #define SD_CS_PIN 12
 #define VBAT_PIN 10
-#define M5LED_ON LOW
-#define M5LED_OFF HIGH
+#define M5LED_ON HIGH
+#define M5LED_OFF LOW
 #endif
 
 
@@ -216,8 +216,8 @@ String platformName = "Dial";
 #define BITMAP DISP.pushImage(0, 0, 240, 240, (uint16_t *)SHARKMatrix);
 #define VBAT_PIN 15
 #define M5_BUTTON_HOME 46
-#define M5LED_ON LOW
-#define M5LED_OFF HIGH
+#define M5LED_ON HIGH
+#define M5LED_OFF LOW
 int abstand[] = { 60, 50, 33, 23, 0, 23, 35, 50, 60, 10, 10 };
 float Helligkeit[] = { 0.3, 0.5, 0.7, 0.85, 1, 0.85, 0.7, 0.5, 0.3, 0, 0 };
 #endif
@@ -242,7 +242,7 @@ String platformName = "CoreInk";
 #define DISP M5.M5Ink
 #define VBAT_PIN 35
 #define UperBtn 0
-#define IRLED 33
+#define IRLED 32
 #define PortBpinIN 32
 #define PortBpinOUT 33
 #define M5_BUTTON_MENU 5
@@ -256,8 +256,8 @@ String platformName = "CoreInk";
 #define SD_MOSI_PIN 26
 #define SD_CS_PIN -1
 #define VBAT_PIN 10
-#define M5LED_ON LOW
-#define M5LED_OFF HIGH
+#define M5LED_ON HIGH
+#define M5LED_OFF LOW
 #endif
 
 

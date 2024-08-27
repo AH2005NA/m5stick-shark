@@ -130,11 +130,11 @@ void IrRead::discard_signal() {
 
 void IrRead::save_signal() {
     if (!_read_signal) return;
-
+#ifdef SD
     String btn_name = Inputfilename("Btn"+String(signals_read));
 
     append_to_file_str(btn_name, parse_signal());
-
+#endif
     signals_read++;
 
     discard_signal();
@@ -171,10 +171,12 @@ void IrRead::append_to_file_str(String btn_name, String signal_code) {
 void IrRead::save_device() {
     if (signals_read == 0) return;
 
+#ifdef SD
     String filename = Inputfilename("MyDevice");
-
+#endif
     display_banner();
 
+#ifdef SD
     if (write_file(filename)) {
         //displaySuccess("File saved.");
         signals_read = 0;
@@ -183,11 +185,13 @@ void IrRead::save_device() {
     else {
         //displayError("Error writing file.");
     }
+#endif
     delay(1000);
     begin();
 }
 
 bool IrRead::write_file(String filename) {
+#ifdef SD
     FS *fs;
     if(setupSdCard()) fs=&SD;
     //else {
@@ -217,6 +221,7 @@ bool IrRead::write_file(String filename) {
     file.print(strDeviceContent);
 
     file.close();
+#endif
     delay(100);
     return true;
 }

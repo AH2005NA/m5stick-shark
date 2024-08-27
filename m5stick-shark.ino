@@ -133,8 +133,8 @@ QRCODE qrcodes[] = {
   { "Rickroll", "https://youtu.be/dQw4w9WgXcQ" },
   { "HackerTyper", "https://hackertyper.net/" },
   { "ZomboCom", "https://html5zombo.com/" },
-  { "Chuck Norris Dance", "https://chuckdance.ytmnd.com/" },
-  { "Bobbing For Apples", "https://www.newgrounds.com/portal/view/310038" },
+  { "Chuck Norris", "https://chuckdance.ytmnd.com/" },
+  { "Bobbing Apple", "https://www.newgrounds.com/portal/view/310038" },
 };
 
 
@@ -756,6 +756,9 @@ void check_menu_press() {
         DISP.setCursor((240 - DISP.textWidth("IR AH")) / 2, 80);
 #else
   DISP.setCursor(0, 39);
+#endif
+#ifdef CoreInk
+  DISP.setTextSize(5);
 #endif
         DISP.println("IR AH");
         DISP.setTextSize(SMALL_TEXT);
@@ -1721,7 +1724,9 @@ void writeCard() {
 #ifdef DIAL
             DISP.setCursor((240 - DISP.textWidth("rti = 0 Pair = 10, 100")) / 2, DISP.getCursorY());
 #endif
+#ifndef CoreInk
             DISP.printf("rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
+#endif
             //Serial.printf("TVBG: rti = %d Pair = %d, %d\n", ti >> 1, ontime, offtime);
             rawData[k * 2] = offtime * 10;
             rawData[(k * 2) + 1] = ontime * 10;
@@ -3238,7 +3243,7 @@ void wscan_drawmenu() {
           }
         }
       }
-#else
+#elif defined(CoreInk)
 void qrmenu_drawmenu() {
   PageSprite.setTextSize(SMALL_TEXT);
   PageSprite.fillScreen(BGCOLOR);
@@ -3246,11 +3251,19 @@ void qrmenu_drawmenu() {
   for (int i = 0; i < (sizeof(qrcodes) / sizeof(QRCODE)); i++) {
     PageSprite.print((cursor == i) ? "> " : " ");
     PageSprite.print(qrcodes[i].name);
-    PageSprite.println("      ");
-    PageSprite.setCursor(0, PageSprite.getCursorY());
-    PageSprite.println("      ");
+    PageSprite.print("\n");
   }
   PageSprite.pushSprite();
+}
+#else
+void qrmenu_drawmenu() {
+  DISP.setTextSize(SMALL_TEXT);
+  DISP.fillScreen(BGCOLOR);
+  DISP.setCursor(0, 8, 1);
+  for (int i = 0; i < (sizeof(qrcodes) / sizeof(QRCODE)); i++) {
+    DISP.print((cursor == i) ? ">" : " ");
+    DISP.print(qrcodes[i].name);
+  }
 }
 #endif
       void qrmenu_setup() {
