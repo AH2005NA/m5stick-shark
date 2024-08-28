@@ -358,7 +358,9 @@ void check_menu_press() {
 #if defined(CARDPUTER)
         { TXT_BATT_INFO, 6 },
 #endif
+#ifndef CoreInk
         { TXT_BRIGHT, 4 },
+#endif
 #if defined(RTC)
         { TXT_SET_CLOCK, 3 },
 #endif
@@ -373,7 +375,9 @@ void check_menu_press() {
 #if defined(USE_EEPROM)
         { TXT_Song_dis, 96 },
 #endif
+#ifndef CoreInk
         { TXT_THEME, 23 },
+#endif
         { TXT_ABOUT, 10 },
         { TXT_REBOOT, 98 },
 #if defined(USE_EEPROM)
@@ -2515,6 +2519,8 @@ void writeCard() {
         DISP.fillScreen(WHITE);
 #ifdef DIAL
         DISP.qrcode("https://github.com/AH2005NA/m5stick-shark", 145, 65, 100, 5);
+#elif defined(CoreInk)
+  DISP.qrcode("https://github.com/AH2005NA/m5stick-shark", 100, 100, 100, 5);
 #else
   DISP.qrcode("https://github.com/AH2005NA/m5stick-shark", 145, 22, 100, 5);
 #endif
@@ -2526,7 +2532,11 @@ void writeCard() {
   DISP.setCursor(0, 10);
 #endif
         DISP.print(" M5-SHARK\n");
+#if defined(CoreInk)
+        DISP.setTextSize(TINY_TEXT);
+#else
         DISP.setTextSize(SMALL_TEXT);
+#endif
 #ifdef DIAL
         DISP.setCursor(15, 65);
 #endif
@@ -2537,13 +2547,16 @@ void writeCard() {
 #ifdef DIAL
         DISP.setCursor(155, 155);
         DISP.println("GitHub");
+#elif defined(CoreInk)
+  DISP.setCursor(135, 65);
+  DISP.println("GitHub");
+  DISP.setCursor(135, 80);
+  DISP.println("Source:");
 #else
   DISP.setCursor(155, 5);
   DISP.println("GitHub");
-#endif
-#ifndef DIAL
-        DISP.setCursor(155, 17);
-        DISP.println("Source:");
+  DISP.setCursor(155, 17);
+  DISP.println("Source:");
 #endif
         delay(250);
         cursor = 0;
@@ -2555,12 +2568,16 @@ void writeCard() {
           DISP.setTextColor(BLACK, WHITE);
 #ifdef DIAL
           DISP.setCursor(25, 180);
+#elif defined(CoreInk)
+    DISP.setCursor(0, 130);
 #else
     DISP.setCursor(0, 115);
 #endif
           DISP.println("                   ");
 #ifdef DIAL
           DISP.setCursor(25, 180);
+#elif defined(CoreInk)
+    DISP.setCursor(0, 130);
 #else
     DISP.setCursor(0, 115);
 #endif
