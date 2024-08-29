@@ -1164,12 +1164,12 @@ void check_menu_press() {
 #else
 
 void displayReadMode() {
-  PageSprite.setCursor(0, 60);
+  DISP.setCursor(0, 60);
   displayUID();
 }
 
 void displayWriteMode() {
-  PageSprite.setCursor(0, 60);
+  DISP.setCursor(0, 60);
   displayUID();
 }
 
