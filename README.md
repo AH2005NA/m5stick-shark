@@ -13,6 +13,7 @@ I decided to call this firmware shark. I gave it this name because i wanted to n
 DEV 1.0.6
 * Add Dutch
 * Add Support to the M5Dial
+* Add Support to the CoreInk
 
 DEV 1.0.5
 * RFID (With SD)
