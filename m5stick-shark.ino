@@ -809,7 +809,23 @@ void check_menu_press() {
         rstOverride = true;
         isSwitching = false;
         delay(250);
-        drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
+
+        for(uint8_t i = 0; i < (sizeof(IR_AH_Transmitmenu_size) / sizeof(MENU)); i++)
+        {
+          String curname = IR_AH_Transmitmenu[i].name;
+          strncpy(Menubuffer[i].name, curname.c_str(), 19);
+        }
+#if defined(SDCARD)
+        for (uint8_t i = 0/*IR_AH_Transmitmenu_size*/; i < (sizeof(Menubuffer) / sizeof(MENU)); i++) {
+          String curname = choosefile(SD, "/IR_AH", i);
+          strncpy(Menubuffer[i].name, curname.c_str(), 19);
+          if (curname == "false") {
+            Menubuffer_size = i+5;
+            break;
+          }
+        }
+#endif
+        drawmenu(Menubuffer, Menubuffer_size);
       }
 
       void IR_AH_Transmit_loop(void) {
@@ -826,15 +842,15 @@ void check_menu_press() {
             } else {
               cursor = 0;
               whichrwmote = 0;
-              drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
+              drawmenu(Menubuffer, Menubuffer_size);
               delay(250);
             }
           }
         } else {
           if (check_next_press()) {
             cursor++;
-            cursor = cursor % IR_AH_Transmitmenu_size;
-            drawmenu(IR_AH_Transmitmenu, IR_AH_Transmitmenu_size);
+            cursor = cursor % Menubuffer_size;
+          drawmenu(Menubuffer, Menubuffer_size);
             delay(250);
           }
           if (check_select_press()) {
@@ -920,8 +936,55 @@ void check_menu_press() {
                 DISP.setCursor(0, 115, TINY_TEXT);
                 DISP.print("   UNIT connected?");
               } else if (IR_AH_Transmitmenu[cursor].command == 1) {
-                IRcurState = Read;
-                DISP.fillScreen(BGCOLOR);
+#if defined(SDCARD)
+              String currem = "/IR_AH";
+              for (uint8_t i = 0; i < (sizeof(Menubuffer) / sizeof(MENU)); i++) {
+                String curname = choosefile(SD, "/IR_AH", i);
+                strncpy(Menubuffer[i].name, curname.c_str(), 19);
+                if (curname == "false") {
+                  Menubuffer_size = i+1;
+                  break;
+                }
+              }
+                strncpy(Menubuffer[Menubuffer_size-1].name, "New Remote", 19);
+                cursor = 0;
+                drawmenu(Menubuffer, Menubuffer_size);
+              while(true)
+              {
+              if (check_next_press()) {
+                cursor++;
+                cursor = cursor % Menubuffer_size;
+                drawmenu(Menubuffer, Menubuffer_size);
+              }
+              if (check_select_press() || Menubuffer_size==1)
+              {
+                String rawstr = "";
+                for (int i = 0; i < LenRAWIR; i++) {
+                  rawstr += String(RawIRBuffer[i]);
+                  rawstr += " ";
+                }
+
+                if(cursor == Menubuffer_size-1)
+                {
+                  currem = "/IR_AH/" + String(Inputfilename("Remote"+String(cursor)) + ".txt");
+                  String btnname = Inputfilename("Btn0") + "\n" + rawstr;
+                  appendToFile(SD, currem.c_str(), btnname.c_str());
+                }
+                else
+                {
+                  currem = "/IR_AH/" + String(Menubuffer[cursor].name);
+                  String btnname = Inputfilename("Btn") + "\n" + rawstr;
+                  appendToFile(SD, currem.c_str(), btnname.c_str());
+                }
+                cursor = 0;
+                drawmenu(IRAHmenu, IRAHmenu_size);
+                break;
+              }
+                delay(250);
+              }
+#endif
+              IRcurState = Read;
+              DISP.fillScreen(BGCOLOR);
               } else {
                 TransmitIR(RawIRBuffer, dcodetype, LenRAWIR, 38000);
               }
