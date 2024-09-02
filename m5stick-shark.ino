@@ -3670,7 +3670,7 @@ Serial.println("EEPROM likely not properly configured. Writing defaults.");
               IR_AH_Transmit_setup();
               break;
             case 26:
-              //IR_AH_Receive_setup();
+              IR_AH_Receive_setup();
               break;
             case 27:
               Modules_setup();
@@ -3776,8 +3776,8 @@ Serial.println("EEPROM likely not properly configured. Writing defaults.");
             IR_AH_Transmit_loop();
             break;
           case 26:
-            //IR_AH_Receive_loop();
-            IrRead();
+            IR_AH_Receive_loop();
+            //IrRead();
             break;
           case 27:
             Modules_loop();
