@@ -24,7 +24,7 @@ jobs:
     name: Build ${{ matrix.board.name }} (${{ matrix.locale }})
     runs-on: ubuntu-latest
     strategy:
-      # max-parallel: 5
+      # max-parallel: 6
       fail-fast: false
       matrix:
         locale:
@@ -41,7 +41,7 @@ jobs:
               extra_flags: "-DCoreInk",
               libraries: "M5Core-Ink IRRemoteESP8266 M5Stack-SD-Updater M5Unified ",
               partitions: {
-                bootloader_addr: "0x0000",
+                bootloader_addr: "0x1000",
               },
             }
           - {
