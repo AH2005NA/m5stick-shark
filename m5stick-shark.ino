@@ -194,18 +194,17 @@ enum irstate {
 void check_menu_press() {
 #if defined(AXP)
   if (M5.Axp.GetBtnPress()) {
-#endif
-#if defined(KB)
+#elif defined(KB)
         M5Cardputer.update();
     if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
-#endif
-#if defined(DIAL)
+#elif defined(DIAL)
       M5Dial.update();
       auto t = M5Dial.Touch.getDetail();
       if (t.isHolding()) {
-#endif
-#if defined(M5_BUTTON_MENU)
+#elif defined(M5_BUTTON_MENU)
         if (digitalRead(M5_BUTTON_MENU) == LOW) {
+#else
+        if (false) {
 #endif
           dimtimer();
           if (portal_active) {
@@ -3534,6 +3533,9 @@ void qrmenu_drawmenu() {
 #elif defined(DIAL)
   auto cfg = M5.config();
   M5Dial.begin(cfg, true, false);
+#elif defined(DINMETER)
+    auto cfg = M5.config();
+    DinMeter.begin(cfg, true);
 #else
   M5.begin();
 #if defined(CoreInk)

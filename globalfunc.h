@@ -54,17 +54,23 @@ int current_proc = 1;  // Start in Main Menu mode if no RTC
           dimtimer();
           return true;
         }
-#elif defined(DIAL)
-  M5Dial.update();
-  int newPosition = M5Dial.Encoder.read();
-  if (-2 > newPosition) {
-    M5Dial.Encoder.write(0);
+#elif defined(Rotary)
+  //M5Dial.update();
+  //DinMeter.update();revRotary
+  int newPosition = Rotary.read();
+  if (-Rotarysteps > newPosition) {
+    Rotary.write(0);
+#ifndef revRotary
     cursor = cursor - 2;
+#endif
     dimtimer();
     return true;
   }
-  if (2 < newPosition) {
-    M5Dial.Encoder.write(0);
+  if (Rotarysteps < newPosition) {
+    Rotary.write(0);
+#ifdef revRotary
+    cursor = cursor - 2;
+#endif
     dimtimer();
     return true;
   }
@@ -478,7 +484,7 @@ void switcher_button_proc() {
     dimtimer();
     return true;
   }
-#else
+#elif defined(M5_BUTTON_HOME)
   if (digitalRead(M5_BUTTON_HOME) == LOW) {
     dimtimer();
     return true;
@@ -491,18 +497,17 @@ void switcher_button_proc() {
 bool check_m_press() {
 #if defined(AXP)
   if (M5.Axp.GetBtnPress()) {
-#endif
-#if defined(KB)
+#elif defined(KB)
         M5Cardputer.update();
     if (M5Cardputer.Keyboard.isKeyPressed(',') || M5Cardputer.Keyboard.isKeyPressed('`')) {
-#endif
-#if defined(DIAL)
+#elif defined(DIAL)
       M5Dial.update();
       auto t = M5Dial.Touch.getDetail();
       if (t.isHolding()) {
-#endif
-#if defined(M5_BUTTON_MENU)
-        if (digitalRead(M5_BUTTON_MENU) == LOW) {
+#elif defined(M5_BUTTON_MENU)
+      if (digitalRead(M5_BUTTON_MENU) == LOW) {
+#else
+      if(false) {
 #endif
           return true;
           dimtimer();

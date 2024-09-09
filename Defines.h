@@ -208,6 +208,8 @@ String platformName = "Dial";
 // -=-=- ALIASES -=-=-
 #define DISP M5Dial.Display
 #define UperBtn 0
+#define Rotary M5Dial.Encoder
+#define Rotarysteps 3
 #define PortBpinIN 1
 #define PortBpinOUT 2
 #define IRLED 2
@@ -275,9 +277,9 @@ String platformName = "DinMeter";
 #define M5LED 19
 #define ROTATION
 #define USE_EEPROM
-#define DTime
-#define DTget StickCP2.Rtc
-#define RTC     //TODO: plus2 has a BM8563 RTC but the class isn't the same, needs work.
+//#define DTime
+//#define DTget StickCP2.Rtc
+//#define RTC     //TODO: plus2 has a BM8563 RTC but the class isn't the same, needs work.
 #define SDCARD  //Requires a custom-built adapter
 #define PWRMGMT
 #define SPEAKER DinMeter.Speaker
@@ -288,10 +290,12 @@ String platformName = "DinMeter";
 #define PortBpinIN 33
 #define PortBpinOUT 32
 #define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);
-#define M5_BUTTON_MENU 35
-#define M5_BUTTON_HOME 37
-#define M5_BUTTON_RST 39
-#define BACKLIGHT 27
+#define M5_BUTTON_HOME 42
+//#define M5_BUTTON_MENU 42
+#define Rotary DinMeter.Encoder
+#define Rotarysteps 1
+#define revRotary
+#define BACKLIGHT 9
 #define MINBRIGHT 190
 #define SD_CLK_PIN 0
 #define SD_MISO_PIN 36
@@ -299,8 +303,8 @@ String platformName = "DinMeter";
 #define SD_CS_PIN -1  //can be -1, but sends a lot of messages of error in serial monitor
 #define M5LED_ON HIGH
 #define M5LED_OFF LOW
-#define SCREEN_WIDTH 80
-#define SCREEN_HEIGHT 160
+#define SCREEN_WIDTH 240
+#define SCREEN_HEIGHT 135
 
 #endif
 
