@@ -24,7 +24,8 @@
 #if !defined(CARDPUTER) && !defined(STICK_C_PLUS2) && !defined(STICK_C_PLUS) && !defined(STICK_C) && !defined(DIAL) && !defined(CoreInk)
 // #define CoreInk
 // #define DIAL
- #define CARDPUTER
+ #define DINMETER
+// #define CARDPUTER
 #endif
 
 #if !defined(LANGUAGE_EN_US) && !defined(LANGUAGE_PT_BR) && !defined(LANGUAGE_GER) && !defined(LANGUAGE_IT_IT) && !defined(LANGUAGE_FR_FR) && !defined(LANGUAGE_NL_NL)
@@ -260,6 +261,48 @@ String platformName = "CoreInk";
 #define M5LED_OFF LOW
 #endif
 
+
+#if defined(DINMETER)
+#include "M5DinMeter.h"
+// -=-=- Display -=-=-
+String platformName = "DinMeter";
+#define BIG_TEXT 4
+#define MEDIUM_TEXT 3
+#define SMALL_TEXT 2
+#define TINY_TEXT 1
+// -=-=- FEATURES -=-=-
+#define ACTIVE_LOW_IR
+#define M5LED 19
+#define ROTATION
+#define USE_EEPROM
+#define DTime
+#define DTget StickCP2.Rtc
+#define RTC     //TODO: plus2 has a BM8563 RTC but the class isn't the same, needs work.
+#define SDCARD  //Requires a custom-built adapter
+#define PWRMGMT
+#define SPEAKER DinMeter.Speaker
+#define SONG
+// -=-=- ALIASES -=-=-
+#define DISP DinMeter.Display
+#define IRLED 19
+#define PortBpinIN 33
+#define PortBpinOUT 32
+#define BITMAP DISP.pushImage(0, 0, 240, 135, (uint16_t *)SHARKMatrix);
+#define M5_BUTTON_MENU 35
+#define M5_BUTTON_HOME 37
+#define M5_BUTTON_RST 39
+#define BACKLIGHT 27
+#define MINBRIGHT 190
+#define SD_CLK_PIN 0
+#define SD_MISO_PIN 36
+#define SD_MOSI_PIN 26
+#define SD_CS_PIN -1  //can be -1, but sends a lot of messages of error in serial monitor
+#define M5LED_ON HIGH
+#define M5LED_OFF LOW
+#define SCREEN_WIDTH 80
+#define SCREEN_HEIGHT 160
+
+#endif
 
 // -=-=-=-=-=- LIST OF CURRENTLY DEFINED FEATURES -=-=-=-=-=-
 // M5LED      - A visible LED (Red) exposed on this pin number
