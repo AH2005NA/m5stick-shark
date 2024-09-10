@@ -293,7 +293,7 @@ String platformName = "DinMeter";
 #define M5_BUTTON_HOME 42
 //#define M5_BUTTON_MENU 42
 #define Rotary DinMeter.Encoder
-#define Rotarysteps 1
+#define Rotarysteps 2
 #define revRotary
 #define BACKLIGHT 9
 #define MINBRIGHT 190
