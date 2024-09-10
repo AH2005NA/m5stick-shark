@@ -17,7 +17,7 @@ on:
         type: choice
         required: true
         default: 'M5Dial'
-        options: ['CoreInk', 'M5Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC']
+        options: ['DinMeter', 'CoreInk', 'M5Dial', 'M5Cardputer', 'M5StickCPlus2', 'M5StickCPlus', 'M5StickC']
 
 jobs:
   compile_sketch:
@@ -42,6 +42,15 @@ jobs:
               libraries: "M5Core-Ink IRRemoteESP8266 M5Stack-SD-Updater M5Unified ",
               partitions: {
                 bootloader_addr: "0x1000",
+              },
+            }
+          - {
+              name: "DinMeter",
+              fqbn: "m5stack:esp32:M5DinMeter",
+              extra_flags: "-DDinMeter",
+              libraries: "M5DinMeter IRRemoteESP8266 M5Stack-SD-Updater M5Unified ",
+              partitions: {
+                bootloader_addr: "0x0000",
               },
             }
           - {
