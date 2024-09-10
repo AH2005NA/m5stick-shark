@@ -47,7 +47,7 @@ jobs:
           - {
               name: "DinMeter",
               fqbn: "m5stack:esp32:m5stack_dinmeter",
-              extra_flags: "-DDinMeter",
+              extra_flags: "-DDINMETER",
               libraries: "M5DinMeter IRRemoteESP8266 M5Stack-SD-Updater M5Unified ",
               partitions: {
                 bootloader_addr: "0x0000",
